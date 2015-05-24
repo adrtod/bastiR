@@ -1,0 +1,45 @@
+---
+title: "Chantier XXX"
+author: "architecte@terranergie.fr"
+date: "Réunion n°1, le `r format(Sys.Date(), '%d/%m/%Y')`\\\nProchaine réunion le `r format(Sys.Date()+7, '%d/%m/%Y')`"
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    fig_width: 7
+    fig_height: 6
+    fig_caption: true
+    includes:
+      in_header: header.tex
+      before_body: doc_prefix.tex
+      after_body: doc_suffix.tex
+documentclass: article
+classoption: a4paper
+fontsize: 11pt
+geometry: margin=1in
+lang: french
+---
+
+\newpage
+
+# Organisation générale
+```{r}
+
+```
+
+# Bâtiment
+```{r}
+
+```
+
+# Armoire à plans 
+```{r}
+
+```
+
+# Photographies
+```{r}
+
+```
+

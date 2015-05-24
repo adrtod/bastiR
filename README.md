@@ -21,6 +21,8 @@ devtools::install_github("adrtod/bastiR")
 
 TODO
 
+- [R Markdown](http://rmarkdown.rstudio.com/)
+
 # Liste des tâches
 - [ ] écrire intro origine et but du projet
 - [ ] ajouter ressources
