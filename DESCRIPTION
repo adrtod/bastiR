@@ -1,0 +1,17 @@
+Package: bastiR
+Title: Outils De Suivi De Chantier
+Version: 0.1
+Authors@R: c(person("Adrien", "Todeschini", email = "adrien.todeschini@gmail.com", role=c("aut", "cre")),
+    person("Baptiste", "Dulau", email = "baptiste.dulau@gmail.com",role=c("ctb")))
+Description: Le package R bastiR a pour but d'être une collection d'outils pour faciliter le suivi de chantier.
+  Sa première tâche est la génération de compte-rendus de réunions de chantier.
+URL: https://github.com/adrtod/bastiR
+BugReports: https://github.com/adrtod/bastiR/issues
+Depends:
+    R (>= 3.2.0)
+Imports:
+    rmarkdown (>= 0.5.1),
+    knitr (>= 1.6)
+SystemRequirements: pandoc (>= 1.12.3) - http://johnmacfarlane.net/pandoc
+License: GPL-2
+LazyData: true
