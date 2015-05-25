@@ -8,6 +8,7 @@ Sa première tâche est la génération de compte-rendus de réunions de chantier.
 # Logiciels requis
 - [R](http://www.r-project.org/) version 3.2.0 (2015-04-16)
 - [RStudio](http://www.rstudio.com/) version 0.98.1103
+- [MikTex](http://www.miktek.org/) version 2.9
 
 # Installation
 Pour installer la dernière version en développement sur [GitHub](https://github.com/adrtod/rchallenge)
