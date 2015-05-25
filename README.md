@@ -29,6 +29,6 @@ TODO
 - [ ] ajouter ressources
 
 # Auteurs
-Copyright (C) 2015, Adrien Todeschini, [Baptiste Dulau](http://www.oxalis-scop.fr/environnement-et-developpement-durable/userprofile/bdulau).
+Copyright (C) 2015, Adrien Todeschini, [Baptiste Dulau](http://www.bastir-energie.fr/).
 
 **bastiR** est un logiciel libre distribué sous la Licence GPL-2.

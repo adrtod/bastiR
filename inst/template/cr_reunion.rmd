@@ -1,10 +1,10 @@
 ---
-title: "Chantier XXX"
-author: "architecte@terranergie.fr"
-date: "Réunion n°1, le `r format(Sys.Date(), '%d/%m/%Y')`\\\nProchaine réunion le `r format(Sys.Date()+7, '%d/%m/%Y')`"
+title: "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
+author: "**<t.weulersse@atelier-d-form.com>**"
+date: "Compte rendu n°12 de la réunion du `r format(Sys.Date(), '%d %B %Y')`\\\nRéunion de chantier n°13 à **9h00** le le `r format(Sys.Date()+7, '%A %d %B %Y')`"
 output: 
   pdf_document:
-    toc: true
+    toc: false
     toc_depth: 2
     number_sections: true
     fig_width: 7
@@ -17,7 +17,7 @@ output:
 documentclass: article
 classoption: a4paper
 fontsize: 11pt
-geometry: margin=1in
+geometry: margin=1cm
 lang: french
 ---
 
