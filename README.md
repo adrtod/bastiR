@@ -6,7 +6,7 @@ Le package R **bastiR** a pour but d'être une collection d'outils pour facilite
 Sa première fonctionnalité est la génération de compte-rendus de réunions de chantier.
 
 # Logiciels requis
-<img src="http://www.r-project.org/Rlogo.png" alt="R" height=32/> 
+<img src="http://www.r-project.org/Rlogo.png" alt="R" height=32/> &nbsp;
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/92/LaTeX_logo.svg/220px-LaTeX_logo.svg.png" alt="LaTeX" height=32/>
 
 - [R](http://www.r-project.org/) version 3.2.0 (2015-04-16)
