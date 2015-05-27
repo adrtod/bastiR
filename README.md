@@ -61,12 +61,12 @@ Copyright (C) 2015, Adrien Todeschini, [Baptiste Dulau](http://www.bastir-energi
 - Faire une demande aux propriétaires du projet GitHub pour devenir collaborateur.
 
 - Mettre en place le projet sous RStudio :
-    1. Exécutez la commande **New Project** (dans le menu **File**)
-    2. Choisissez de créer un nouveau projet **Version Control**
-    3. Choisissez **Git**
-    4. Fournir l'[URL du référentiel](https://help.github.com/articles/which-remote-url-should-i-use/) (et d'autres options appropriées) et puis cliquez sur **Create project**.
+    1. Cliquer sur **New Project** (dans le menu **File**)
+    2. Choisir un nouveau projet **Version Control**
+    3. Choisir **Git**
+    4. Fournir l'[URL du référentiel](https://help.github.com/articles/which-remote-url-should-i-use/) (et d'autres options appropriées) et cliquer sur **Create project**.
     
-    Le dépôt distant sera cloné dans le répertoire spécifié, et les fonctions de versionnage de RStudio sera ensuite disponible pour ce répertoire.  
+    Le dépôt distant sera cloné dans le répertoire spécifié, et les fonctions de versionnage de RStudio seront ensuite disponibles pour ce répertoire.  
     Voir aussi : [projets RStudio](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects), [versionnage avec RStudio](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN), [tutoriel vidéo](https://vimeo.com/119403805).
     
 # Liste des tâches
