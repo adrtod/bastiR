@@ -21,17 +21,18 @@ devtools::install_github("adrtod/bastiR")
 # Spécification des tableaux d'entrée
 - Tableur Excel .xls version 2007
 - Feuilles de calcul (onglets) :
-    - Légende : classe (acteur orga, acteur exe, chapitre, état), clé (insensible à la casse), désignation, ...
-    - Tâches : chapitre (clé), date de réunion, date d'échéance, acteur (clé), description, état (clé : a=A faire, f=Fait, i=Info), priorité (autromatique, clé : rappel, urgent)
+    - Légende : classe (`acteur orga`, `acteur exe`, `chapitre`, `etat`), clé (insensible à la casse), désignation, ...
+    - Tâches : chapitre (clé), date de réunion, date d'échéance, acteur (clé), description, état (clé : `a`=A faire, `f`=Fait, `i`=Info), priorité (automatique, clé : `rappel`, `urgent`)
     - Tâches réunion en cours : cf. Tâches
     - Armoire à plans : TODO
     - Photos : nom du fichier, commentaire
 - Ne pas fusionner les cellules
 - 1 colonne = 1 variable, label en 1ère ligne
 - 1 ligne = 1 individu
-- cellules dates au format date dans Excel
+- Enregistrer les dates au format date dans Excel
 
 # Ressources
+- Introduction à R et RStudio : TODO
 - [knitr](http://yihui.name/knitr/)
 
 # Auteurs
@@ -49,24 +50,24 @@ Copyright (C) 2015, Adrien Todeschini, [Baptiste Dulau](http://www.bastir-energi
 <https://github.com/signup>
 
 ### Installer Git :
-- Windows & OS X: <http://git-scm.com/downloads>
-- Debian/Ubuntu: `sudo apt-get install git-core`
-- Fedora/RedHat: `sudo yum install git-core`
+- Windows & OS X : <http://git-scm.com/downloads>
+- Debian/Ubuntu : `sudo apt-get install git-core`
+- Fedora/RedHat : `sudo yum install git-core`
 
 ### Contribution mineure
 [Fork](https://help.github.com/articles/fork-a-repo/) & [pull](https://help.github.com/articles/using-pull-requests/)
 
 ### Contribution majeure
-- Faire une demande aux propriétaires du projet GitHub pour devenir administrateur.
+- Faire une demande aux propriétaires du projet GitHub pour devenir collaborateur.
 
-- Mettre en place le projet sous RStudio : [tutoriel video](https://vimeo.com/119403805)
-    
+- Mettre en place le projet sous RStudio :
     1. Exécutez la commande **New Project** (dans le menu **File**)
     2. Choisissez de créer un nouveau projet **Version Control**
     3. Choisissez **Git**
     4. Fournir l'[URL du référentiel](https://help.github.com/articles/which-remote-url-should-i-use/) (et d'autres options appropriées) et puis cliquez sur **Create project**.
     
-    Le dépôt distant sera cloné dans le répertoire spécifié, et les fonctions de versionnage de RStudio sera ensuite disponible pour ce répertoire.
+    Le dépôt distant sera cloné dans le répertoire spécifié, et les fonctions de versionnage de RStudio sera ensuite disponible pour ce répertoire.  
+    Voir aussi : [projets RStudio](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects), [versionnage avec RStudio](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN), [tutoriel vidéo](https://vimeo.com/119403805).
     
 # Liste des tâches
 - [ ] écrire intro origine et but du projet
