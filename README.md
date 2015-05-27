@@ -33,10 +33,9 @@ devtools::install_github("adrtod/bastiR")
 
 # Ressources
 - Introduction à R et RStudio : TODO
-- [knitr](http://yihui.name/knitr/)
 
 # Auteurs
-Copyright (C) 2015, Adrien Todeschini, [Baptiste Dulau](http://www.bastir-energie.fr/).
+Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientodeschini/), [Baptiste Dulau](http://www.bastir-energie.fr/).
 
 **bastiR** est un logiciel libre distribué sous la Licence [GPL-2](http://www.gnu.org/licenses/gpl-2.0.html).
 
@@ -68,6 +67,10 @@ Copyright (C) 2015, Adrien Todeschini, [Baptiste Dulau](http://www.bastir-energi
     
     Le dépôt distant sera cloné dans le répertoire spécifié, et les fonctions de versionnage de RStudio seront ensuite disponibles pour ce répertoire.  
     Voir aussi : [projets RStudio](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects), [versionnage avec RStudio](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN), [tutoriel vidéo](https://vimeo.com/119403805).
+    
+### Ressources
+- [Packages R](http://r-pkgs.had.co.nz/)
+- [knitr](http://yihui.name/knitr/)
     
 # Liste des tâches
 - [ ] écrire intro origine et but du projet
