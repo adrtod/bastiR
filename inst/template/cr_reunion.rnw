@@ -23,7 +23,7 @@ num_reu = 12
 date_reu = as.Date("2015-04-22")
 date_reu_next = date_reu+7
 num_reu_next = num_reu + 1
-heur_reu_next = "9H00"
+heure_reu_next = "9H00"
 img_garde = "TAVAILLON_3D"
 file = "BEUBOIS_CR_box.xls"
 
@@ -66,7 +66,7 @@ if (nrow(ce_jour)>0) {
 \end{center}
 
 \begin{center}
-\textcolor{red}{Réunion de chantier \no \Sexpr{num_reu_next} à \textbf{\Sexpr{heur_reu_next}} le \Sexpr{format(date_reu_next, "%A %d %B %Y")}}
+\textcolor{red}{Réunion de chantier \no \Sexpr{num_reu_next} à \textbf{\Sexpr{heure_reu_next}} le \Sexpr{format(date_reu_next, "%A %d %B %Y")}}
 \end{center}
 
 \arrayrulecolor{lightgray}
