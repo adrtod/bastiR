@@ -20,7 +20,6 @@
 
 \maketitle
 
-
 \begin{center}
 \includegraphics[width=.8\textwidth]{TAVAILLON_3D}
 \end{center}
@@ -31,8 +30,8 @@
 
 \arrayrulecolor{lightgray}
 
-{
-\tiny
+{\tiny
+
 \hspace*{-.5cm}
 \begin{tabular}{|p{2.92cm}|p{2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{2cm}|p{.3cm}|p{.3cm}|p{.3cm}|p{.3cm}|}
 \hline
@@ -118,7 +117,6 @@
 \end{tabular}
 }
 
-
 <<setup, include=FALSE>>=
 knitr::opts_chunk$set(results='asis', echo=FALSE)
 
@@ -150,7 +148,6 @@ if (nrow(ce_jour)>0) {
   }
 }
 @
-
 
 <<orga>>=
 
@@ -253,7 +250,6 @@ print_taches <- function(chapitre = "orga", col_format = "|p{11cm}|p{2cm}|p{2cm}
 print_taches("orga")
 @
 
-
 <<tav>>=
 print_taches("tav")
 @
@@ -275,6 +271,5 @@ print_taches("epb")
 \section*{Photographies}
 <<photo>>=
 @
-
 
 \end{document}

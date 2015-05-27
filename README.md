@@ -2,55 +2,72 @@
 [![Travis-CI Build Status](https://img.shields.io/travis/adrtod/bastiR.svg)](https://travis-ci.org/adrtod/bastiR)
 [![GPLv2 License](http://img.shields.io/badge/license-GPLv2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
 
-Le package R **bastiR** a pour but d'Ítre une collection d'outils pour faciliter le suivi de chantier.
-Sa premiËre fonctionnalitÈ est la gÈnÈration de compte-rendus de rÈunions de chantier.
+Le package R **bastiR** a pour but d'√™tre une collection d'outils pour faciliter le suivi de chantier.
+Sa premi√®re fonctionnalit√© est la g√©n√©ration de compte-rendus de r√©unions de chantier.
 
 # Logiciels requis
 - [R](http://www.r-project.org/) version 3.2.0 (2015-04-16)
 - [RStudio](http://www.rstudio.com/) version 0.98.1103
-- [MikTex](http://www.miktek.org/) version 2.9
+- Distribution [LaTeX](http://www.latex-project.org/) :
+    - Windows : [MikTex](http://www.miktek.org/) version 2.9
 
 # Installation
-Pour installer la derniËre version en dÈveloppement sur [GitHub](https://github.com/adrtod/rchallenge), taper la commande suivante sous R :
+Pour installer la derni√®re version en d√©veloppement sur [GitHub](https://github.com/adrtod/rchallenge), taper la commande suivante sous R :
 ```r
 # install.packages("devtools")
 devtools::install_github("adrtod/bastiR")
 ```
 
-# SpÈcification des tableaux d'entrÈe
+# Sp√©cification des tableaux d'entr√©e
 - Tableur Excel .xls version 2007
 - Feuilles de calcul (onglets) :
-    - LÈgende : classe (acteur orga, acteur exe, chapitre, Ètat), clÈ (insensible ‡ la casse), dÈsignation, ...
-    - T‚ches : chapitre (clÈ), date de rÈunion, date d'ÈchÈance, acteur (clÈ), description, Ètat (clÈ : a=A faire, f=Fait, i=Info), prioritÈ (autromatique, clÈ : rappel, urgent)
-    - T‚ches rÈunion en cours : cf. T‚ches
-    - Armoire ‡ plans : TODO
+    - L√©gende : classe (acteur orga, acteur exe, chapitre, √©tat), cl√© (insensible √† la casse), d√©signation, ...
+    - T√¢ches : chapitre (cl√©), date de r√©union, date d'√©ch√©ance, acteur (cl√©), description, √©tat (cl√© : a=A faire, f=Fait, i=Info), priorit√© (autromatique, cl√© : rappel, urgent)
+    - T√¢ches r√©union en cours : cf. T√¢ches
+    - Armoire √† plans : TODO
     - Photos : nom du fichier, commentaire
 - Ne pas fusionner les cellules
-- 1 colonne = 1 variable, label en 1Ëre ligne
+- 1 colonne = 1 variable, label en 1√®re ligne
 - 1 ligne = 1 individu
 - cellules dates au format date dans Excel
 
 # Ressources
-### Programmation sous R
-
-- [R Markdown](http://rmarkdown.rstudio.com/)
-
-# Contribuer au projet
-- CrÈer un compte github
-
-- Signaler un bug : https://github.com/adrtod/bastiR/issues
-
-- Demander une fonctionnalitÈ : ???
-
-- Contribution au dÈveloppement : 
-    - mineure : Fork + pull request
-    - majeure : Faire demande aux propriÈtaires du projet pour devenir administrateur
-    
-# Liste des t‚ches
-- [ ] Ècrire intro origine et but du projet
-- [ ] ajouter ressources
+- [knitr](http://yihui.name/knitr/)
 
 # Auteurs
 Copyright (C) 2015, Adrien Todeschini, [Baptiste Dulau](http://www.bastir-energie.fr/).
 
-**bastiR** est un logiciel libre distribuÈ sous la Licence [GPL-2](http://www.gnu.org/licenses/gpl-2.0.html).
+**bastiR** est un logiciel libre distribu√© sous la Licence [GPL-2](http://www.gnu.org/licenses/gpl-2.0.html).
+
+# Signaler un bug
+
+<https://github.com/adrtod/bastiR/issues>
+
+# Contribuer au d√©veloppement
+
+### Cr√©er un compte GitHub
+<https://github.com/signup>
+
+### Installer Git :
+- Windows & OS X: <http://git-scm.com/downloads>
+- Debian/Ubuntu: `sudo apt-get install git-core`
+- Fedora/RedHat: `sudo yum install git-core`
+
+### Contribution mineure
+[Fork](https://help.github.com/articles/fork-a-repo/) & [pull](https://help.github.com/articles/using-pull-requests/)
+
+### Contribution majeure
+- Faire une demande aux propri√©taires du projet GitHub pour devenir administrateur.
+
+- Mettre en place le projet sous RStudio : [tutoriel video](https://vimeo.com/119403805)
+    
+    1. Ex√©cutez la commande **New Project** (dans le menu **File**)
+    2. Choisissez de cr√©er un nouveau projet **Version Control**
+    3. Choisissez **Git**
+    4. Fournir l'[URL du r√©f√©rentiel](https://help.github.com/articles/which-remote-url-should-i-use/) (et d'autres options appropri√©es) et puis cliquez sur **Create project**.
+    
+    Le d√©p√¥t distant sera clon√© dans le r√©pertoire sp√©cifi√©, et les fonctions de versionnage de RStudio sera ensuite disponible pour ce r√©pertoire.
+    
+# Liste des t√¢ches
+- [ ] √©crire intro origine et but du projet
+- [ ] ajouter ressources

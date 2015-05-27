@@ -12,3 +12,9 @@
 vignettes/*.html
 vignettes/*.pdf
 .Rproj.user
+
+# latex compilation files
+inst/template/*.pdf
+inst/template/*.log
+inst/template/*.gz
+inst/template/*.tex
