@@ -6,10 +6,16 @@ Le package R **bastiR** a pour but d'être une collection d'outils pour facilite
 Sa première fonctionnalité est la génération de compte-rendus de réunions de chantier.
 
 # Logiciels requis
+<img src="http://www.r-project.org/Rlogo.png" alt="R" style="height: 32px;"/>\ \ 
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/92/LaTeX_logo.svg/220px-LaTeX_logo.svg.png" alt="LaTeX" style="height: 32px;"/>
+
 - [R](http://www.r-project.org/) version 3.2.0 (2015-04-16)
 - [RStudio](http://www.rstudio.com/) version 0.98.1103
-- Distribution [LaTeX](http://www.latex-project.org/) :
-    - Windows : [MikTex](http://www.miktek.org/) version 2.9
+- [LaTeX](http://www.latex-project.org/)
+    - Windows : [MikTex](http://www.miktek.org/)
+    - OS X : [MacTeX](https://tug.org/mactex/)
+    - Debian/Ubuntu : `sudo apt-get install texlive`
+    - Fedora/RedHat : `sudo yum install texlive`
 
 # Installation
 Pour installer la dernière version en développement sur [GitHub](https://github.com/adrtod/rchallenge), taper la commande suivante sous R :
@@ -48,7 +54,7 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
 ### Créer un compte GitHub
 <https://github.com/signup>
 
-### Installer Git :
+### Installer Git
 - Windows & OS X : <http://git-scm.com/downloads>
 - Debian/Ubuntu : `sudo apt-get install git-core`
 - Fedora/RedHat : `sudo yum install git-core`
