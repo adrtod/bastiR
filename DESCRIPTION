@@ -11,7 +11,8 @@ Depends:
     R (>= 3.2.0)
 Imports:
     rmarkdown (>= 0.5.1),
-    knitr (>= 1.6)
+    knitr (>= 1.6),
+    readxl (0.1.0)
 SystemRequirements: pandoc (>= 1.12.3) - http://johnmacfarlane.net/pandoc
 License: GPL-2
 LazyData: true

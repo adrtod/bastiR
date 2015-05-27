@@ -1,0 +1,280 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage[table]{xcolor}
+\usepackage{array}
+\usepackage{ulem} % pour barrer \sout
+
+
+\title{CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY}
+\author{\href{mailto:t.weulersse@atelier-d-form.com}{t.weulersse@atelier-d-form.com}}
+\date{Compte rendu \no 12 de la réunion du 22 Avril 2015}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{center}
+\includegraphics[width=.8\textwidth]{TAVAILLON_3D}
+\end{center}
+
+\begin{center}
+\textcolor{red}{Réunion de chantier \no 13 à \textbf{9H00} le mercredi 29 avril 2015}
+\end{center}
+
+\arrayrulecolor{lightgray}
+
+{
+\tiny
+\hspace*{-.5cm}
+\begin{tabular}{|p{2.92cm}|p{2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{2cm}|p{.3cm}|p{.3cm}|p{.3cm}|p{.3cm}|}
+\hline
+\rowcolor{lightgray}   Désignation & Nom & Représentant & Tel & Fax/Portable & Mail & P & Dif & Inv & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+   A & B & C & D & E & F & G & H & I & \\
+\hline
+\end{tabular}
+
+\hspace*{-.5cm}
+\begin{tabular}{|p{.5cm}|p{2cm}|p{2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{2cm}|p{.3cm}|p{.3cm}|p{.3cm}|p{.3cm}|}
+\hline
+\rowcolor{lightgray}   Lots & Corps d'état & Entreprises & Représentant & Tel & Portables & Mail & P & Dif & Con & Pen Abs. \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+   A & B & C & D & E & F & G & H & I & J & K \\
+\hline
+\end{tabular}
+}
+
+
+<<setup, include=FALSE>>=
+knitr::opts_chunk$set(results='asis', echo=FALSE)
+
+require("readxl")
+
+file = "BEUBOIS CR box.xls"
+
+sheets = excel_sheets(file)
+
+stopifnot("LEGENDE" %in% sheets)
+stopifnot("TACHE" %in% sheets)
+stopifnot("CE JOUR" %in% sheets)
+
+legende = read_excel(file, sheet="LEGENDE")
+tache = read_excel(file, sheet="TACHE")
+ce_jour = read_excel(file, sheet="CE JOUR")
+
+# effacer lignes vides
+row = !is.na(ce_jour$CHAPITRE)
+ce_jour = ce_jour[row,]
+
+# ajouter ce_jour à tache
+if (nrow(ce_jour)>0) {
+  tache[nrow(tache)+nrow(ce_jour),] = NA
+  
+  ind_cejour = (nrow(tache)-nrow(ce_jour)+1):nrow(tache)
+  for (c in colnames(ce_jour)) {
+    tache[ind_cejour,c] = ce_jour[,c]
+  }
+}
+@
+
+
+<<orga>>=
+
+# cat("\\texttt{", Sys.getlocale(), "}\n")
+
+libelle.acteur_orga <- function(nom, des, lot) {
+  if (is.na(nom))
+    lib = toupper(des)
+  else
+    lib = paste(nom, des)
+  return(lib)
+}
+
+libelle.acteur_exe <- function(nom, des, lot) {
+  paste(lot, des, "-", nom)
+}
+
+print_tab <- function(..., col_format="", rowcol = NULL) {
+  cat("\\begin{tabular}{", col_format, "}\n")
+  cat("\\hline\n")
+  
+  if (!is.null(rowcol))
+    cat("\\rowcolor{", rowcol, "} ", sep="") 
+  
+  cat(paste(..., sep=" & ", collapse = " \\tabularnewline \n \\hline\n"))
+  
+  cat(" \\tabularnewline \n \\hline\n")
+  cat("\\end{tabular}\\\\ \n")
+}
+
+print_taches <- function(chapitre = "orga", col_format = "|p{11cm}|p{2cm}|p{2cm}|",
+                         col_head = "lightgray") {
+  cat("\\newpage\n")
+  
+  ind = match(tolower(chapitre), tolower(legende$Sigle))
+  cat("\\section*{", toupper(legende$Nom[ind]), "}\n")  
+  
+  row = tolower(tache$CHAPITRE) == tolower(chapitre)
+  df = tache[row,]
+  
+  cat("\\parindent=0em\n")
+  print_tab("Tâche", "Pour le", "Etat", col_format="|>{\\centering\\bfseries}p{11cm}|>{\\centering\\bfseries}p{2cm}|>{\\centering\\bfseries}p{2cm}|", rowcol=col_head)
+  
+  # acteurs dans l'ordre de la légende
+  acteurs = tolower(unique(df$ACTEUR))
+  ind = match(tolower(legende$Sigle), acteurs)
+  ind = ind[!is.na(ind)]
+  acteurs = acteurs[ind]  
+  
+  for (a in seq_along(acteurs)) {
+    row = tolower(df$ACTEUR) == acteurs[a]
+    df_a = df[row,]
+    
+    ind = match(acteurs[a], tolower(legende$Sigle))
+    nom = legende$Nom[ind]
+    des = legende$Désignation[ind]
+    lot = legende$Num[ind]
+    libelle = switch(tolower(legende$Classe[ind]),
+                     "acteur orga" = libelle.acteur_orga(nom, des, lot),
+                     "acteur exe" = libelle.acteur_exe(nom, des, lot))
+    cat("\\textbf{", libelle, "}\\\\ \n")
+    
+    dates = unique(df_a$DATE)
+    for (d in seq_along(dates)) {
+      row = (df_a$DATE == dates[d])
+      cat("\\underline{Réunion du", format(dates[d], "%d %B %Y"), "}\\\\ \n")
+      
+      df_d = df_a[row, ]
+      df_d$ECHEANCE = ifelse(is.na(df_d$ECHEANCE), "", format(df_d$ECHEANCE, "%d/%m/%Y"))
+      
+      ind = match(df_d$ETAT, tolower(legende$Sigle))
+      df_d$ETAT = ifelse(tolower(df_d$ETAT) == "a", df_d$PRIORITE, legende$Nom[ind])
+      
+      ind = match("a", tolower(legende$Sigle))
+      df_d$ETAT = ifelse(is.na(df_d$ETAT), legende$Nom[ind], df_d$ETAT)
+      
+      df_d = df_d[, c("TACHE", "ECHEANCE", "ETAT")]
+      
+      # ajoute puce devant tache
+      df_d$TACHE = paste("$\\bullet$", df_d$TACHE)
+      
+      # formatage fait, urgent, rappel
+      rowformat = switch(tolower(df_d$ETAT),
+                         fait = "\\sout{",
+                         rappel = "{\\color{red}",
+                         urgent = "{\\color{red}",
+                         "{")
+      
+      df_d$TACHE = paste(rowformat, df_d$TACHE, "}")
+      df_d$ECHEANCE = paste(rowformat, df_d$ECHEANCE, "}")
+      df_d$ETAT = paste(rowformat, df_d$ETAT, "}")
+      
+      print_tab(df_d$TACHE, df_d$ECHEANCE, df_d$ETAT, col_format=col_format)
+      
+#       cat("\\\\")
+    }
+  }
+}
+
+print_taches("orga")
+@
+
+
+<<tav>>=
+print_taches("tav")
+@
+
+<<src>>=
+print_taches("src")
+@
+
+<<epb>>=
+print_taches("epb")
+@
+
+\newpage
+\section*{Armoire à plans }
+<<aap>>=
+@
+
+\newpage
+\section*{Photographies}
+<<photo>>=
+@
+
+
+\end{document}

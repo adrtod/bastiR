@@ -19,15 +19,16 @@ devtools::install_github("adrtod/bastiR")
 
 # Spécification des tableaux d'entrée
 - Tableur Excel .xls version 2007
-- Onglets :
-    - Table des clés : classe (acteur orga, acteur exe, chapitre, état), clé (insensible à la casse), désignation, ...
-    - Tâches : chapitre (clé), date de réunion, date d'échéance, acteur (clé), description, état (clé : a, f, i), priorité (autromatique, clé : rappel, urgent)
+- Feuilles de calcul (onglets) :
+    - Légende : classe (acteur orga, acteur exe, chapitre, état), clé (insensible à la casse), désignation, ...
+    - Tâches : chapitre (clé), date de réunion, date d'échéance, acteur (clé), description, état (clé : a=A faire, f=Fait, i=Info), priorité (autromatique, clé : rappel, urgent)
     - Tâches réunion en cours : cf. Tâches
     - Armoire à plans : TODO
     - Photos : nom du fichier, commentaire
 - Ne pas fusionner les cellules
 - 1 colonne = 1 variable, label en 1ère ligne
 - 1 ligne = 1 individu
+- cellules dates au format date dans Excel
 
 # Ressources
 ### Programmation sous R
@@ -52,4 +53,4 @@ devtools::install_github("adrtod/bastiR")
 # Auteurs
 Copyright (C) 2015, Adrien Todeschini, [Baptiste Dulau](http://www.bastir-energie.fr/).
 
-**bastiR** est un logiciel libre distribué sous la Licence GPL-2.
+**bastiR** est un logiciel libre distribué sous la Licence [GPL-2](http://www.gnu.org/licenses/gpl-2.0.html).
