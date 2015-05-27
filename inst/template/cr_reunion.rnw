@@ -11,21 +11,62 @@
 \usepackage{array}
 \usepackage{ulem} % pour barrer \sout
 
+<<setup, include=FALSE>>=
+knitr::opts_chunk$set(results='asis', echo=FALSE)
 
-\title{CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY}
-\author{\href{mailto:t.weulersse@atelier-d-form.com}{t.weulersse@atelier-d-form.com}}
-\date{Compte rendu \no 12 de la réunion du 22 Avril 2015}
+require("readxl")
+
+# variables du projet
+titre = "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
+email = "t.weulersse@atelier-d-form.com"
+num_reu = 12
+date_reu = as.Date("2015-04-22")
+date_reu_next = date_reu+7
+num_reu_next = num_reu + 1
+heur_reu_next = "9H00"
+img_garde = "TAVAILLON_3D"
+file = "BEUBOIS_CR_box.xls"
+
+# lecture fichier
+sheets = excel_sheets(file)
+
+stopifnot("LEGENDE" %in% sheets)
+stopifnot("TACHE" %in% sheets)
+stopifnot("CE JOUR" %in% sheets)
+
+legende = read_excel(file, sheet="LEGENDE")
+tache = read_excel(file, sheet="TACHE")
+ce_jour = read_excel(file, sheet="CE JOUR")
+
+# effacer lignes vides
+row = !is.na(ce_jour$CHAPITRE)
+ce_jour = ce_jour[row,]
+
+# ajouter ce_jour à tache
+if (nrow(ce_jour)>0) {
+  tache[nrow(tache)+nrow(ce_jour),] = NA
+  
+  ind_cejour = (nrow(tache)-nrow(ce_jour)+1):nrow(tache)
+  for (c in colnames(ce_jour)) {
+    tache[ind_cejour,c] = ce_jour[,c]
+  }
+}
+@
+
+\title{\Sexpr{titre}}
+\author{\href{mailto:\Sexpr{email}}{\Sexpr{email}}}
+\date{Compte rendu \no \Sexpr{num_reu} de la réunion du \Sexpr{format(date_reu, "%d %B %Y")}}
 
 \begin{document}
 
 \maketitle
 
 \begin{center}
-\includegraphics[width=.8\textwidth]{TAVAILLON_3D}
+\includegraphics[width=.8\textwidth]{\Sexpr{img_garde}}
 \end{center}
 
 \begin{center}
-\textcolor{red}{Réunion de chantier \no 13 à \textbf{9H00} le mercredi 29 avril 2015}
+\textcolor{red}{Réunion de chantier \no \Sexpr{num_reu} à \textbf{\Sexpr{heur_reu_next}} le \Sexpr{format(date_reu, "%A %d %B %Y")}}
 \end{center}
 
 \arrayrulecolor{lightgray}
@@ -35,7 +76,7 @@
 \hspace*{-.5cm}
 \begin{tabular}{|p{2.92cm}|p{2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{2cm}|p{.3cm}|p{.3cm}|p{.3cm}|p{.3cm}|}
 \hline
-\rowcolor{lightgray}   Désignation & Nom & Représentant & Tel & Fax/Portable & Mail & P & Dif & Inv & \\
+\rowcolor{lightgray} Désignation & Nom & Représentant & Tel & Fax/Portable & Mail & P & Dif & Inv & \\
 \hline
    A & B & C & D & E & F & G & H & I & \\
 \hline
@@ -117,42 +158,8 @@
 \end{tabular}
 }
 
-<<setup, include=FALSE>>=
-knitr::opts_chunk$set(results='asis', echo=FALSE)
-
-require("readxl")
-
-file = "BEUBOIS CR box.xls"
-
-sheets = excel_sheets(file)
-
-stopifnot("LEGENDE" %in% sheets)
-stopifnot("TACHE" %in% sheets)
-stopifnot("CE JOUR" %in% sheets)
-
-legende = read_excel(file, sheet="LEGENDE")
-tache = read_excel(file, sheet="TACHE")
-ce_jour = read_excel(file, sheet="CE JOUR")
-
-# effacer lignes vides
-row = !is.na(ce_jour$CHAPITRE)
-ce_jour = ce_jour[row,]
-
-# ajouter ce_jour à tache
-if (nrow(ce_jour)>0) {
-  tache[nrow(tache)+nrow(ce_jour),] = NA
-  
-  ind_cejour = (nrow(tache)-nrow(ce_jour)+1):nrow(tache)
-  for (c in colnames(ce_jour)) {
-    tache[ind_cejour,c] = ce_jour[,c]
-  }
-}
-@
 
 <<orga>>=
-
-# cat("\\texttt{", Sys.getlocale(), "}\n")
-
 libelle.acteur_orga <- function(nom, des, lot) {
   if (is.na(nom))
     lib = toupper(des)
@@ -263,12 +270,12 @@ print_taches("epb")
 @
 
 \newpage
-\section*{Armoire à plans }
+\section*{ARMOIRE \`A PLANS }
 <<aap>>=
 @
 
 \newpage
-\section*{Photographies}
+\section*{PHOTOGRAPHIES}
 <<photo>>=
 @
 
