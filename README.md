@@ -25,15 +25,19 @@ devtools::install_github("adrtod/bastiR")
 ```
 
 # Spécification des tableaux d'entrée
-- Tableur Excel .xls version 2007
+- Tableur Excel (>= 2007) `.xls` ou `.xlsx`
 - Feuilles de calcul (onglets) :
-    - Légende : classe (`acteur orga`, `acteur exe`, `chapitre`, `etat`), clé (insensible à la casse), désignation, ...
-    - Tâches : chapitre (clé), date de réunion, date d'échéance, acteur (clé), description, état (clé : `a`=A faire, `f`=Fait, `i`=Info), priorité (automatique, clé : `rappel`, `urgent`)
-    - Tâches réunion en cours : cf. Tâches
-    - Armoire à plans : TODO
-    - Photos : nom du fichier, commentaire
+
+    Nom           | Description               | Colonnes
+    ------------- | ------------------------- | -------------
+    **`LEGENDE`** | Légende des objets        | *Obligatoires* : <br> **`Classe`** : classe d'objet désigné par une clé (`acteur orga`, `acteur exe`, `section`, `etat`) <br> **`Clé`** : courte chaîne de caractères, insensible à la casse <br> **`Nom`** : nom de l'objet) <br> *Facultatives* : <br> **`Désignation`** : nom du lot <br> **`Num`** : numéro du lot <br> ...
+    **`TACHE`**   | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche, accepte formattage et symboles mathématiques latex (ex: `$\lambda$`) <br> **`ETAT`** : clé (`a`=A faire, `f`=Fait, `i`=Info) <br> **`PRIORITE`** : automatique,  `RAPPEL` ou `URGENT`)
+    **`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHE`**, sauf **`PRIORITE`**
+    **`PLANS`**   | Armoire à plans           | TODO
+    **`PHOTO`**   | Photographies commentées  | **`FICHIER`** : nom du fichier, ne doit pas contenir d'espace, utiliser `_` <br> **`COMMENTAIRE`** : texte
+
 - Ne pas fusionner les cellules
-- 1 colonne = 1 variable, label en 1ère ligne
+- 1 colonne = 1 variable, libellé en 1ère ligne
 - 1 ligne = 1 individu
 - Enregistrer les dates au format date dans Excel
 
@@ -77,7 +81,10 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
 ### Ressources
 - [Packages R](http://r-pkgs.had.co.nz/)
 - [knitr](http://yihui.name/knitr/)
+- [dplyr](https://github.com/hadley/dplyr): [introduction](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html), [aide mémoire](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+- R & Excel: [readxl](https://github.com/hadley/readxl), [openxlsx](https://github.com/awalker89/openxlsx), <http://www.r-bloggers.com/a-million-ways-to-connect-r-and-excel/>
     
 # Liste des tâches
+- [ ] tester sous windows
 - [ ] écrire intro origine et but du projet
 - [ ] ajouter ressources

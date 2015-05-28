@@ -14,66 +14,115 @@
 <<setup, include=FALSE>>=
 knitr::opts_chunk$set(results='asis', echo=FALSE)
 
+require(bastiR)
+
 # variables du projet
 titre = "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
 email = "t.weulersse@atelier-d-form.com"
 num_reu = 12
-date_reu = as.POSIXct("2015-04-29")
-sem = 7*as.difftime("24:00:00")
-date_reu_next = date_reu+sem
+date_reu = as.Date("2015-04-29")
+date_reu_next = date_reu+7
 num_reu_next = num_reu + 1
 heure_reu_next = "9H00"
 img_garde = "TAVAILLON_3D"
-file = "BEUBOIS_CR_box.xls"
+xlfile = "BEUBOIS_CR_box.xlsx"
+sections = c("orga", "tav", "src", "epb")
+photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
+xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu, ".xlsx")
+xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
+origin = "1899-12-30" # Depends on the Excel date system. Default is "1899-12-30" for Windows Excel and "1904-01-01" for Macintosh Excel. See as.Date help and https://support.microsoft.com/en-us/kb/214330
 @
 
 <<read, include=FALSE>>=
 # lecture fichier
 require("readxl")
-sheets = excel_sheets(file)
+sheets = excel_sheets(xlfile)
 
 stopifnot("LEGENDE" %in% sheets)
 stopifnot("TACHE" %in% sheets)
-stopifnot("CE JOUR" %in% sheets)
+stopifnot("CEJOUR" %in% sheets)
 
-legende = read_excel(file, sheet="LEGENDE")
-tache = read_excel(file, sheet="TACHE")
-ce_jour = read_excel(file, sheet="CE JOUR")
+legende = read_excel(xlfile, sheet="LEGENDE")
+tache = read_excel(xlfile, sheet="TACHE")
+cejour = read_excel(xlfile, sheet="CEJOUR")
+
+# codage dates
+require(dplyr)
+tache = tache %>% 
+  mutate(DATE = as.Date(DATE, origin = origin)) %>% 
+  mutate(ECHEANCE = as.Date(ECHEANCE, origin = origin))
+cejour = cejour %>% 
+  mutate(DATE = as.Date(DATE, origin = origin)) %>% 
+  mutate(ECHEANCE = as.Date(ECHEANCE, origin = origin))
+@
+
+<<prepare_photo, include=FALSE>>=
+if ("PHOTO" %in% sheets) {
+  # lecture tableau photo
+  photo = read_excel(xlfile, sheet="PHOTO")
+} else {
+  # prepare tableau photo
+  photo = data_frame(FICHIER = photo_files, 
+                     COMMENTAIRE = as.character(rep(NA, length(photo_files))))
+  
+  # ajoute onglet photo
+  require(openxlsx)
+  openxlsx::write.xlsx(list("LEGENDE" = legende, 
+                            "TACHE" = tache,
+                            "CEJOUR" = cejour,
+                            "PHOTO" = photo), 
+                       file = xlfile_out)
+  
+  # ouvrir Excel
+  openxlsx::openXL(xlfile_out)
+}
 @
 
 <<edit_taches, include=FALSE>>=
 require(dplyr)
 
 legende = legende %>% 
-  mutate(Sigle = tolower(Sigle)) %>% 
+  mutate(Clé = tolower(Clé)) %>% 
   mutate(Classe = tolower(Classe))
 
-ce_jour = ce_jour %>% 
-  filter(!is.na(CHAPITRE)) %>% # effacer lignes vides
-  filter(is.na(ETAT)) %>% # ajouter A faire
-  mutate(PRIORITE = NA) # ajouter colonne PRIORITE
+cejour = cejour %>% 
+  filter(!is.na(SECTION)) # effacer lignes vides
 
-# ajouter ce_jour à tache
-tache = tache %>% bind_rows(ce_jour)
+# ajouter cejour à tache
+tache = tache %>% bind_rows(cejour)
 
 # recodage et tri
 tache = tache %>% 
   mutate(ETAT = factor(tolower(ETAT), levels = c("a", "i", "f"))) %>% 
-  mutate(CHAPITRE = factor(tolower(CHAPITRE), levels = c("orga", "tav", "src", "epb"))) %>% 
+  mutate(SECTION = factor(tolower(SECTION), levels = sections)) %>% 
   mutate(ACTEUR = tolower(ACTEUR)) %>% 
-  arrange(ETAT, CHAPITRE, ECHEANCE, ACTEUR)
+  arrange(ETAT, SECTION, ECHEANCE, ACTEUR)
 
 # ajouter rappel
 row = (tache$ETAT == "a") & (tache$ECHEANCE <= date_reu)
 tache$PRIORITE[row] = "RAPPEL"
 
 # ajouter urgent
-row = (tache$ETAT == "a") & (tache$ECHEANCE <= date_reu-sem)
+row = (tache$ETAT == "a") & (tache$ECHEANCE <= date_reu-7)
 tache$PRIORITE[row] = "URGENT"
 
 # supprime Fait et supérieur à 3 semaines
 tache = tache %>% 
-  filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*sem) ) )
+  filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*7) ) )
+
+# prepare cejour prochaine reu
+nafun = function(x) { y = NA; class(y) = class(x); return(y) }
+cejour_next = cejour %>% 
+  summarise_each(funs(nafun)) %>% # 1 ligne vide
+  mutate(DATE = date_reu_next) %>% # date prochaine reu
+  slice(rep(1, 10)) # dupliquer 10 lignes
+
+# exporte xls prochaine reu
+require(openxlsx)
+openxlsx::write.xlsx(list("LEGENDE" = legende, 
+                          "TACHE" = tache,
+                          "CEJOUR" = cejour_next), 
+                     file = xlfile_next)
 @
 
 \title{\Sexpr{titre}}
@@ -181,115 +230,13 @@ tache = tache %>%
 \end{tabular}
 }
 
-\newpage
-<<orga>>=
-libelle.acteur_orga <- function(nom, des, lot) {
-  if (is.na(nom))
-    lib = toupper(des)
-  else
-    lib = paste(nom, des)
-  return(lib)
+<<taches>>=
+for (c in sections) {
+  cat("\\newpage\n")
+  bastiR::print_taches(tache, legende, c)
 }
-
-libelle.acteur_exe <- function(nom, des, lot) {
-  paste(lot, des, "-", nom)
-}
-
-print_tab <- function(..., col_format="", rowcol = NULL) {
-  cat("\\begin{tabular}{", col_format, "}\n", sep="")
-  cat("\\hline\n")
-  
-  if (!is.null(rowcol))
-    cat("\\rowcolor{", rowcol, "} ", sep="")
-  
-  cat(paste(..., sep=" & ", collapse = " \\tabularnewline \n \\hline\n"))
-  
-  cat(" \\tabularnewline \n \\hline\n")
-  cat("\\end{tabular}\n\\vspace*{.5em}\n\n")
-}
-
-print_taches <- function(df, legende, chapitre = "orga", col_format = "|p{11cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|",
-                         col_head = "lightgray") {
-  ind = match(chapitre, legende$Sigle)
-  cat("\\section*{", toupper(legende$Nom[ind]), "}\n\n")  
-  
-  df = df %>% filter(CHAPITRE == chapitre)
-  
-  cat("\\parindent=0em\n")
-  print_tab("Tâche", "Pour le", "Etat", col_format="|>{\\centering\\bfseries}p{11cm}|>{\\centering\\bfseries}p{2cm}|>{\\centering\\bfseries}p{2cm}|", rowcol=col_head)
-  
-  # acteurs dans l'ordre de la légende
-  acteurs = unique(df$ACTEUR)
-  ind = match(legende$Sigle, acteurs)
-  ind = ind[!is.na(ind)]
-  acteurs = acteurs[ind]  
-  
-  for (a in seq_along(acteurs)) {
-    df_a = df %>% 
-      filter(ACTEUR == acteurs[a])
-    
-    ind = match(acteurs[a], legende$Sigle)
-    nom = legende$Nom[ind]
-    des = legende$Désignation[ind]
-    lot = legende$Num[ind]
-    libelle = switch(legende$Classe[ind],
-                     "acteur orga" = libelle.acteur_orga(nom, des, lot),
-                     "acteur exe" = libelle.acteur_exe(nom, des, lot))
-    cat("\\textbf{", libelle, "}\n\n", sep="")
-    
-    dates = unique(df_a$DATE)
-    for (d in seq_along(dates)) {
-      cat("\\hspace*{1.4em}\\underline{Réunion du", format(dates[d], "%d %B %Y"), "}\n\n")
-      
-      df_d = df_a %>% 
-        filter(DATE == dates[d])
-      
-      ind = match(df_d$ETAT, legende$Sigle)
-      ind_a = match("a", legende$Sigle)
-      df_d = df_d %>% 
-        mutate(ETAT = ifelse(ETAT == "a", 
-                             ifelse(is.na(PRIORITE),
-                                    legende$Nom[ind_a],
-                                    PRIORITE),
-                             legende$Nom[ind])) %>%  # libelle etat
-        mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
-        select(TACHE, ECHEANCE, ETAT) %>% # ordonne colonnes
-        mutate(TACHE = paste("$\\bullet$", TACHE)) # ajoute puce devant tache
-      
-      # formatage ligne fait, urgent, rappel
-      rowformat = switch(tolower(df_d$ETAT),
-                         fait = "\\sout{",
-                         rappel = "\\textcolor{red}{",
-                         urgent = "\\textcolor{red}{",
-                         "{")
-      
-      rowfun = function(x) paste0(rowformat, x, "}")
-      
-      df_d = df_d %>% 
-        mutate_each(funs(rowfun))
-      
-      print_tab(df_d$TACHE, df_d$ECHEANCE, df_d$ETAT, col_format=col_format)
-    }
-  }
-}
-
-print_taches(tache, legende, "orga")
 @
 
-\newpage
-<<tav>>=
-print_taches(tache, legende, "tav")
-@
-
-\newpage
-<<src>>=
-print_taches(tache, legende, "src")
-@
-
-\newpage
-<<epb>>=
-print_taches(tache, legende, "epb")
-@
 
 \newpage
 \section*{ARMOIRE \`A PLANS }
@@ -299,6 +246,7 @@ print_taches(tache, legende, "epb")
 \newpage
 \section*{PHOTOGRAPHIES}
 <<photo>>=
+bastiR::print_photo(photo)
 @
 
 \end{document}

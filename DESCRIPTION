@@ -11,7 +11,8 @@ Depends:
     R (>= 3.2.0)
 Imports:
     knitr (>= 1.6),
+    dplyr (>= 0.4.1),
     readxl (>= 0.1.0),
-    dplyr (>= 0.4.1)
+    openxlsx (>= 2.4.0)
 License: GPL-2
 LazyData: true
