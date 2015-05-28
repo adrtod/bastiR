@@ -38,7 +38,7 @@ Nom           | Description               | Colonnes
 **`TACHE`**   | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche, accepte formattage et symboles mathématiques latex (ex: `$\lambda$`) <br> **`ETAT`** : clé (`a`=A faire, `f`=Fait, `i`=Info) <br> **`PRIORITE`** : automatique,  `RAPPEL` ou `URGENT`)
 **`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHE`**, sauf **`PRIORITE`**
 **`PLANS`**   | Armoire à plans           | TODO
-**`PHOTO`**   | Photographies commentées  | **`FICHIER`** : nom du fichier, ne doit pas contenir d'espace, utiliser `_` <br> **`COMMENTAIRE`** : texte
+**`PHOTO`**   | Photographies commentées  | **`FICHIER`** : nom du fichier, ne doit pas contenir d'espace <br> **`COMMENTAIRE`** : texte
 
 # Ressources
 - Introduction à R et RStudio : TODO
@@ -82,8 +82,8 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
 ### Ressources
 - [Packages R](http://r-pkgs.had.co.nz/)
 - [knitr](http://yihui.name/knitr/)
-- [dplyr](https://github.com/hadley/dplyr): [introduction](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html), [aide mémoire](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
-- R & Excel: [readxl](https://github.com/hadley/readxl), [openxlsx](https://github.com/awalker89/openxlsx), <http://www.r-bloggers.com/a-million-ways-to-connect-r-and-excel/>
+- [dplyr](https://github.com/hadley/dplyr) : [introduction](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html), [aide mémoire](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+- R & Excel : [readxl](https://github.com/hadley/readxl), [openxlsx](https://github.com/awalker89/openxlsx), <http://www.r-bloggers.com/a-million-ways-to-connect-r-and-excel/>
     
 # Liste des tâches
 - [ ] tester sous windows
