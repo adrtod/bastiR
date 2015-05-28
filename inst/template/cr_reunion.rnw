@@ -14,8 +14,6 @@
 <<setup, include=FALSE>>=
 knitr::opts_chunk$set(results='asis', echo=FALSE)
 
-require("readxl")
-
 # variables du projet
 titre = "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
 email = "t.weulersse@atelier-d-form.com"
@@ -27,8 +25,11 @@ num_reu_next = num_reu + 1
 heure_reu_next = "9H00"
 img_garde = "TAVAILLON_3D"
 file = "BEUBOIS_CR_box.xls"
+@
 
+<<read, include=FALSE>>=
 # lecture fichier
+require("readxl")
 sheets = excel_sheets(file)
 
 stopifnot("LEGENDE" %in% sheets)
@@ -38,35 +39,37 @@ stopifnot("CE JOUR" %in% sheets)
 legende = read_excel(file, sheet="LEGENDE")
 tache = read_excel(file, sheet="TACHE")
 ce_jour = read_excel(file, sheet="CE JOUR")
+@
 
-# effacer lignes vides
-row = !is.na(ce_jour$CHAPITRE)
-ce_jour = ce_jour[row,]
+<<edit_taches, include=FALSE>>=
+require(dplyr)
 
-# ajouter A faire
-row = is.na(ce_jour$ETAT)
-ce_jour$ETAT[row] = "a"
-
-# ajouter colonne PRIORITE
-ce_jour$PRIORITE = NA
-
-# ordonner colonnes
-ce_jour = ce_jour[, colnames(tache)]
+ce_jour = ce_jour %>% 
+  filter(!is.na(CHAPITRE)) %>% # effacer lignes vides
+  filter(is.na(ETAT)) %>% # ajouter A faire
+  mutate(PRIORITE = NA) # ajouter colonne PRIORITE
 
 # ajouter ce_jour à tache
-tache = rbind(tache, ce_jour)
+tache = tache %>% bind_rows(ce_jour)
+
+# recodage et tri
+tache = tache %>% 
+  mutate(ETAT = factor(tolower(ETAT), levels = c("a", "i", "f"))) %>% 
+  mutate(CHAPITRE = factor(tolower(CHAPITRE), levels = c("orga", "tav", "src", "epb"))) %>% 
+  mutate(ACTEUR = tolower(ACTEUR)) %>% 
+  arrange(ETAT, CHAPITRE, ECHEANCE, ACTEUR)
 
 # ajouter rappel
-row = (tolower(tache$ETAT) == "a") & (tache$ECHEANCE <= date_reu)
+row = (tache$ETAT == "a") & (tache$ECHEANCE <= date_reu)
 tache$PRIORITE[row] = "RAPPEL"
 
 # ajouter urgent
-row = (tolower(tache$ETAT) == "a") & (tache$ECHEANCE <= date_reu-sem)
+row = (tache$ETAT == "a") & (tache$ECHEANCE <= date_reu-sem)
 tache$PRIORITE[row] = "URGENT"
 
 # supprime Fait et supérieur à 3 semaines
-row = !( (tolower(tache$ETAT) == "f") & (tache$ECHEANCE <= date_reu-3*sem) )
-tache = tache[row,]
+tache = tache %>% 
+  filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*sem) ) )
 @
 
 \title{\Sexpr{titre}}
