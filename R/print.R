@@ -35,7 +35,7 @@ print_tab <- function(..., col_format="", rowcol = NULL, hline=TRUE) {
 }
 
 #' @export
-print_taches <- function(df, legende, section = "orga", 
+print_taches <- function(tache, legende, section = "orga", 
                          col_type = c("p{11cm}", "p{2cm}", "p{2cm}"),
                          col_sep = "|",
                          col_form = c("", ">{\\centering}", ">{\\centering}"),
@@ -44,7 +44,7 @@ print_taches <- function(df, legende, section = "orga",
   ind = match(section, legende$Clé)
   cat("\\section*{", toupper(legende$Nom[ind]), "}\n\n", sep="")  
   
-  df = df %>% filter(SECTION == section)
+  tache = tache %>% filter(SECTION == section)
   
   col_format_head = paste0(col_sep, paste0(col_form_head, col_type, collapse=col_sep), col_sep)
   col_format = paste0(col_sep, paste0(col_form, col_type, collapse=col_sep), col_sep)
@@ -55,13 +55,13 @@ print_taches <- function(df, legende, section = "orga",
             rowcol = rowcol_head)
   
   # acteurs dans l'ordre de la légende
-  acteurs = unique(df$ACTEUR)
+  acteurs = unique(tache$ACTEUR)
   ind = match(legende$Clé, acteurs)
   ind = ind[!is.na(ind)]
   acteurs = acteurs[ind]  
   
   for (a in seq_along(acteurs)) {
-    df_a = df %>% 
+    tache_a = tache %>% 
       filter(ACTEUR == acteurs[a])
     
     ind = match(acteurs[a], legende$Clé)
@@ -73,16 +73,16 @@ print_taches <- function(df, legende, section = "orga",
                      "acteur exe" = libelle.acteur_exe(nom, des, lot))
     cat("\\textbf{", libelle, "}\n\n", sep="")
     
-    dates = unique(df_a$DATE)
+    dates = unique(tache_a$DATE)
     for (d in seq_along(dates)) {
       cat("\\hspace*{1.4em}\n\\underline{Réunion du", format(dates[d], "%d %B %Y"), "}\n\n")
       
-      df_d = df_a %>% 
+      tache_d = tache_a %>% 
         filter(DATE == dates[d])
       
-      ind = match(df_d$ETAT, legende$Clé)
+      ind = match(tache_d$ETAT, legende$Clé)
       ind_a = match("a", legende$Clé)
-      df_d = df_d %>% 
+      tache_d = tache_d %>% 
         mutate(ETAT = ifelse(ETAT == "a", 
                              ifelse(is.na(PRIORITE),
                                     legende$Nom[ind_a],
@@ -93,7 +93,7 @@ print_taches <- function(df, legende, section = "orga",
         mutate(TACHE = paste("$\\bullet$", TACHE)) # ajoute puce devant tache
       
       # formatage ligne fait, urgent, rappel
-      rowformat = switch(tolower(df_d$ETAT),
+      rowformat = switch(tolower(tache_d$ETAT),
                          fait = "\\sout{",
                          rappel = "\\textcolor{red}{",
                          urgent = "\\textcolor{red}{",
@@ -101,10 +101,10 @@ print_taches <- function(df, legende, section = "orga",
       
       rowfun = function(x) paste0(rowformat, x, "}")
       
-      df_d = df_d %>% 
+      tache_d = tache_d %>% 
         mutate_each(funs(rowfun))
       
-      print_tab(df_d$TACHE, df_d$ECHEANCE, df_d$ETAT, col_format=col_format)
+      print_tab(tache_d$TACHE, tache_d$ECHEANCE, tache_d$ETAT, col_format=col_format)
     }
   }
 }

@@ -25,71 +25,50 @@ date_reu_next = date_reu+7
 num_reu_next = num_reu + 1
 heure_reu_next = "9H00"
 img_garde = "TAVAILLON_3D"
+img_garde_width = "0.8\\textwidth"
 xlfile = "BEUBOIS_CR_box.xlsx"
 sections = c("orga", "tav", "src", "epb")
 photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
-xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu, ".xlsx")
+legende_sheet = "LEGENDE"
+tache_sheet = "TACHE"
+cejour_sheet = "CEJOUR"
+photo_sheet = "PHOTO"
+col_dates = c("DATE", "ECHEANCE")
+xlfile_out = paste0(tools::file_path_sans_ext(xlfile), ".xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
-origin = "1899-12-30" # Depends on the Excel date system. Default is "1899-12-30" for Windows Excel and "1904-01-01" for Macintosh Excel. See as.Date help and https://support.microsoft.com/en-us/kb/214330
+origin = "1899-12-30" # Depend du système de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
+openxl = TRUE
 @
 
 <<read, include=FALSE>>=
 # lecture fichier
-require("readxl")
-sheets = excel_sheets(xlfile)
-
-stopifnot("LEGENDE" %in% sheets)
-stopifnot("TACHE" %in% sheets)
-stopifnot("CEJOUR" %in% sheets)
-
-legende = read_excel(xlfile, sheet="LEGENDE")
-tache = read_excel(xlfile, sheet="TACHE")
-cejour = read_excel(xlfile, sheet="CEJOUR")
-
-# codage dates
-require(dplyr)
-tache = tache %>% 
-  mutate(DATE = as.Date(DATE, origin = origin)) %>% 
-  mutate(ECHEANCE = as.Date(ECHEANCE, origin = origin))
-cejour = cejour %>% 
-  mutate(DATE = as.Date(DATE, origin = origin)) %>% 
-  mutate(ECHEANCE = as.Date(ECHEANCE, origin = origin))
+xl = lire_xl(xlfile, c(legende_sheet, tache_sheet, cejour_sheet), 
+             sheets_opt = photo_sheet, 
+             col_dates = col_dates, 
+             origin = origin)
 @
 
 <<prepare_photo, include=FALSE>>=
-if ("PHOTO" %in% sheets) {
-  # lecture tableau photo
-  photo = read_excel(xlfile, sheet="PHOTO")
-} else {
+if (!(photo_sheet %in% names(xl))) {
   # prepare tableau photo
-  photo = data_frame(FICHIER = photo_files, 
-                     COMMENTAIRE = as.character(rep(NA, length(photo_files))))
-  
-  # ajoute onglet photo
-  require(openxlsx)
-  openxlsx::write.xlsx(list("LEGENDE" = legende, 
-                            "TACHE" = tache,
-                            "CEJOUR" = cejour,
-                            "PHOTO" = photo), 
-                       file = xlfile_out)
-  
-  # ouvrir Excel
-  openxlsx::openXL(xlfile_out)
+  xl[["PHOTO"]] = prepare_photo(photo_files)
+  export_xl(xl, xlfile_out, open = openxl)
 }
 @
 
 <<edit_taches, include=FALSE>>=
 require(dplyr)
 
-legende = legende %>% 
+legende = xl[[legende_sheet]] %>% 
   mutate(Clé = tolower(Clé)) %>% 
   mutate(Classe = tolower(Classe))
 
-cejour = cejour %>% 
+cejour = xl[[cejour_sheet]] %>% 
   filter(!is.na(SECTION)) # effacer lignes vides
 
 # ajouter cejour à tache
-tache = tache %>% bind_rows(cejour)
+tache = xl[[tache_sheet]] %>% 
+  bind_rows(cejour)
 
 # recodage et tri
 tache = tache %>% 
@@ -134,7 +113,7 @@ openxlsx::write.xlsx(list("LEGENDE" = legende,
 \maketitle
 
 \begin{center}
-\includegraphics[width=.8\textwidth]{\Sexpr{img_garde}}
+\includegraphics[width=\Sexpr{img_garde_width}]{\Sexpr{img_garde}}
 \end{center}
 
 \begin{center}
@@ -246,7 +225,7 @@ for (c in sections) {
 \newpage
 \section*{PHOTOGRAPHIES}
 <<photo>>=
-bastiR::print_photo(photo)
+bastiR::print_photo(xl[[photo_sheet]])
 @
 
 \end{document}
