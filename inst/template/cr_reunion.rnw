@@ -20,8 +20,9 @@ require("readxl")
 titre = "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
 email = "t.weulersse@atelier-d-form.com"
 num_reu = 12
-date_reu = as.Date("2015-04-22")
-date_reu_next = date_reu+7
+date_reu = as.POSIXct("2015-04-29")
+sem = 7*as.difftime("24:00:00")
+date_reu_next = date_reu+sem
 num_reu_next = num_reu + 1
 heure_reu_next = "9H00"
 img_garde = "TAVAILLON_3D"
@@ -42,15 +43,30 @@ ce_jour = read_excel(file, sheet="CE JOUR")
 row = !is.na(ce_jour$CHAPITRE)
 ce_jour = ce_jour[row,]
 
+# ajouter A faire
+row = is.na(ce_jour$ETAT)
+ce_jour$ETAT[row] = "a"
+
+# ajouter colonne PRIORITE
+ce_jour$PRIORITE = NA
+
+# ordonner colonnes
+ce_jour = ce_jour[, colnames(tache)]
+
 # ajouter ce_jour à tache
-if (nrow(ce_jour)>0) {
-  tache[nrow(tache)+nrow(ce_jour),] = NA
-  
-  ind_cejour = (nrow(tache)-nrow(ce_jour)+1):nrow(tache)
-  for (c in colnames(ce_jour)) {
-    tache[ind_cejour,c] = ce_jour[,c]
-  }
-}
+tache = rbind(tache, ce_jour)
+
+# ajouter rappel
+row = (tolower(tache$ETAT) == "a") & (tache$ECHEANCE <= date_reu)
+tache$PRIORITE[row] = "RAPPEL"
+
+# ajouter urgent
+row = (tolower(tache$ETAT) == "a") & (tache$ECHEANCE <= date_reu-sem)
+tache$PRIORITE[row] = "URGENT"
+
+# supprime Fait et supérieur à 3 semaines
+row = !( (tolower(tache$ETAT) == "f") & (tache$ECHEANCE <= date_reu-3*sem) )
+tache = tache[row,]
 @
 
 \title{\Sexpr{titre}}
@@ -158,7 +174,6 @@ if (nrow(ce_jour)>0) {
 \end{tabular}
 }
 
-
 <<orga>>=
 libelle.acteur_orga <- function(nom, des, lot) {
   if (is.na(nom))
@@ -182,15 +197,15 @@ print_tab <- function(..., col_format="", rowcol = NULL) {
   cat(paste(..., sep=" & ", collapse = " \\tabularnewline \n \\hline\n"))
   
   cat(" \\tabularnewline \n \\hline\n")
-  cat("\\end{tabular}\\\\ \n")
+  cat("\\end{tabular}\n\\vspace*{.5em}\n\n")
 }
 
-print_taches <- function(chapitre = "orga", col_format = "|p{11cm}|p{2cm}|p{2cm}|",
+print_taches <- function(chapitre = "orga", col_format = "|p{11cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|",
                          col_head = "lightgray") {
   cat("\\newpage\n")
   
   ind = match(tolower(chapitre), tolower(legende$Sigle))
-  cat("\\section*{", toupper(legende$Nom[ind]), "}\n")  
+  cat("\\section*{", toupper(legende$Nom[ind]), "}\n\n")  
   
   row = tolower(tache$CHAPITRE) == tolower(chapitre)
   df = tache[row,]
@@ -215,12 +230,12 @@ print_taches <- function(chapitre = "orga", col_format = "|p{11cm}|p{2cm}|p{2cm}
     libelle = switch(tolower(legende$Classe[ind]),
                      "acteur orga" = libelle.acteur_orga(nom, des, lot),
                      "acteur exe" = libelle.acteur_exe(nom, des, lot))
-    cat("\\textbf{", libelle, "}\\\\ \n")
+    cat("\\textbf{", libelle, "}\n\n", sep="")
     
     dates = unique(df_a$DATE)
     for (d in seq_along(dates)) {
       row = (df_a$DATE == dates[d])
-      cat("\\underline{Réunion du", format(dates[d], "%d %B %Y"), "}\\\\ \n")
+      cat("\\hspace*{1.4em}\\underline{Réunion du", format(dates[d], "%d %B %Y"), "}\n\n")
       
       df_d = df_a[row, ]
       df_d$ECHEANCE = ifelse(is.na(df_d$ECHEANCE), "", format(df_d$ECHEANCE, "%d/%m/%Y"))
@@ -239,17 +254,15 @@ print_taches <- function(chapitre = "orga", col_format = "|p{11cm}|p{2cm}|p{2cm}
       # formatage fait, urgent, rappel
       rowformat = switch(tolower(df_d$ETAT),
                          fait = "\\sout{",
-                         rappel = "{\\color{red}",
-                         urgent = "{\\color{red}",
+                         rappel = "\\textcolor{red}{",
+                         urgent = "\\textcolor{red}{",
                          "{")
       
-      df_d$TACHE = paste(rowformat, df_d$TACHE, "}")
-      df_d$ECHEANCE = paste(rowformat, df_d$ECHEANCE, "}")
-      df_d$ETAT = paste(rowformat, df_d$ETAT, "}")
+      df_d$TACHE = paste0(rowformat, df_d$TACHE, "}")
+      df_d$ECHEANCE = paste0(rowformat, df_d$ECHEANCE, "}")
+      df_d$ETAT = paste0(rowformat, df_d$ETAT, "}")
       
       print_tab(df_d$TACHE, df_d$ECHEANCE, df_d$ETAT, col_format=col_format)
-      
-#       cat("\\\\")
     }
   }
 }
