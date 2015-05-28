@@ -44,6 +44,10 @@ ce_jour = read_excel(file, sheet="CE JOUR")
 <<edit_taches, include=FALSE>>=
 require(dplyr)
 
+legende = legende %>% 
+  mutate(Sigle = tolower(Sigle)) %>% 
+  mutate(Classe = tolower(Classe))
+
 ce_jour = ce_jour %>% 
   filter(!is.na(CHAPITRE)) %>% # effacer lignes vides
   filter(is.na(ETAT)) %>% # ajouter A faire
@@ -177,6 +181,7 @@ tache = tache %>%
 \end{tabular}
 }
 
+\newpage
 <<orga>>=
 libelle.acteur_orga <- function(nom, des, lot) {
   if (is.na(nom))
@@ -191,11 +196,11 @@ libelle.acteur_exe <- function(nom, des, lot) {
 }
 
 print_tab <- function(..., col_format="", rowcol = NULL) {
-  cat("\\begin{tabular}{", col_format, "}\n")
+  cat("\\begin{tabular}{", col_format, "}\n", sep="")
   cat("\\hline\n")
   
   if (!is.null(rowcol))
-    cat("\\rowcolor{", rowcol, "} ", sep="") 
+    cat("\\rowcolor{", rowcol, "} ", sep="")
   
   cat(paste(..., sep=" & ", collapse = " \\tabularnewline \n \\hline\n"))
   
@@ -203,86 +208,87 @@ print_tab <- function(..., col_format="", rowcol = NULL) {
   cat("\\end{tabular}\n\\vspace*{.5em}\n\n")
 }
 
-print_taches <- function(chapitre = "orga", col_format = "|p{11cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|",
+print_taches <- function(df, legende, chapitre = "orga", col_format = "|p{11cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|",
                          col_head = "lightgray") {
-  cat("\\newpage\n")
-  
-  ind = match(tolower(chapitre), tolower(legende$Sigle))
+  ind = match(chapitre, legende$Sigle)
   cat("\\section*{", toupper(legende$Nom[ind]), "}\n\n")  
   
-  row = tolower(tache$CHAPITRE) == tolower(chapitre)
-  df = tache[row,]
+  df = df %>% filter(CHAPITRE == chapitre)
   
   cat("\\parindent=0em\n")
   print_tab("Tâche", "Pour le", "Etat", col_format="|>{\\centering\\bfseries}p{11cm}|>{\\centering\\bfseries}p{2cm}|>{\\centering\\bfseries}p{2cm}|", rowcol=col_head)
   
   # acteurs dans l'ordre de la légende
-  acteurs = tolower(unique(df$ACTEUR))
-  ind = match(tolower(legende$Sigle), acteurs)
+  acteurs = unique(df$ACTEUR)
+  ind = match(legende$Sigle, acteurs)
   ind = ind[!is.na(ind)]
   acteurs = acteurs[ind]  
   
   for (a in seq_along(acteurs)) {
-    row = tolower(df$ACTEUR) == acteurs[a]
-    df_a = df[row,]
+    df_a = df %>% 
+      filter(ACTEUR == acteurs[a])
     
-    ind = match(acteurs[a], tolower(legende$Sigle))
+    ind = match(acteurs[a], legende$Sigle)
     nom = legende$Nom[ind]
     des = legende$Désignation[ind]
     lot = legende$Num[ind]
-    libelle = switch(tolower(legende$Classe[ind]),
+    libelle = switch(legende$Classe[ind],
                      "acteur orga" = libelle.acteur_orga(nom, des, lot),
                      "acteur exe" = libelle.acteur_exe(nom, des, lot))
     cat("\\textbf{", libelle, "}\n\n", sep="")
     
     dates = unique(df_a$DATE)
     for (d in seq_along(dates)) {
-      row = (df_a$DATE == dates[d])
       cat("\\hspace*{1.4em}\\underline{Réunion du", format(dates[d], "%d %B %Y"), "}\n\n")
       
-      df_d = df_a[row, ]
-      df_d$ECHEANCE = ifelse(is.na(df_d$ECHEANCE), "", format(df_d$ECHEANCE, "%d/%m/%Y"))
+      df_d = df_a %>% 
+        filter(DATE == dates[d])
       
-      ind = match(df_d$ETAT, tolower(legende$Sigle))
-      df_d$ETAT = ifelse(tolower(df_d$ETAT) == "a", df_d$PRIORITE, legende$Nom[ind])
+      ind = match(df_d$ETAT, legende$Sigle)
+      ind_a = match("a", legende$Sigle)
+      df_d = df_d %>% 
+        mutate(ETAT = ifelse(ETAT == "a", 
+                             ifelse(is.na(PRIORITE),
+                                    legende$Nom[ind_a],
+                                    PRIORITE),
+                             legende$Nom[ind])) %>%  # libelle etat
+        mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
+        select(TACHE, ECHEANCE, ETAT) %>% # ordonne colonnes
+        mutate(TACHE = paste("$\\bullet$", TACHE)) # ajoute puce devant tache
       
-      ind = match("a", tolower(legende$Sigle))
-      df_d$ETAT = ifelse(is.na(df_d$ETAT), legende$Nom[ind], df_d$ETAT)
-      
-      df_d = df_d[, c("TACHE", "ECHEANCE", "ETAT")]
-      
-      # ajoute puce devant tache
-      df_d$TACHE = paste("$\\bullet$", df_d$TACHE)
-      
-      # formatage fait, urgent, rappel
+      # formatage ligne fait, urgent, rappel
       rowformat = switch(tolower(df_d$ETAT),
                          fait = "\\sout{",
                          rappel = "\\textcolor{red}{",
                          urgent = "\\textcolor{red}{",
                          "{")
       
-      df_d$TACHE = paste0(rowformat, df_d$TACHE, "}")
-      df_d$ECHEANCE = paste0(rowformat, df_d$ECHEANCE, "}")
-      df_d$ETAT = paste0(rowformat, df_d$ETAT, "}")
+      rowfun = function(x) paste0(rowformat, x, "}")
+      
+      df_d = df_d %>% 
+        mutate_each(funs(rowfun))
       
       print_tab(df_d$TACHE, df_d$ECHEANCE, df_d$ETAT, col_format=col_format)
     }
   }
 }
 
-print_taches("orga")
+print_taches(tache, legende, "orga")
 @
 
+\newpage
 <<tav>>=
-print_taches("tav")
+print_taches(tache, legende, "tav")
 @
 
+\newpage
 <<src>>=
-print_taches("src")
+print_taches(tache, legende, "src")
 @
 
+\newpage
 <<epb>>=
-print_taches("epb")
+print_taches(tache, legende, "epb")
 @
 
 \newpage
