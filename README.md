@@ -26,20 +26,19 @@ devtools::install_github("adrtod/bastiR")
 
 # Spécification des tableaux d'entrée
 - Tableur Excel (>= 2007) `.xls` ou `.xlsx`
-- Feuilles de calcul (onglets) :
-
-    Nom           | Description               | Colonnes
-    ------------- | ------------------------- | -------------
-    **`LEGENDE`** | Légende des objets        | *Obligatoires* : <br> **`Classe`** : classe d'objet désigné par une clé (`acteur orga`, `acteur exe`, `section`, `etat`) <br> **`Clé`** : courte chaîne de caractères, insensible à la casse <br> **`Nom`** : nom de l'objet) <br> *Facultatives* : <br> **`Désignation`** : nom du lot <br> **`Num`** : numéro du lot <br> ...
-    **`TACHE`**   | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche, accepte formattage et symboles mathématiques latex (ex: `$\lambda$`) <br> **`ETAT`** : clé (`a`=A faire, `f`=Fait, `i`=Info) <br> **`PRIORITE`** : automatique,  `RAPPEL` ou `URGENT`)
-    **`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHE`**, sauf **`PRIORITE`**
-    **`PLANS`**   | Armoire à plans           | TODO
-    **`PHOTO`**   | Photographies commentées  | **`FICHIER`** : nom du fichier, ne doit pas contenir d'espace, utiliser `_` <br> **`COMMENTAIRE`** : texte
-
 - Ne pas fusionner les cellules
 - 1 colonne = 1 variable, libellé en 1ère ligne
 - 1 ligne = 1 individu
-- Enregistrer les dates au format date dans Excel
+- Colonnes de dates au format date dans Excel
+
+### Feuilles de calcul (onglets)
+Nom           | Description               | Colonnes
+------------- | ------------------------- | -------------
+**`LEGENDE`** | Légende des objets        | *Obligatoires* : <br> **`Classe`** : classe d'objet désigné par une clé (`acteur orga`, `acteur exe`, `section`, `etat`) <br> **`Clé`** : courte chaîne de caractères, insensible à la casse <br> **`Nom`** : nom de l'objet) <br> *Facultatives* : <br> **`Désignation`** : nom du lot <br> **`Num`** : numéro du lot <br> ...
+**`TACHE`**   | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche, accepte formattage et symboles mathématiques latex (ex: `$\lambda$`) <br> **`ETAT`** : clé (`a`=A faire, `f`=Fait, `i`=Info) <br> **`PRIORITE`** : automatique,  `RAPPEL` ou `URGENT`)
+**`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHE`**, sauf **`PRIORITE`**
+**`PLANS`**   | Armoire à plans           | TODO
+**`PHOTO`**   | Photographies commentées  | **`FICHIER`** : nom du fichier, ne doit pas contenir d'espace, utiliser `_` <br> **`COMMENTAIRE`** : texte
 
 # Ressources
 - Introduction à R et RStudio : TODO
