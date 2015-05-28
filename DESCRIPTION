@@ -1,6 +1,6 @@
 Package: bastiR
 Title: Outils De Suivi De Chantier
-Version: 0.1
+Version: 0.1.0
 Authors@R: c(person("Adrien", "Todeschini", email = "adrien.todeschini@gmail.com", role=c("aut", "cre")),
     person("Baptiste", "Dulau", email = "baptiste.dulau@gmail.com",role=c("ctb")))
 Description: The R package bastiR aims to be a collection of tools to facilitate site supervision.
@@ -12,6 +12,7 @@ Depends:
 Imports:
     knitr (>= 1.6),
     dplyr (>= 0.4.1),
+    tidyr (>= 0.2.0),
     readxl (>= 0.1.0),
     openxlsx (>= 2.4.0)
 License: GPL-2

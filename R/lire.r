@@ -1,4 +1,13 @@
 
+#' Read excel file
+#' 
+#' @param xlfile string. path to the file
+#' @param sheets character or integer vector. mandatory sheets to be read
+#' @param sheets_opt character or integer vector. optional sheets to be read
+#' @param col_dates character vector. date column names
+#' @param origin a Date object, or something which can be coerced by 
+#'   \code{as.Date(origin)} to such an object.
+#'
 #' @export
 #' @importFrom readxl excel_sheets
 lire_xl <- function(xlfile, sheets = 1, 

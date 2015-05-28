@@ -1,19 +1,15 @@
-#' @export
-libelle.acteur_orga <- function(nom, des, lot) {
-  if (is.na(nom))
-    lib = toupper(des)
-  else
-    lib = paste(nom, des)
-  return(lib)
-}
 
+#' Print table to latex
+#' @param df data.frame
+#' @param col_format string. column format
+#' @param rowcol string. row color
+#' @param hline logical. activate horizontal lines
+#'
 #' @export
-libelle.acteur_exe <- function(nom, des, lot) {
-  paste(lot, des, "-", nom)
-}
-
-#' @export
-print_tab <- function(..., col_format="", rowcol = NULL, hline=TRUE) {
+#' @importFrom tidyr unite_
+#' @examples  
+#' print_tab(mtcars)
+print_tab <- function(df, col_format="", rowcol = NULL, hline=TRUE) {
   cat("\\begin{tabular}{", col_format, "}\n", sep="")
   
   if (hline)
@@ -26,32 +22,55 @@ print_tab <- function(..., col_format="", rowcol = NULL, hline=TRUE) {
   if (hline)
     collapse = paste(collapse, "\\hline\n")
   
-  cat(paste(..., sep=" & ", collapse = collapse))
+  cat(paste(unlist(tidyr::unite_(df, "x", colnames(df), sep = " & ")), collapse = collapse))
   
   if (hline)
-    cat(" \\tabularnewline \n \\hline\n")
+    cat(" \\tabularnewline\n \\hline\n")
   
   cat("\\end{tabular}\n\\vspace*{.5em}\n\n")
 }
 
+#' Print tasks to latex
+#'
+#' @param tache data.frame
+#' @param legende data.frame
+#' @param section string. section
+#' @param col_type character vector. column types
+#' @param col_sep string. column separator
+#' @param col_form character vector. column format
+#' @param col_form_head character vector. header column format
+#' @param rowcol_head row color of the header
+#' @param header character vector. header
+#' @param cle_var string. key column name
+#' @param format_fun list. formatting functions
+#'
 #' @export
+#' @importFrom dplyr %>%
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate_each
+#' @importFrom dplyr funs
 print_taches <- function(tache, legende, section = "orga", 
                          col_type = c("p{11cm}", "p{2cm}", "p{2cm}"),
                          col_sep = "|",
                          col_form = c("", ">{\\centering}", ">{\\centering}"),
                          col_form_head = c(">{\\centering\\bf}", ">{\\centering\\bf}", ">{\\centering\\bf}"),
                          rowcol_head = "lightgray",
-                         cle_var) {
+                         header,
+                         cle_var,
+                         format_fun) {
   ind = match(section, legende[[cle_var]])
   cat("\\section*{", toupper(legende$Nom[ind]), "}\n\n", sep="")  
   
-  tache = tache %>% filter(SECTION == section)
+  tache = tache %>% 
+    filter(SECTION == section)
   
   col_format_head = paste0(col_sep, paste0(col_form_head, col_type, collapse=col_sep), col_sep)
   col_format = paste0(col_sep, paste0(col_form, col_type, collapse=col_sep), col_sep)
   
   cat("\\parindent=0em\n")
-  print_tab("Tâche", "Pour le", "Etat", 
+  print_tab(data.frame(as.list(header)), 
             col_format = col_format_head, 
             rowcol = rowcol_head)
   
@@ -66,17 +85,14 @@ print_taches <- function(tache, legende, section = "orga",
       filter(ACTEUR == acteurs[a])
     
     ind = match(acteurs[a], legende[[cle_var]])
-    nom = legende$Nom[ind]
-    des = legende$Désignation[ind]
-    lot = legende$Num[ind]
-    libelle = switch(legende$Classe[ind],
-                     "acteur orga" = libelle.acteur_orga(nom, des, lot),
-                     "acteur exe" = libelle.acteur_exe(nom, des, lot))
-    cat("\\textbf{", libelle, "}\n\n", sep="")
+    
+    fmtfun = do.call(switch, c(list(legende$Classe[ind]), format_fun))
+    libelle = fmtfun(legende[ind,])
+    cat(libelle)
     
     dates = unique(tache_a$DATE)
     for (d in seq_along(dates)) {
-      cat("\\hspace*{1.4em}\n\\underline{Réunion du", format(dates[d], "%d %B %Y"), "}\n\n")
+      cat(format_fun$date_reu(dates[d]))
       
       tache_d = tache_a %>% 
         filter(DATE == dates[d])
@@ -105,12 +121,21 @@ print_taches <- function(tache, legende, section = "orga",
       tache_d = tache_d %>% 
         mutate_each(funs(rowfun))
       
-      print_tab(tache_d$TACHE, tache_d$ECHEANCE, tache_d$ETAT, col_format=col_format)
+      print_tab(tache_d, col_format=col_format)
     }
   }
 }
 
+#' print photos to latex
+#'
+#' @param photo data.frame
+#' @param col_format string. column format
+#' @param width string. photo max width
+#' @param height string. photo max height
+#'
 #' @export
+#' @importFrom dplyr mutate
+#' @importFrom dplyr %>%
 print_photo = function(photo, col_format="|>{\\centering}m{10cm}|m{7cm}|", 
                        width = "10cm",
                        height="5cm") {
@@ -118,5 +143,5 @@ print_photo = function(photo, col_format="|>{\\centering}m{10cm}|m{7cm}|",
     mutate(FICHIER = paste0("\\includegraphics[height=", height, ", width=", width, 
                             ", keepaspectratio]{", tools::file_path_sans_ext(FICHIER), "}"))
   
-  print_tab(photo$FICHIER, photo$COMMENTAIRE, col_format=col_format)
+  print_tab(photo, col_format=col_format)
 }

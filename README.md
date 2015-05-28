@@ -12,7 +12,7 @@ Sa première fonctionnalité est la génération de compte-rendus de réunions d
 - [R](http://www.r-project.org/) version 3.2.0 (2015-04-16)
 - [RStudio](http://www.rstudio.com/) version 0.98.1103
 - [LaTeX](http://www.latex-project.org/)
-    - Windows : [MikTex](http://www.miktek.org/)
+    - Windows : [MikTex](http://miktex.org/)
     - OS X : [MacTeX](https://tug.org/mactex/)
     - Debian/Ubuntu : `sudo apt-get install texlive`
     - Fedora/RedHat : `sudo yum install texlive`
