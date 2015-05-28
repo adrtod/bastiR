@@ -40,8 +40,9 @@ print_taches <- function(tache, legende, section = "orga",
                          col_sep = "|",
                          col_form = c("", ">{\\centering}", ">{\\centering}"),
                          col_form_head = c(">{\\centering\\bf}", ">{\\centering\\bf}", ">{\\centering\\bf}"),
-                         rowcol_head = "lightgray") {
-  ind = match(section, legende$Clé)
+                         rowcol_head = "lightgray",
+                         cle_var) {
+  ind = match(section, legende[[cle_var]])
   cat("\\section*{", toupper(legende$Nom[ind]), "}\n\n", sep="")  
   
   tache = tache %>% filter(SECTION == section)
@@ -54,9 +55,9 @@ print_taches <- function(tache, legende, section = "orga",
             col_format = col_format_head, 
             rowcol = rowcol_head)
   
-  # acteurs dans l'ordre de la légende
+  # acteurs dans l'ordre de la legende
   acteurs = unique(tache$ACTEUR)
-  ind = match(legende$Clé, acteurs)
+  ind = match(legende[[cle_var]], acteurs)
   ind = ind[!is.na(ind)]
   acteurs = acteurs[ind]  
   
@@ -64,7 +65,7 @@ print_taches <- function(tache, legende, section = "orga",
     tache_a = tache %>% 
       filter(ACTEUR == acteurs[a])
     
-    ind = match(acteurs[a], legende$Clé)
+    ind = match(acteurs[a], legende[[cle_var]])
     nom = legende$Nom[ind]
     des = legende$Désignation[ind]
     lot = legende$Num[ind]
@@ -80,8 +81,8 @@ print_taches <- function(tache, legende, section = "orga",
       tache_d = tache_a %>% 
         filter(DATE == dates[d])
       
-      ind = match(tache_d$ETAT, legende$Clé)
-      ind_a = match("a", legende$Clé)
+      ind = match(tache_d$ETAT, legende[[cle_var]])
+      ind_a = match("a", legende[[cle_var]])
       tache_d = tache_d %>% 
         mutate(ETAT = ifelse(ETAT == "a", 
                              ifelse(is.na(PRIORITE),

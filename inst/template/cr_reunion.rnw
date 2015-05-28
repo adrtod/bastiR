@@ -38,6 +38,8 @@ xlfile_out = paste0(tools::file_path_sans_ext(xlfile), ".xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
 origin = "1899-12-30" # Depend du système de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
 openxl = TRUE
+cle_var = "Clé"
+col_names = c("Tâche", "Pour le", "Etat")
 @
 
 <<read, include=FALSE>>=
@@ -212,7 +214,7 @@ openxlsx::write.xlsx(list("LEGENDE" = legende,
 <<taches>>=
 for (c in sections) {
   cat("\\newpage\n")
-  bastiR::print_taches(tache, legende, c)
+  bastiR::print_taches(tache, legende, c, cle_var = cle_var)
 }
 @
 
