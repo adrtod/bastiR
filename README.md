@@ -48,6 +48,8 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
 
 **bastiR** est un logiciel libre distribué sous la Licence [GPL-2](http://www.gnu.org/licenses/gpl-2.0.html).
 
+********************************************************************************
+
 # Signaler un bug
 
 <https://github.com/adrtod/bastiR/issues>
