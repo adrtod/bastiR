@@ -12,7 +12,7 @@ _**bastiR** est actuellement en contruction._
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/92/LaTeX_logo.svg/220px-LaTeX_logo.svg.png" alt="LaTeX" height=32/>
 
 - [R](http://www.r-project.org/) version 3.2.0 (2015-04-16)
-- [RStudio](http://www.rstudio.com/) version 0.98.1103
+- [RStudio](http://www.rstudio.com/) version 0.99.441
 - [LaTeX](http://www.latex-project.org/)
     - Windows : [MiKTeX](http://miktex.org/)
     - OS X : [MacTeX](https://tug.org/mactex/)
@@ -83,11 +83,17 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
     
 ### Ressources
 - [Packages R](http://r-pkgs.had.co.nz/)
+- [Markdown](https://help.github.com/articles/markdown-basics/)
 - [knitr](http://yihui.name/knitr/)
 - [dplyr](https://github.com/hadley/dplyr) : [introduction](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html), [aide mémoire](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 - R & Excel : [readxl](https://github.com/hadley/readxl), [openxlsx](https://github.com/awalker89/openxlsx), <http://www.r-bloggers.com/a-million-ways-to-connect-r-and-excel/>
     
 # Liste des tâches
+- [ ] compléter LEGENDE avec colonnes manquantes
+- [ ] programmer `print_legende`
+- [ ] ajouter armoire à plans
+- [ ] programmer `print_armoire`
+- [ ] code en anglais, aide en français ?
 - [ ] tester sous windows
 - [ ] écrire intro origine et but du projet
 - [ ] ajouter ressources
