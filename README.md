@@ -46,7 +46,7 @@ Nom           | Description               | Colonnes
 - Introduction à R et RStudio : TODO
 
 # Auteurs
-Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientodeschini/), [Baptiste Dulau](http://www.bastir-energie.fr/).
+Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientodeschini/), [Baptiste Dulau](http://www.oxalis-scop.fr/environnement-et-developpement-durable/userprofile/bdulau).
 
 **bastiR** est un logiciel libre distribué sous la Licence [GPL-2](http://www.gnu.org/licenses/gpl-2.0.html).
 
