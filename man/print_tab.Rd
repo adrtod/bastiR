@@ -4,7 +4,9 @@
 \alias{print_tab}
 \title{Print table to latex}
 \usage{
-print_tab(df, col_format = "", rowcol = NULL, hline = TRUE)
+print_tab(df, col_format = "", rowcol = NULL, hline = TRUE,
+  replace_na = function(x) ifelse(is.na(x), "", x), replace_nl = function(x)
+  gsub("\\n", " \\\\\\\\newline ", x), header = NULL)
 }
 \arguments{
 \item{df}{data.frame}
@@ -14,6 +16,10 @@ print_tab(df, col_format = "", rowcol = NULL, hline = TRUE)
 \item{rowcol}{string. row color}
 
 \item{hline}{logical. activate horizontal lines}
+
+\item{replace_na}{function or NULL}
+
+\item{header}{character vector or NULL. header}
 }
 \description{
 Print table to latex

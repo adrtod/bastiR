@@ -4,14 +4,15 @@
 \alias{print_taches}
 \title{Print tasks to latex}
 \usage{
-print_taches(tache, legende, section = "orga", col_type = c("p{11cm}",
+print_taches(taches, legende, section = "orga", col_type = c("p{11cm}",
   "p{2cm}", "p{2cm}"), col_sep = "|", col_form = c("", ">{\\\\centering}",
   ">{\\\\centering}"), col_form_head = c(">{\\\\centering\\\\bf}",
   ">{\\\\centering\\\\bf}", ">{\\\\centering\\\\bf}"),
-  rowcol_head = "lightgray", header, cle_var, format_fun)
+  rowcol_head = "lightgray", header, cle_var = "CLE",
+  classe_var = "CLASSE", format_fun)
 }
 \arguments{
-\item{tache}{data.frame}
+\item{taches}{data.frame}
 
 \item{legende}{data.frame}
 
@@ -30,6 +31,8 @@ print_taches(tache, legende, section = "orga", col_type = c("p{11cm}",
 \item{header}{character vector. header}
 
 \item{cle_var}{string. key column name}
+
+\item{classe_var}{string. class column name}
 
 \item{format_fun}{list. formatting functions}
 }

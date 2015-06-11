@@ -36,11 +36,13 @@ devtools::install_github("adrtod/bastiR")
 ### Feuilles de calcul (onglets)
 Nom           | Description               | Colonnes
 ------------- | ------------------------- | -------------
-**`LEGENDE`** | Légende des objets        | *Obligatoires* : <br> **`Classe`** : classe d'objet désigné par une clé (`acteur orga`, `acteur exe`, `section`, `etat`) <br> **`Clé`** : courte chaîne de caractères, insensible à la casse <br> **`Nom`** : nom de l'objet) <br> *Facultatives* : <br> **`Désignation`** : nom du lot <br> **`Num`** : numéro du lot <br> ...
-**`TACHE`**   | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche, accepte formattage et symboles mathématiques latex (ex: `$\lambda$`) <br> **`ETAT`** : clé (`a`=A faire, `f`=Fait, `i`=Info) <br> **`PRIORITE`** : automatique,  `RAPPEL` ou `URGENT`)
-**`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHE`**, sauf **`PRIORITE`**
-**`PLANS`**   | Armoire à plans           | TODO
-**`PHOTO`**   | Photographies commentées  | **`FICHIER`** : nom du fichier, ne doit pas contenir d'espace <br> **`COMMENTAIRE`** : texte
+**`LEGENDE`** | Légende des objets        | *Obligatoires* : <br> **`CLASSE`** : classe d'objet désigné par une clé (`acteur orga`, `acteur exe`, `section`, `etat`) <br> **`CLE`** : clé, courte chaîne de caractères, insensible à la casse <br> **`Nom`** : nom de l'objet) <br> *Facultatives* : <br> **`Désignation`** : nom du lot <br> **`Lots`** : numéro du lot <br> **`Représentant`**,	**`Téléphone`**,	**`Mobile`**,	**`Fax`**,	**`Courriel`**,	**`P`**,	**`Dif`**,	**`Inv`**,	**`C`**
+...
+**`TACHES`**  | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche, accepte formattage et symboles mathématiques latex (ex: `$\lambda$`) <br> **`ETAT`** : clé (`a`=A faire, `f`=Fait, `i`=Info) <br> **`PRIORITE`** : automatique,  `RAPPEL` ou `URGENT`)
+**`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHES`**, sauf **`PRIORITE`**
+**`PLANS`**   | Armoire à plans           | **`SECTION`** <br> **`SOUS-SECTION`** <br> **`PLAN`**,	**`n°`**,	**`Indice`**,	**`Date`**
+**`PLANSNOTE`** | Note pour l'armoire à plans | **`TEXTE`** <br> **`FORMAT`**
+**`PHOTOS`**  | Photographies commentées  | **`FICHIER`** : nom du fichier, ne doit pas contenir d'espace <br> **`COMMENTAIRE`** : texte
 
 # Ressources
 - Introduction à R et RStudio : TODO

@@ -10,8 +10,8 @@
 #'
 #' @export
 #' @importFrom readxl excel_sheets
-lire_xl <- function(xlfile, sheets = 1, 
-                    sheets_opt = "PHOTO",
+read_xl <- function(xlfile, sheets = 1, 
+                    sheets_opt = "PHOTOS",
                     col_dates = c("DATE", "ECHEANCE"), 
                     origin = "1899-12-30") {
   

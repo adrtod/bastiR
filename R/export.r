@@ -5,23 +5,23 @@
 #'
 #' @export
 #' @importFrom dplyr data_frame
-prepare_photo <- function(photo_files) {
+prepare_photos <- function(photo_files) {
   df = data_frame(FICHIER = photo_files, 
                   COMMENTAIRE = as.character(rep(NA, length(photo_files))))
   return(df)
 }
 
 
-#' Export data.frame to Excel file
+#' Write data.frame to Excel file
 #'
-#' @param df data.frame
+#' @param df data.frame or list of data.frames
 #' @param xlfile_out string. path to the output excel file
 #' @param open logical. activate opening the file in Excel/LibreOffice/OpenOffice
 #'
 #' @export
 #' @importFrom openxlsx write.xlsx
 #' @importFrom openxlsx openXL
-export_xl <- function(df, xlfile_out, open = TRUE) {
+write_xl <- function(df, xlfile_out, open = TRUE) {
   # export
   openxlsx::write.xlsx(df, file = xlfile_out)
   

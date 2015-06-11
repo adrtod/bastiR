@@ -10,6 +10,8 @@
 \usepackage[table]{xcolor}
 \usepackage{array}
 \usepackage{ulem} % pour barrer \sout
+\usepackage{setspace}
+\renewcommand*{\familydefault}{\sfdefault}
 
 <<setup, include=FALSE>>=
 knitr::opts_chunk$set(results='asis', echo=FALSE)
@@ -25,20 +27,23 @@ date_reu_next = date_reu+7
 num_reu_next = num_reu + 1
 heure_reu_next = "9H00"
 img_garde = "TAVAILLON_3D"
-img_garde_width = "0.8\\textwidth"
-xlfile = "BEUBOIS_CR_box.xlsx"
+img_garde_width = "0.9\\textwidth"
+xlfile = "BEUBOIS_CR_box_1.xlsx"
 sections = c("orga", "tav", "src", "epb")
 photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
 legende_sheet = "LEGENDE"
-tache_sheet = "TACHE"
+taches_sheet = "TACHES"
 cejour_sheet = "CEJOUR"
-photo_sheet = "PHOTO"
-col_dates = c("DATE", "ECHEANCE")
-xlfile_out = paste0(tools::file_path_sans_ext(xlfile), ".xlsx")
+photos_sheet = "PHOTOS"
+plans_sheet = "PLANS"
+plansnote_sheet = "PLANSNOTE"
+col_dates = c("DATE", "ECHEANCE", "")
+xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_export.xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
 origin = "1899-12-30" # Depend du système de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
 openxl = TRUE
-cle_var = "Clé"
+cle_var = "CLE"
+classe_var = "CLASSE"
 header = c("Tâche", "Pour le", "Etat")
 format_fun = list(
   "acteur orga" = function(x) {
@@ -48,75 +53,28 @@ format_fun = list(
     paste0("\\textbf{", lib, "}\n\n")
   },
   "acteur exe" = function(x) {
-    lib = paste(x$Num, x$Désignation, "-", x$Nom)
+    lib = paste(x$Lots, x$Désignation, "-", x$Nom)
     paste0("\\textbf{", lib, "}\n\n")
   },
   "date_reu" = function(x) format(x, "\\hspace*{1.4em}\n\\underline{Réunion du %d %B %Y}\n\n")
 )
+grid_col = "lightgray"
 @
 
 <<read, include=FALSE>>=
 # lecture fichier
-xl = lire_xl(xlfile, c(legende_sheet, tache_sheet, cejour_sheet), 
-             sheets_opt = photo_sheet, 
+xl = read_xl(xlfile, c(legende_sheet, taches_sheet, cejour_sheet, plans_sheet, plansnote_sheet), 
+             sheets_opt = photos_sheet, 
              col_dates = col_dates, 
              origin = origin)
 @
 
 <<prepare_photo, include=FALSE>>=
-if (!(photo_sheet %in% names(xl))) {
+if (!(photos_sheet %in% names(xl))) {
   # prepare tableau photo
-  xl[["PHOTO"]] = prepare_photo(photo_files)
-  export_xl(xl, xlfile_out, open = openxl)
+  xl[[photos_sheet]] = prepare_photos(photo_files)
+  write_xl(xl, xlfile_out, open = openxl)
 }
-@
-
-<<edit_taches, include=FALSE>>=
-require(dplyr)
-
-legende = xl[[legende_sheet]] %>% 
-  mutate(Clé = tolower(Clé)) %>% 
-  mutate(Classe = tolower(Classe))
-
-cejour = xl[[cejour_sheet]] %>% 
-  filter(!is.na(SECTION)) # effacer lignes vides
-
-# ajouter cejour à tache
-tache = xl[[tache_sheet]] %>% 
-  bind_rows(cejour)
-
-# recodage et tri
-tache = tache %>% 
-  mutate(ETAT = factor(tolower(ETAT), levels = c("a", "i", "f"))) %>% 
-  mutate(SECTION = factor(tolower(SECTION), levels = sections)) %>% 
-  mutate(ACTEUR = tolower(ACTEUR)) %>% 
-  arrange(ETAT, SECTION, ECHEANCE, ACTEUR)
-
-# ajouter rappel
-row = (tache$ETAT == "a") & (tache$ECHEANCE <= date_reu)
-tache$PRIORITE[row] = "RAPPEL"
-
-# ajouter urgent
-row = (tache$ETAT == "a") & (tache$ECHEANCE <= date_reu-7)
-tache$PRIORITE[row] = "URGENT"
-
-# supprime Fait et supérieur à 3 semaines
-tache = tache %>% 
-  filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*7) ) )
-
-# prepare cejour prochaine reu
-nafun = function(x) { y = NA; class(y) = class(x); return(y) }
-cejour_next = cejour %>% 
-  summarise_each(funs(nafun)) %>% # 1 ligne vide
-  mutate(DATE = date_reu_next) %>% # date prochaine reu
-  slice(rep(1, 10)) # dupliquer 10 lignes
-
-# exporte xls prochaine reu
-require(openxlsx)
-openxlsx::write.xlsx(list("LEGENDE" = legende, 
-                          "TACHE" = tache,
-                          "CEJOUR" = cejour_next), 
-                     file = xlfile_next)
 @
 
 \title{\Sexpr{titre}}
@@ -135,112 +93,115 @@ openxlsx::write.xlsx(list("LEGENDE" = legende,
 \textcolor{red}{Réunion de chantier \no \Sexpr{num_reu_next} à \textbf{\Sexpr{heure_reu_next}} le \Sexpr{format(date_reu_next, "%A %d %B %Y")}}
 \end{center}
 
-\arrayrulecolor{lightgray}
 
-{\tiny
+<<legende, include=FALSE>>=
+require(dplyr)
 
-\hspace*{-.5cm}
-\begin{tabular}{|p{2.92cm}|p{2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{2cm}|p{.3cm}|p{.3cm}|p{.3cm}|p{.3cm}|}
-\hline
-\rowcolor{lightgray} Désignation & Nom & Représentant & Tel & Fax/Portable & Mail & P & Dif & Inv & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-   A & B & C & D & E & F & G & H & I & \\
-\hline
-\end{tabular}
+legende = xl[[legende_sheet]] %>% 
+  mutate_each_(funs(tolower), c(cle_var, classe_var))
+@
 
-\hspace*{-.5cm}
-\begin{tabular}{|p{.5cm}|p{2cm}|p{2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{2cm}|p{.3cm}|p{.3cm}|p{.3cm}|p{.3cm}|}
-\hline
-\rowcolor{lightgray}   Lots & Corps d'état & Entreprises & Représentant & Tel & Portables & Mail & P & Dif & Con & Pen Abs. \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-   A & B & C & D & E & F & G & H & I & J & K \\
-\hline
-\end{tabular}
+\arrayrulecolor{\Sexpr{grid_col}}
+
+% \begin{center}
+\begin{spacing}{.7}
+{\fontsize{6pt}{1em}\selectfont
+% \tiny
+\setlength{\tabcolsep}{1pt}
+\renewcommand{\arraystretch}{1}
+
+\hspace*{-1.5cm}
+<<tab_orga>>=
+orga = legende %>% 
+  filter(CLASSE == "acteur orga", CLE != "all") %>% 
+  select(-CLE, -CLASSE, -Lots) %>% 
+  select(Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
+
+# cat("\\parindent=0em\n")
+print_tab(orga, col_format="|p{3.98cm}|p{2.5cm}|p{1.8cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\centering}p{.5cm}|>{\\centering}p{.5cm}|", 
+          rowcol = "lightgray", hline=TRUE,
+          header = c("Désignation", "Nom", "Représentant", "Tel", "Portables", "Fax", "Mail", "P", "Dif", "Inv", ""))
+@
+
+\hspace*{-1.5cm}
+<<tab_exe>>=
+exe = legende %>% 
+  filter(CLASSE == "acteur exe") %>% 
+  select(-CLE, -CLASSE) %>% 
+  select(Lots, Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
+
+# cat("\\parindent=0em\n")
+print_tab(exe, col_format="|p{.7cm}|p{3.2cm}|p{2.5cm}|p{1.8cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\centering}p{.5cm}|>{\\centering}p{.5cm}|", 
+          rowcol = "lightgray", hline=TRUE,
+          header = c("Lots", "Corps d'état", "Entreprises", "Représentant", "Tel", "Portables", "", "Mail", "P", "Dif", "Conv", "Pen Abs."))
+@
 }
+\end{spacing}
+% \end{center}
+
+<<edit_taches, include=FALSE>>=
+cejour = xl[[cejour_sheet]] %>% 
+  filter(!is.na(SECTION)) # effacer lignes vides
+
+# ajouter cejour à taches
+taches = xl[[taches_sheet]] %>% 
+  bind_rows(cejour)
+
+# recodage et tri
+taches = taches %>% 
+  mutate(ETAT = factor(tolower(ETAT), levels = c("a", "i", "f"))) %>% 
+  mutate(SECTION = factor(tolower(SECTION), levels = sections)) %>% 
+  mutate(ACTEUR = tolower(ACTEUR)) %>% 
+  arrange(ETAT, SECTION, ECHEANCE, ACTEUR)
+
+# ajouter rappel
+row = (taches$ETAT == "a") & (taches$ECHEANCE <= date_reu)
+taches$PRIORITE[row] = "RAPPEL"
+
+# ajouter urgent
+row = (taches$ETAT == "a") & (taches$ECHEANCE <= date_reu-7)
+taches$PRIORITE[row] = "URGENT"
+
+# supprime Fait et supérieur à 3 semaines
+taches = taches %>% 
+  filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*7) ) )
+
+# prepare cejour prochaine reu
+nafun = function(x) { y = NA; class(y) = class(x); return(y) }
+cejour_next = cejour %>% 
+  summarise_each(funs(nafun)) %>% # 1 ligne vide
+  mutate(DATE = date_reu_next) %>% # date prochaine reu
+  slice(rep(1, 10)) # dupliquer 10 lignes
+
+# exporte xls prochaine reu
+xl_next = xl
+xl_next[[taches_sheet]] = taches
+xl_next[[cejour_sheet]] = cejour_next
+xl_next[[photos_sheet]] = NULL
+
+write_xl(xl_next, xlfile_next, open=FALSE)
+@
+
 
 <<taches>>=
 for (c in sections) {
   cat("\\newpage\n")
-  bastiR::print_taches(tache, legende, c, header = header, cle_var = cle_var, format_fun = format_fun)
+  bastiR::print_taches(taches, legende, c, header = header, 
+                       cle_var = cle_var, classe_var = classe_var, 
+                       format_fun = format_fun)
 }
 @
 
 
 \newpage
 \section*{ARMOIRE \`A PLANS }
-<<aap>>=
+<<plans>>=
 @
 
 \newpage
 \section*{PHOTOGRAPHIES}
 <<photo>>=
-bastiR::print_photo(xl[[photo_sheet]])
+bastiR::print_photos(xl[[photos_sheet]])
 @
 
 \end{document}
