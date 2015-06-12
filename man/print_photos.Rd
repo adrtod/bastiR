@@ -5,7 +5,7 @@
 \title{print photos to latex}
 \usage{
 print_photos(photos, col_format = "|>{\\\\centering}m{10cm}|m{7cm}|",
-  width = "10cm", height = "5cm")
+  width = "10cm", height = "5cm", ...)
 }
 \arguments{
 \item{photos}{data.frame}
@@ -15,6 +15,8 @@ print_photos(photos, col_format = "|>{\\\\centering}m{10cm}|m{7cm}|",
 \item{width}{string. photo max width}
 
 \item{height}{string. photo max height}
+
+\item{...}{further arguments to be passed to print_tab}
 }
 \description{
 print photos to latex

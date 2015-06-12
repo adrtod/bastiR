@@ -4,12 +4,10 @@
 \alias{print_taches}
 \title{Print tasks to latex}
 \usage{
-print_taches(taches, legende, section = "orga", col_type = c("p{11cm}",
-  "p{2cm}", "p{2cm}"), col_sep = "|", col_form = c("", ">{\\\\centering}",
-  ">{\\\\centering}"), col_form_head = c(">{\\\\centering\\\\bf}",
-  ">{\\\\centering\\\\bf}", ">{\\\\centering\\\\bf}"),
-  rowcol_head = "lightgray", header, cle_var = "CLE",
-  classe_var = "CLASSE", format_fun)
+print_taches(taches, legende, section = "orga",
+  col_format = c("|p{11cm}|>{\\\\centering}p{2cm}|>{\\\\centering}p{2cm}|"),
+  rowcol_head = "lightgray", header = c("TACHE", "ECHEANCE", "ETAT"),
+  cle_var = "CLE", classe_var = "CLASSE", format_fun, ...)
 }
 \arguments{
 \item{taches}{data.frame}
@@ -18,13 +16,7 @@ print_taches(taches, legende, section = "orga", col_type = c("p{11cm}",
 
 \item{section}{string. section}
 
-\item{col_type}{character vector. column types}
-
-\item{col_sep}{string. column separator}
-
-\item{col_form}{character vector. column format}
-
-\item{col_form_head}{character vector. header column format}
+\item{col_format}{string. column format}
 
 \item{rowcol_head}{row color of the header}
 
@@ -35,6 +27,8 @@ print_taches(taches, legende, section = "orga", col_type = c("p{11cm}",
 \item{classe_var}{string. class column name}
 
 \item{format_fun}{list. formatting functions}
+
+\item{...}{further arguments to be passed to print_tab}
 }
 \description{
 Print tasks to latex

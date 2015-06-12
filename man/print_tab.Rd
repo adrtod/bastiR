@@ -4,22 +4,38 @@
 \alias{print_tab}
 \title{Print table to latex}
 \usage{
-print_tab(df, col_format = "", rowcol = NULL, hline = TRUE,
+print_tab(df = data.frame(), envir = c("longtable", "tabular", "tabularx"),
+  col_format = "", rowcolors = NULL, rowcol_head = "lightgray",
+  hline = TRUE, format_head = "\\\\centering\\\\bf",
   replace_na = function(x) ifelse(is.na(x), "", x), replace_nl = function(x)
-  gsub("\\n", " \\\\\\\\newline ", x), header = NULL)
+  gsub("\\n", "\\\\\\\\newline ", x), header = colnames(df),
+  vspace_before = "-.8em", vspace_after = "-.8em")
 }
 \arguments{
 \item{df}{data.frame}
 
+\item{envir}{string. table environment to be used in latex}
+
 \item{col_format}{string. column format}
 
-\item{rowcol}{string. row color}
+\item{rowcolors}{NULL or list with fields \code{begin} (integer. starting row including header)
+\code{even} (string. even rows color) and \code{odd} (string. odd rows color)}
+
+\item{rowcol_head}{string. row color of the columns header}
 
 \item{hline}{logical. activate horizontal lines}
 
-\item{replace_na}{function or NULL}
+\item{format_head}{string. header columns format}
 
-\item{header}{character vector or NULL. header}
+\item{replace_na}{function or NULL. replace NA}
+
+\item{replace_nl}{function or NULL. replace newlines}
+
+\item{header}{character vector or NULL. columns header text}
+
+\item{vspace_before}{string or NULL. height of vertical space before the table}
+
+\item{vspace_after}{string or NULL. height of vertical space after the table}
 }
 \description{
 Print table to latex

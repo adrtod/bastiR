@@ -6,12 +6,17 @@
 \usepackage{lmodern}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{longtable}
 \usepackage{fancyhdr}
 \usepackage[table]{xcolor}
 \usepackage{array}
 \usepackage{ulem} % pour barrer \sout
-\usepackage{setspace}
+\usepackage{setspace} % pour définir les interlignes
 \renewcommand*{\familydefault}{\sfdefault}
+\setlongtables % pour pouvoir utiliser les colonnes l r c en longtable
+\setlength{\LTleft}{-20cm plus -1fill} % pour l'alignement horizontal des lontables
+\setlength{\LTright}{\LTleft}
 
 <<setup, include=FALSE>>=
 knitr::opts_chunk$set(results='asis', echo=FALSE)
@@ -63,17 +68,17 @@ grid_col = "lightgray"
 
 <<read, include=FALSE>>=
 # lecture fichier
-xl = read_xl(xlfile, c(legende_sheet, taches_sheet, cejour_sheet, plans_sheet, plansnote_sheet), 
-             sheets_opt = photos_sheet, 
-             col_dates = col_dates, 
-             origin = origin)
+xl = bastiR::read_xl(xlfile, c(legende_sheet, taches_sheet, cejour_sheet, plans_sheet, plansnote_sheet), 
+                     sheets_opt = photos_sheet, 
+                     col_dates = col_dates, 
+                     origin = origin)
 @
 
 <<prepare_photo, include=FALSE>>=
 if (!(photos_sheet %in% names(xl))) {
   # prepare tableau photo
   xl[[photos_sheet]] = prepare_photos(photo_files)
-  write_xl(xl, xlfile_out, open = openxl)
+  bastiR::write_xl(xl, xlfile_out, open = openxl)
 }
 @
 
@@ -83,7 +88,11 @@ if (!(photos_sheet %in% names(xl))) {
 
 \begin{document}
 
+\arrayrulecolor{\Sexpr{grid_col}}
+
 \maketitle
+
+\vspace*{-1cm}
 
 \begin{center}
 \includegraphics[width=\Sexpr{img_garde_width}]{\Sexpr{img_garde}}
@@ -101,47 +110,45 @@ legende = xl[[legende_sheet]] %>%
   mutate_each_(funs(tolower), c(cle_var, classe_var))
 @
 
-\arrayrulecolor{\Sexpr{grid_col}}
-
-% \begin{center}
+\begin{center}
 \begin{spacing}{.7}
 {\fontsize{6pt}{1em}\selectfont
-% \tiny
 \setlength{\tabcolsep}{1pt}
 \renewcommand{\arraystretch}{1}
 
-\hspace*{-1.5cm}
 <<tab_orga>>=
 orga = legende %>% 
   filter(CLASSE == "acteur orga", CLE != "all") %>% 
   select(-CLE, -CLASSE, -Lots) %>% 
   select(Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
 
-# cat("\\parindent=0em\n")
-print_tab(orga, col_format="|p{3.98cm}|p{2.5cm}|p{1.8cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\centering}p{.5cm}|>{\\centering}p{.5cm}|", 
-          rowcol = "lightgray", hline=TRUE,
-          header = c("Désignation", "Nom", "Représentant", "Tel", "Portables", "Fax", "Mail", "P", "Dif", "Inv", ""))
+bastiR::print_tab(orga, 
+                  col_format="|p{3.88cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
+                  rowcol_head = "lightgray", hline=TRUE,
+                  header = c("Désignation", "Nom", "Représentant", "Tel", "Portables", "Fax", "Mail", "P", "Dif", "Inv", ""),
+                  vspace_after = "-.5cm")
 @
 
-\hspace*{-1.5cm}
 <<tab_exe>>=
 exe = legende %>% 
   filter(CLASSE == "acteur exe") %>% 
   select(-CLE, -CLASSE) %>% 
   select(Lots, Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
 
-# cat("\\parindent=0em\n")
-print_tab(exe, col_format="|p{.7cm}|p{3.2cm}|p{2.5cm}|p{1.8cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\centering}p{.5cm}|>{\\centering}p{.5cm}|", 
-          rowcol = "lightgray", hline=TRUE,
-          header = c("Lots", "Corps d'état", "Entreprises", "Représentant", "Tel", "Portables", "", "Mail", "P", "Dif", "Conv", "Pen Abs."))
+bastiR::print_tab(exe, 
+                  col_format="|p{.7cm}|p{3.1cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
+                  rowcol_head = "lightgray", hline=TRUE,
+                  header = c("Lots", "Corps d'état", "Entreprises", "Représentant", "Tel", "Portables", "", "Mail", "P", "Dif", "Conv", "Pen Abs."),
+                  vspace_after = "-.5cm")
 @
 }
 \end{spacing}
-% \end{center}
+\end{center}
 
 <<edit_taches, include=FALSE>>=
 cejour = xl[[cejour_sheet]] %>% 
-  filter(!is.na(SECTION)) # effacer lignes vides
+  filter(!is.na(SECTION)) %>%  # effacer lignes vides
+  mutate(ETAT = ifelse(is.na(ETAT), "a", ETAT)) # ETAT vide -> A faire
 
 # ajouter cejour à taches
 taches = xl[[taches_sheet]] %>% 
@@ -166,20 +173,20 @@ taches$PRIORITE[row] = "URGENT"
 taches = taches %>% 
   filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*7) ) )
 
-# prepare cejour prochaine reu
+# prepare cejour prochaine reunion
 nafun = function(x) { y = NA; class(y) = class(x); return(y) }
 cejour_next = cejour %>% 
   summarise_each(funs(nafun)) %>% # 1 ligne vide
   mutate(DATE = date_reu_next) %>% # date prochaine reu
   slice(rep(1, 10)) # dupliquer 10 lignes
 
-# exporte xls prochaine reu
+# exporte xls prochaine reunion
 xl_next = xl
 xl_next[[taches_sheet]] = taches
 xl_next[[cejour_sheet]] = cejour_next
 xl_next[[photos_sheet]] = NULL
 
-write_xl(xl_next, xlfile_next, open=FALSE)
+bastiR::write_xl(xl_next, xlfile_next, open=FALSE)
 @
 
 
@@ -201,7 +208,7 @@ for (c in sections) {
 \newpage
 \section*{PHOTOGRAPHIES}
 <<photo>>=
-bastiR::print_photos(xl[[photos_sheet]])
+bastiR::print_photos(xl[[photos_sheet]], header = NULL)
 @
 
 \end{document}
