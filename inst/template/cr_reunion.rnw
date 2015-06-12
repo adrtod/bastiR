@@ -33,7 +33,7 @@ num_reu_next = num_reu + 1
 heure_reu_next = "9H00"
 img_garde = "TAVAILLON_3D"
 img_garde_width = "0.9\\textwidth"
-xlfile = "BEUBOIS_CR_box_1.xlsx"
+xlfile = "BEUBOIS_CR_box_1_export.xlsx"
 sections = c("orga", "tav", "src", "epb")
 photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
 legende_sheet = "LEGENDE"
@@ -42,7 +42,7 @@ cejour_sheet = "CEJOUR"
 photos_sheet = "PHOTOS"
 plans_sheet = "PLANS"
 plansnote_sheet = "PLANSNOTE"
-col_dates = c("DATE", "ECHEANCE", "")
+col_dates = c("DATE", "ECHEANCE")
 xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_export.xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
 origin = "1899-12-30" # Depend du système de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
@@ -88,8 +88,6 @@ if (!(photos_sheet %in% names(xl))) {
 
 \begin{document}
 
-\arrayrulecolor{\Sexpr{grid_col}}
-
 \maketitle
 
 \vspace*{-1cm}
@@ -126,7 +124,8 @@ bastiR::print_tab(orga,
                   col_format="|p{3.88cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
                   rowcol_head = "lightgray", hline=TRUE,
                   header = c("Désignation", "Nom", "Représentant", "Tel", "Portables", "Fax", "Mail", "P", "Dif", "Inv", ""),
-                  vspace_after = "-.5cm")
+                  vspace_after = "-.5cm",
+                  grid_col = grid_col)
 @
 
 <<tab_exe>>=
@@ -139,7 +138,8 @@ bastiR::print_tab(exe,
                   col_format="|p{.7cm}|p{3.1cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
                   rowcol_head = "lightgray", hline=TRUE,
                   header = c("Lots", "Corps d'état", "Entreprises", "Représentant", "Tel", "Portables", "", "Mail", "P", "Dif", "Conv", "Pen Abs."),
-                  vspace_after = "-.5cm")
+                  vspace_after = "-.5cm",
+                  grid_col = grid_col)
 @
 }
 \end{spacing}
@@ -195,20 +195,40 @@ for (c in sections) {
   cat("\\newpage\n")
   bastiR::print_taches(taches, legende, c, header = header, 
                        cle_var = cle_var, classe_var = classe_var, 
-                       format_fun = format_fun)
+                       format_fun = format_fun,
+                       grid_col = grid_col)
 }
 @
 
 
 \newpage
 \section*{ARMOIRE \`A PLANS }
+<<plansnote>>=
+bastiR::print_tab(xl[[plansnote_sheet]][,"TEXTE"], 
+                  col_format="p{\\textwidth}",
+                  hline=FALSE,
+                  header = NULL)
+@
+
+\subsection*{LISTE DES PLANS A JOUR}
+
 <<plans>>=
+plans = xl[[plans_sheet]] %>% 
+  mutate(SECTION = tolower(SECTION)) %>% 
+  mutate(SOUSSECTION = tolower(SOUSSECTION))
+
+bastiR::print_plans(plans, legende,
+                    hline=TRUE,
+                    header = c("Plan", "n°", "Indice", "Date"),
+                    grid_col = grid_col)
 @
 
 \newpage
 \section*{PHOTOGRAPHIES}
 <<photo>>=
-bastiR::print_photos(xl[[photos_sheet]], header = NULL)
+bastiR::print_photos(xl[[photos_sheet]], 
+                     header = NULL,
+                     grid_col = grid_col)
 @
 
 \end{document}

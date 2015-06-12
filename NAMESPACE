@@ -2,6 +2,7 @@
 
 export(prepare_photos)
 export(print_photos)
+export(print_plans)
 export(print_tab)
 export(print_taches)
 export(read_xl)

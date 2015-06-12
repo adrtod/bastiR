@@ -9,7 +9,7 @@ print_tab(df = data.frame(), envir = c("longtable", "tabular", "tabularx"),
   hline = TRUE, format_head = "\\\\centering\\\\bf",
   replace_na = function(x) ifelse(is.na(x), "", x), replace_nl = function(x)
   gsub("\\n", "\\\\\\\\newline ", x), header = colnames(df),
-  vspace_before = "-.8em", vspace_after = "-.8em")
+  grid_col = "lightgray", vspace_before = "-.8em", vspace_after = "-.8em")
 }
 \arguments{
 \item{df}{data.frame}
@@ -32,6 +32,8 @@ print_tab(df = data.frame(), envir = c("longtable", "tabular", "tabularx"),
 \item{replace_nl}{function or NULL. replace newlines}
 
 \item{header}{character vector or NULL. columns header text}
+
+\item{grid_col}{string. color of the grid}
 
 \item{vspace_before}{string or NULL. height of vertical space before the table}
 

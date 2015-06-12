@@ -14,6 +14,7 @@
 #' @param replace_nl function or NULL. replace newlines
 #' @param vspace_before string or NULL. height of vertical space before the table
 #' @param vspace_after string or NULL. height of vertical space after the table
+#' @param grid_col string. color of the grid
 #'
 #' @export
 #' @importFrom tidyr unite_
@@ -29,6 +30,7 @@ print_tab <- function(df = data.frame(),
                       replace_na = function(x) ifelse(is.na(x), "", x),
                       replace_nl = function(x) gsub("\n", "\\\\newline ", x),
                       header = colnames(df),
+                      grid_col = "lightgray",
                       vspace_before = "-.8em",
                       vspace_after = "-.8em") {
   envir = match.arg(envir, c("longtable", "tabular", "tabularx"))
@@ -36,7 +38,9 @@ print_tab <- function(df = data.frame(),
   if (!is.null(vspace_before)) {
     cat("\\vspace*{", vspace_before, "}\n", sep="")
   }
-    
+  
+  cat("\\arrayrulecolor{", grid_col,"}\n", sep="")
+  
   # begin table
   if (!is.null(rowcolors)) {
     cat("\\rowcolors{", rowcolors$begin, "}{", rowcolors$even, "}{", rowcolors$odd, "}\n", sep="")
@@ -180,6 +184,68 @@ print_taches <- function(taches,
   }
 }
 
+#' Print plans to latex
+#'
+#' @param plans data.frame
+#' @param legende data.frame
+#' @param col_format string. column format
+#' @param rowcol_head row color of the header
+#' @param header character vector. header
+#' @param cle_var string. key column name
+#' @param classe_var string. class column name
+#' @param ... further arguments to be passed to print_tab
+#'
+#' @export
+#' @importFrom dplyr %>%
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+#' @importFrom dplyr funs
+print_plans <- function(plans,
+                        legende, 
+                        col_format = c("|p{9cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|"),
+                        rowcol_head = "lightgray",
+                        header = c("PLAN", "N°", "INDICE", "DATE"),
+                        cle_var = "CLE", classe_var = "CLASSE", ...) {
+  
+  print_tab(header = header,
+            col_format = col_format, 
+            rowcol_head = rowcol_head, ...)
+  
+  # sections dans l'ordre de la legende
+  sections = unique(plans$SECTION)
+  ind = match(legende[[cle_var]], sections)
+  ind = ind[!is.na(ind)]
+  sections = sections[ind]
+  
+  for (s in seq_along(sections)) {
+    plans_s = plans %>% 
+      filter(SECTION == sections[s])
+    
+    ind = match(sections[s], legende[[cle_var]])
+    
+    libelle = legende$Nom[ind]
+    cat("{\\bf", libelle, "}\n\n")
+    
+    soussec = unique(plans_s$SOUSSECTION)
+    for (ss in seq_along(soussec)) {
+      
+      ind = match(soussec[ss], legende[[cle_var]])
+      
+      libelle = legende$Nom[ind]
+      cat("{\\bf \\small \\qquad", libelle, "}\n\n")
+      
+      plans_ss = plans_s %>% 
+        filter(SOUSSECTION == soussec[ss])
+      
+      plans_ss = plans_ss %>% 
+        mutate(DATE = ifelse(is.na(DATE), "", format(DATE, "%d/%m/%Y"))) %>% # formatage date
+        select(PLAN, NUM, INDICE, DATE) # ordonne colonnes
+      
+      print_tab(plans_ss, col_format=col_format, header=NULL, ...)
+    }
+  }
+}
 #' print photos to latex
 #'
 #' @param photos data.frame
