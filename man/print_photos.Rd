@@ -4,8 +4,9 @@
 \alias{print_photos}
 \title{print photos to latex}
 \usage{
-print_photos(photos, col_format = "|>{\\\\centering}m{10cm}|m{7cm}|",
-  width = "10cm", height = "5cm", ...)
+print_photos(photos,
+  col_format = "|>{\\\\centering}m{.55\\\\linewidth}|m{.4\\\\linewidth}|",
+  width = "\\\\linewidth", height = ".3\\\\textheight", ...)
 }
 \arguments{
 \item{photos}{data.frame}
@@ -16,7 +17,7 @@ print_photos(photos, col_format = "|>{\\\\centering}m{10cm}|m{7cm}|",
 
 \item{height}{string. photo max height}
 
-\item{...}{further arguments to be passed to print_tab}
+\item{...}{further arguments to be passed to print_table}
 }
 \description{
 print photos to latex

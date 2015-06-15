@@ -4,7 +4,8 @@
 \alias{prepare_photos}
 \title{Prepare photo sheet to be completed}
 \usage{
-prepare_photos(photo_files)
+prepare_photos(photo_files = list.files(".", pattern =
+  ".*\\\\.(jpg|jpeg|JPG|JPEG|png|PNG)"))
 }
 \arguments{
 \item{photo_files}{character vector. paths of the photo files}

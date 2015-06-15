@@ -1,105 +1,87 @@
-\documentclass[a4paper, 11pt]{article}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage[french]{babel}
-\usepackage[margin=2cm]{geometry}
-\usepackage{lmodern}
-\usepackage{hyperref}
-\usepackage{graphicx}
-\usepackage{tabularx}
-\usepackage{longtable}
-\usepackage{fancyhdr}
-\usepackage[table]{xcolor}
-\usepackage{array}
-\usepackage{ulem} % pour barrer \sout
-\usepackage{setspace} % pour définir les interlignes
-\renewcommand*{\familydefault}{\sfdefault}
-\setlongtables % pour pouvoir utiliser les colonnes l r c en longtable
-\setlength{\LTleft}{-20cm plus -1fill} % pour l'alignement horizontal des lontables
-\setlength{\LTright}{\LTleft}
 
 <<setup, include=FALSE>>=
 knitr::opts_chunk$set(results='asis', echo=FALSE)
 
 require(bastiR)
 
-# variables du projet
-titre = "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
-email = "t.weulersse@atelier-d-form.com"
-num_reu = 12
-date_reu = as.Date("2015-04-29")
-date_reu_next = date_reu+7
-num_reu_next = num_reu + 1
-heure_reu_next = "9H00"
-img_garde = "TAVAILLON_3D"
-img_garde_width = "0.9\\textwidth"
-xlfile = "BEUBOIS_CR_box_1_export.xlsx"
-sections = c("orga", "tav", "src", "epb")
-photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
-legende_sheet = "LEGENDE"
-taches_sheet = "TACHES"
-cejour_sheet = "CEJOUR"
-photos_sheet = "PHOTOS"
-plans_sheet = "PLANS"
-plansnote_sheet = "PLANSNOTE"
-col_dates = c("DATE", "ECHEANCE")
-xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_export.xlsx")
-xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
-origin = "1899-12-30" # Depend du système de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
-openxl = TRUE
-cle_var = "CLE"
-classe_var = "CLASSE"
-header = c("Tâche", "Pour le", "Etat")
-format_fun = list(
-  "acteur orga" = function(x) {
-    lib = ifelse(is.na(x$Nom),
-                 toupper(x$Désignation), # pour A TOUTES LES ENTREPRISES
-                 paste(x$Nom, x$Désignation))
-    paste0("\\textbf{", lib, "}\n\n")
-  },
-  "acteur exe" = function(x) {
-    lib = paste(x$Lots, x$Désignation, "-", x$Nom)
-    paste0("\\textbf{", lib, "}\n\n")
-  },
-  "date_reu" = function(x) format(x, "\\hspace*{1.4em}\n\\underline{Réunion du %d %B %Y}\n\n")
-)
-grid_col = "lightgray"
+source("cr_variables.r")
+@
+
+\documentclass[\Sexpr{fontsize}, \Sexpr{classoption}]{\Sexpr{documentclass}}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[\Sexpr{geometry}]{geometry}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[letterspace=\Sexpr{letterspace}]{microtype} % pour espacement de caractères avec \lsstyle
+\usepackage{ulem} % pour barrer \sout
+\usepackage{setspace} % pour définir les interlignes
+\renewcommand*{\familydefault}{\\Sexpr{familydefault}} % police par défaut
+% \graphicspath{{\Sexpr{graphicspath}}}
+
+\usepackage{tabularx}
+\usepackage[table,usenames,dvipsnames]{xcolor}
+\usepackage{array}
+\usepackage{longtable}
+\setlongtables % pour pouvoir utiliser les colonnes l r c en longtable
+\setlength{\LTleft}{-20cm plus -1fill} % pour l'alignement horizontal des lontables
+\setlength{\LTright}{\LTleft}
+
+\usepackage{fancyhdr} % entete et pied de page
+\pagestyle{fancy}
+
+\DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8
+
+\parindent \Sexpr{parindent}
+
+<<colors>>=
+for (i in seq_along(RGBcolors)) {
+  cat("\\definecolor{", names(RGBcolors)[i], "}{RGB}{", paste(RGBcolors[[i]], collapse=","), "}\n", sep="")
+}
+@
+
+\fancyhf{}
+\fancyhead[C]{\Sexpr{entete$C}}
+\fancyhead[L]{\Sexpr{entete$L}}
+\fancyhead[R]{\Sexpr{entete$R}}
+\fancyfoot[C]{\Sexpr{pied$C}}
+\fancyfoot[L]{\Sexpr{pied$L}}
+\fancyfoot[R]{\Sexpr{pied$R}}
+\renewcommand{\headrulewidth}{0pt} % pour ne pas afficher de ligne horizontale en entête
+
+\begin{document}
+
+<<garde>>=
+print_garde(garde)
 @
 
 <<read, include=FALSE>>=
 # lecture fichier
-xl = bastiR::read_xl(xlfile, c(legende_sheet, taches_sheet, cejour_sheet, plans_sheet, plansnote_sheet), 
-                     sheets_opt = photos_sheet, 
-                     col_dates = col_dates, 
-                     origin = origin)
+xl = read_xl(xlfile, c(legende_sheet, taches_sheet, cejour_sheet, plans_sheet, plansnote_sheet), 
+             sheets_opt = photos_sheet, 
+             col_dates = col_dates, 
+             origin = origin)
+@
+
+<<resize_photos, include=FALSE>>=
+if (!dir.exists(backup))
+  dir.create(backup)
+
+resize_photos(photo_files = photo_files,
+              folder = backup, max_width = max_width, max_height = max_height)
+
+photo_files = list.files(backup, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
 @
 
 <<prepare_photo, include=FALSE>>=
 if (!(photos_sheet %in% names(xl))) {
   # prepare tableau photo
   xl[[photos_sheet]] = prepare_photos(photo_files)
-  bastiR::write_xl(xl, xlfile_out, open = openxl)
+  write_xl(xl, xlfile_out, open = openxl)
 }
 @
-
-\title{\Sexpr{titre}}
-\author{\href{mailto:\Sexpr{email}}{\Sexpr{email}}}
-\date{Compte rendu \no \Sexpr{num_reu} de la réunion du \Sexpr{format(date_reu, "%d %B %Y")}}
-
-\begin{document}
-
-\maketitle
-
-\vspace*{-1cm}
-
-\begin{center}
-\includegraphics[width=\Sexpr{img_garde_width}]{\Sexpr{img_garde}}
-\end{center}
-
-\begin{center}
-\textcolor{red}{Réunion de chantier \no \Sexpr{num_reu_next} à \textbf{\Sexpr{heure_reu_next}} le \Sexpr{format(date_reu_next, "%A %d %B %Y")}}
-\end{center}
-
 
 <<legende, include=FALSE>>=
 require(dplyr)
@@ -108,24 +90,22 @@ legende = xl[[legende_sheet]] %>%
   mutate_each_(funs(tolower), c(cle_var, classe_var))
 @
 
-\begin{center}
 \begin{spacing}{.7}
 {\fontsize{6pt}{1em}\selectfont
 \setlength{\tabcolsep}{1pt}
 \renewcommand{\arraystretch}{1}
-
 <<tab_orga>>=
 orga = legende %>% 
   filter(CLASSE == "acteur orga", CLE != "all") %>% 
   select(-CLE, -CLASSE, -Lots) %>% 
   select(Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
 
-bastiR::print_tab(orga, 
-                  col_format="|p{3.88cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
-                  rowcol_head = "lightgray", hline=TRUE,
-                  header = c("Désignation", "Nom", "Représentant", "Tel", "Portables", "Fax", "Mail", "P", "Dif", "Inv", ""),
-                  vspace_after = "-.5cm",
-                  grid_col = grid_col)
+print_table(orga, 
+            col_format="|p{3.88cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
+            rowcol_head = rowcol_head, hline=TRUE,
+            header = c("Désignation", "Nom", "Représentant", "Tel", "Portables", "Fax", "Mail", "P", "Dif", "Inv", ""),
+            vspace_after = "-.68cm",
+            grid_col = grid_col)
 @
 
 <<tab_exe>>=
@@ -134,16 +114,14 @@ exe = legende %>%
   select(-CLE, -CLASSE) %>% 
   select(Lots, Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
 
-bastiR::print_tab(exe, 
-                  col_format="|p{.7cm}|p{3.1cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
-                  rowcol_head = "lightgray", hline=TRUE,
-                  header = c("Lots", "Corps d'état", "Entreprises", "Représentant", "Tel", "Portables", "", "Mail", "P", "Dif", "Conv", "Pen Abs."),
-                  vspace_after = "-.5cm",
-                  grid_col = grid_col)
+print_table(exe, 
+            col_format="|p{.7cm}|p{3.1cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
+            rowcol_head = rowcol_head, hline=TRUE,
+            header = c("Lots", "Corps d'état", "Entreprises", "Représentant", "Tel", "Portables", "", "Mail", "P", "Dif", "Conv", "Pen Abs."),
+            grid_col = grid_col)
 @
 }
 \end{spacing}
-\end{center}
 
 <<edit_taches, include=FALSE>>=
 cejour = xl[[cejour_sheet]] %>% 
@@ -156,8 +134,8 @@ taches = xl[[taches_sheet]] %>%
 
 # recodage et tri
 taches = taches %>% 
-  mutate(ETAT = factor(tolower(ETAT), levels = c("a", "i", "f"))) %>% 
-  mutate(SECTION = factor(tolower(SECTION), levels = sections)) %>% 
+  mutate(ETAT = tolower(ETAT)) %>% 
+  mutate(SECTION = tolower(SECTION)) %>% 
   mutate(ACTEUR = tolower(ACTEUR)) %>% 
   arrange(ETAT, SECTION, ECHEANCE, ACTEUR)
 
@@ -186,49 +164,46 @@ xl_next[[taches_sheet]] = taches
 xl_next[[cejour_sheet]] = cejour_next
 xl_next[[photos_sheet]] = NULL
 
-bastiR::write_xl(xl_next, xlfile_next, open=FALSE)
+write_xl(xl_next, xlfile_next, open=FALSE)
 @
-
 
 <<taches>>=
-for (c in sections) {
-  cat("\\newpage\n")
-  bastiR::print_taches(taches, legende, c, header = header, 
-                       cle_var = cle_var, classe_var = classe_var, 
-                       format_fun = format_fun,
-                       grid_col = grid_col)
-}
+print_taches(taches, legende, header = header_taches, 
+             col_format = c("|p{.75\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|"),
+             cle_var = cle_var, classe_var = classe_var, 
+             format_fun = format_fun,
+             grid_col = grid_col)
 @
 
-
-\newpage
-\section*{ARMOIRE \`A PLANS }
+\clearpage
+\section*{\centering ARMOIRE \`A PLANS }
 <<plansnote>>=
-bastiR::print_tab(xl[[plansnote_sheet]][,"TEXTE"], 
-                  col_format="p{\\textwidth}",
-                  hline=FALSE,
-                  header = NULL)
+print_table(xl[[plansnote_sheet]][,"TEXTE"], 
+            col_format="p{\\textwidth}",
+            hline = FALSE,
+            header = NULL)
 @
 
-\subsection*{LISTE DES PLANS A JOUR}
-
+\subsection*{LISTE DES PLANS \`A JOUR}
 <<plans>>=
 plans = xl[[plans_sheet]] %>% 
   mutate(SECTION = tolower(SECTION)) %>% 
   mutate(SOUSSECTION = tolower(SOUSSECTION))
 
-bastiR::print_plans(plans, legende,
-                    hline=TRUE,
-                    header = c("Plan", "n°", "Indice", "Date"),
-                    grid_col = grid_col)
+print_plans(plans, legende,
+            hline=TRUE,
+            col_format = c("|p{.6\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|"),
+            header = header_plans, 
+            format_fun = format_fun,
+            grid_col = grid_col)
 @
 
-\newpage
-\section*{PHOTOGRAPHIES}
+\clearpage
+\section*{\centering PHOTOGRAPHIES}
 <<photo>>=
-bastiR::print_photos(xl[[photos_sheet]], 
-                     header = NULL,
-                     grid_col = grid_col)
+print_photos(xl[[photos_sheet]], 
+             header = NULL,
+             grid_col = grid_col)
 @
 
 \end{document}

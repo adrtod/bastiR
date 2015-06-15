@@ -1,3 +1,25 @@
+utils::globalVariables(c("FICHIER", "SECTION", "SOUSSECTION", "DATE", "PLAN", 
+                         "NUM", "INDICE", "SECTION", "ACTEUR", "DATE", "ETAT", 
+                         "PRIORITE", "ECHEANCE", "TACHE"))
+
+#' Print front page
+#'
+#' @param garde list
+#'
+#' @export
+print_garde = function(garde) {
+  cat("\\begin{center}\n", sep="")
+  cat("~\\\\\n")
+  cat("{\\LARGE \\bf \\color{gray} ", garde$titre, "\\\\}\n", sep="")
+  cat("{\\Large \\color{gray} ", garde$soustitre , "\\\\}\n", sep="")
+  cat("~\\\\\n")
+  cat("\\includegraphics[width=", garde$img_width, "]{", garde$img,"}\n", sep="")
+  cat("~\\\\~\\\\\n")
+  cat("{\\Large \\color{red} ", garde$reu_next, "\\\\}\n", sep="")
+  cat("~\\\\\n")
+  cat("{\\Large \\bf \\color{blue} \\lsstyle \\underline{", garde$email, "}}\n", sep="")
+  cat("\\end{center}\n")
+}
 
 #' Print table to latex
 #' @param df data.frame
@@ -20,19 +42,19 @@
 #' @importFrom tidyr unite_
 #' @importFrom dplyr mutate_each
 #' @examples  
-#' print_tab(mtcars)
-print_tab <- function(df = data.frame(), 
-                      envir = c("longtable", "tabular", "tabularx"), 
-                      col_format = "", 
-                      rowcolors = NULL,
-                      rowcol_head = "lightgray", hline=TRUE, 
-                      format_head = "\\centering\\bf",
-                      replace_na = function(x) ifelse(is.na(x), "", x),
-                      replace_nl = function(x) gsub("\n", "\\\\newline ", x),
-                      header = colnames(df),
-                      grid_col = "lightgray",
-                      vspace_before = "-.8em",
-                      vspace_after = "-.8em") {
+#' print_table(mtcars)
+print_table <- function(df = data.frame(), 
+                        envir = c("longtable", "tabular", "tabularx"), 
+                        col_format = "", 
+                        rowcolors = NULL,
+                        rowcol_head = "lightgray", hline=TRUE, 
+                        format_head = "\\centering\\bf",
+                        replace_na = function(x) ifelse(is.na(x), "", x),
+                        replace_nl = function(x) gsub("\n", "\\\\newline ", x),
+                        header = colnames(df),
+                        grid_col = "lightgray",
+                        vspace_before = "-.8em",
+                        vspace_after = "-.8em") {
   envir = match.arg(envir, c("longtable", "tabular", "tabularx"))
   
   if (!is.null(vspace_before)) {
@@ -95,18 +117,34 @@ print_tab <- function(df = data.frame(),
   cat("\n")
 }
 
+#' Print object depending on its class
+#'
+#' @param cle string. cle
+#' @param legende data.frame
+#' @param cle_var string. key column name
+#' @param classe_var string. class column name
+#' @param format_fun list. formatting functions
+#' @export
+print_classe <- function(cle, legende, 
+                         format_fun, 
+                         cle_var = "CLE", 
+                         classe_var = "CLASSE") {
+  ind = match(cle, legende[[cle_var]])
+  fmtfun = do.call(switch, c(list(legende[[classe_var]][ind]), format_fun))
+  cat(fmtfun(legende[ind,]))
+}
+
 #' Print tasks to latex
 #'
 #' @param taches data.frame
 #' @param legende data.frame
-#' @param section string. section
 #' @param col_format string. column format
 #' @param rowcol_head row color of the header
 #' @param header character vector. header
 #' @param cle_var string. key column name
 #' @param classe_var string. class column name
 #' @param format_fun list. formatting functions
-#' @param ... further arguments to be passed to print_tab
+#' @param ... further arguments to be passed to print_table
 #'
 #' @export
 #' @importFrom dplyr %>%
@@ -116,70 +154,81 @@ print_tab <- function(df = data.frame(),
 #' @importFrom dplyr mutate_each
 #' @importFrom dplyr funs
 print_taches <- function(taches,
-                         legende, section = "orga", 
-                         col_format = c("|p{11cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|"),
+                         legende,
+                         col_format,
                          rowcol_head = "lightgray",
                          header = c("TACHE", "ECHEANCE", "ETAT"),
                          cle_var = "CLE", classe_var = "CLASSE",
                          format_fun, ...) {
-  ind = match(section, legende[[cle_var]])
-  cat("\\section*{", toupper(legende$Nom[ind]), "}\n\n", sep="")  
   
-  taches = taches %>% 
-    filter(SECTION == section)
-  
-  print_tab(header = header,
-            col_format = col_format, 
-            rowcol_head = rowcol_head, ...)
-  
-  # acteurs dans l'ordre de la legende
-  acteurs = unique(taches$ACTEUR)
-  ind = match(legende[[cle_var]], acteurs)
+  # sections dans l'ordre de la legende
+  sections = unique(taches$SECTION)
+  ind = match(legende[[cle_var]], sections)
   ind = ind[!is.na(ind)]
-  acteurs = acteurs[ind]  
+  sections = sections[ind]
   
-  for (a in seq_along(acteurs)) {
-    taches_a = taches %>% 
-      filter(ACTEUR == acteurs[a])
+  # boucle sur sections
+  for (s in seq_along(sections)) {
+    print_classe(sections[s], legende, 
+                 cle_var = cle_var, 
+                 classe_var = classe_var, 
+                 format_fun = format_fun)
     
-    ind = match(acteurs[a], legende[[cle_var]])
+    taches_s = taches %>% 
+      filter(SECTION == sections[s])
     
-    fmtfun = do.call(switch, c(list(legende[[classe_var]][ind]), format_fun))
-    libelle = fmtfun(legende[ind,])
-    cat(libelle)
+    print_table(header = header,
+                col_format = col_format, 
+                rowcol_head = rowcol_head, ...)
     
-    dates = unique(taches_a$DATE)
-    for (d in seq_along(dates)) {
-      cat(format_fun$date_reu(dates[d]))
+    # acteurs dans l'ordre de la legende
+    acteurs = unique(taches_s$ACTEUR)
+    ind = match(legende[[cle_var]], acteurs)
+    ind = ind[!is.na(ind)]
+    acteurs = acteurs[ind]  
+    
+    # boucle sur acteurs
+    for (a in seq_along(acteurs)) {
+      taches_a = taches_s %>% 
+        filter(ACTEUR == acteurs[a])
       
-      taches_d = taches_a %>% 
-        filter(DATE == dates[d])
+      print_classe(acteurs[a], legende, 
+                   cle_var = cle_var, 
+                   classe_var = classe_var, 
+                   format_fun = format_fun)
       
-      ind = match(taches_d$ETAT, legende[[cle_var]])
-      ind_a = match("a", legende[[cle_var]])
-      taches_d = taches_d %>% 
-        mutate(ETAT = ifelse(ETAT == "a", 
-                             ifelse(is.na(PRIORITE),
-                                    legende$Nom[ind_a],
-                                    PRIORITE),
-                             legende$Nom[ind])) %>%  # libelle etat
-        mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
-        select(TACHE, ECHEANCE, ETAT) %>% # ordonne colonnes
-        mutate(TACHE = paste("$\\bullet$", TACHE)) # ajoute puce devant tache
+      dates = unique(taches_a$DATE)
       
-      # formatage ligne fait, urgent, rappel
-      rowformat = switch(tolower(taches_d$ETAT),
-                         fait = "\\sout{",
-                         rappel = "\\textcolor{red}{",
-                         urgent = "\\textcolor{red}{",
-                         "{")
-      
-      rowfun = function(x) paste0(rowformat, x, "}")
-      
-      taches_d = taches_d %>% 
-        mutate_each(funs(rowfun))
-      
-      print_tab(taches_d, col_format=col_format, header=NULL, ...)
+      # boucle sur dates
+      for (d in seq_along(dates)) {
+        cat(format_fun$date_reu(dates[d]))
+        
+        taches_d = taches_a %>% 
+          filter(DATE == dates[d])
+        
+        ind = match(taches_d$ETAT, legende[[cle_var]])
+        taches_d = taches_d %>% 
+          mutate(ETAT = ifelse(ETAT == "a" & !is.na(PRIORITE), 
+                               PRIORITE,
+                               legende$Nom[ind])) %>%  # libelle etat
+          mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
+          select(TACHE, ECHEANCE, ETAT) %>% # ordonne colonnes
+          mutate(TACHE = paste("$\\bullet$", TACHE)) # ajoute puce devant tache
+        
+        # formatage ligne fait, urgent, rappel
+        rowformat = switch(tolower(taches_d$ETAT),
+                           fait = "\\sout{",
+                           rappel = "\\textcolor{red}{",
+                           urgent = "\\textcolor{red}{",
+                           "{")
+        
+        rowfun = function(x) paste0(rowformat, x, "}")
+        
+        taches_d = taches_d %>% 
+          mutate_each(funs(rowfun))
+        
+        print_table(taches_d, col_format=col_format, header=NULL, ...)
+      }
     }
   }
 }
@@ -193,7 +242,8 @@ print_taches <- function(taches,
 #' @param header character vector. header
 #' @param cle_var string. key column name
 #' @param classe_var string. class column name
-#' @param ... further arguments to be passed to print_tab
+#' @param format_fun list. formatting functions
+#' @param ... further arguments to be passed to print_table
 #'
 #' @export
 #' @importFrom dplyr %>%
@@ -203,14 +253,15 @@ print_taches <- function(taches,
 #' @importFrom dplyr funs
 print_plans <- function(plans,
                         legende, 
-                        col_format = c("|p{9cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|>{\\centering}p{2cm}|"),
+                        col_format,
                         rowcol_head = "lightgray",
-                        header = c("PLAN", "N°", "INDICE", "DATE"),
-                        cle_var = "CLE", classe_var = "CLASSE", ...) {
+                        header = c("PLAN", "NUM", "INDICE", "DATE"),
+                        cle_var = "CLE", classe_var = "CLASSE", 
+                        format_fun, ...) {
   
-  print_tab(header = header,
-            col_format = col_format, 
-            rowcol_head = rowcol_head, ...)
+  print_table(header = header,
+              col_format = col_format, 
+              rowcol_head = rowcol_head, ...)
   
   # sections dans l'ordre de la legende
   sections = unique(plans$SECTION)
@@ -222,18 +273,17 @@ print_plans <- function(plans,
     plans_s = plans %>% 
       filter(SECTION == sections[s])
     
-    ind = match(sections[s], legende[[cle_var]])
-    
-    libelle = legende$Nom[ind]
-    cat("{\\bf", libelle, "}\n\n")
+    print_classe(sections[s], legende, 
+                 cle_var = cle_var, 
+                 classe_var = classe_var, 
+                 format_fun = format_fun)
     
     soussec = unique(plans_s$SOUSSECTION)
     for (ss in seq_along(soussec)) {
-      
-      ind = match(soussec[ss], legende[[cle_var]])
-      
-      libelle = legende$Nom[ind]
-      cat("{\\bf \\small \\qquad", libelle, "}\n\n")
+      print_classe(soussec[ss], legende, 
+                   cle_var = cle_var, 
+                   classe_var = classe_var, 
+                   format_fun = format_fun)
       
       plans_ss = plans_s %>% 
         filter(SOUSSECTION == soussec[ss])
@@ -242,25 +292,26 @@ print_plans <- function(plans,
         mutate(DATE = ifelse(is.na(DATE), "", format(DATE, "%d/%m/%Y"))) %>% # formatage date
         select(PLAN, NUM, INDICE, DATE) # ordonne colonnes
       
-      print_tab(plans_ss, col_format=col_format, header=NULL, ...)
+      print_table(plans_ss, col_format=col_format, header=NULL, ...)
     }
   }
 }
+
 #' print photos to latex
 #'
 #' @param photos data.frame
 #' @param col_format string. column format
 #' @param width string. photo max width
 #' @param height string. photo max height
-#' @param ... further arguments to be passed to print_tab
+#' @param ... further arguments to be passed to print_table
 #'
 #' @export
 #' @importFrom dplyr mutate
-print_photos = function(photos, col_format="|>{\\centering}m{10cm}|m{7cm}|", 
-                       width = "10cm",
-                       height="5cm", ...) {
+print_photos = function(photos, col_format="|>{\\centering}m{.55\\linewidth}|m{.4\\linewidth}|", 
+                        width = "\\linewidth",
+                        height=".3\\textheight", ...) {
   photos = mutate(photos, FICHIER = paste0("\\includegraphics[height=", height, ", width=", width, 
-                            ", keepaspectratio]{", tools::file_path_sans_ext(FICHIER), "}"))
+                                           ", keepaspectratio]{", tools::file_path_sans_ext(FICHIER), "}"))
   
-  print_tab(photos, col_format=col_format, ...)
+  print_table(photos, col_format=col_format, ...)
 }

@@ -47,7 +47,7 @@ Nom           | Description               | Colonnes
 - Introduction à R et RStudio : TODO
 
 # Auteurs
-Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientodeschini/), [Baptiste Dulau](http://www.oxalis-scop.fr/environnement-et-developpement-durable/userprofile/bdulau).
+Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientodeschini/), [Baptiste Dulau](http://www.bastir-energie.fr/).
 
 **bastiR** est un logiciel libre distribué sous la Licence [GPL-2](http://www.gnu.org/licenses/gpl-2.0.html).
 
@@ -88,6 +88,7 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
 - [knitr](http://yihui.name/knitr/)
 - [dplyr](https://github.com/hadley/dplyr) : [introduction](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html), [aide mémoire](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 - R & Excel : [readxl](https://github.com/hadley/readxl), [openxlsx](https://github.com/awalker89/openxlsx), <http://www.r-bloggers.com/a-million-ways-to-connect-r-and-excel/>
+- [LaTeX](http://fr.wikibooks.org/wiki/LaTeX)
     
 # Liste des tâches
 - [ ] code en anglais, aide en français ?

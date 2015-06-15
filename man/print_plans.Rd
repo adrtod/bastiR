@@ -4,10 +4,9 @@
 \alias{print_plans}
 \title{Print plans to latex}
 \usage{
-print_plans(plans, legende,
-  col_format = c("|p{9cm}|>{\\\\centering}p{2cm}|>{\\\\centering}p{2cm}|>{\\\\centering}p{2cm}|"),
-  rowcol_head = "lightgray", header = c("PLAN", "N°", "INDICE", "DATE"),
-  cle_var = "CLE", classe_var = "CLASSE", ...)
+print_plans(plans, legende, col_format, rowcol_head = "lightgray",
+  header = c("PLAN", "NUM", "INDICE", "DATE"), cle_var = "CLE",
+  classe_var = "CLASSE", format_fun, ...)
 }
 \arguments{
 \item{plans}{data.frame}
@@ -24,7 +23,9 @@ print_plans(plans, legende,
 
 \item{classe_var}{string. class column name}
 
-\item{...}{further arguments to be passed to print_tab}
+\item{format_fun}{list. formatting functions}
+
+\item{...}{further arguments to be passed to print_table}
 }
 \description{
 Print plans to latex

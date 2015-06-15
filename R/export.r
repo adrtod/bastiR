@@ -5,12 +5,62 @@
 #'
 #' @export
 #' @importFrom dplyr data_frame
-prepare_photos <- function(photo_files) {
+prepare_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")) {
   df = data_frame(FICHIER = photo_files, 
                   COMMENTAIRE = as.character(rep(NA, length(photo_files))))
   return(df)
 }
 
+#' Resize photos
+#'
+#' @param photo_files character vector. paths of the photo files
+#' @param folder string. output folder of the photos
+#' @param max_width maximum photo width
+#' @param max_height maximum photo height
+#'
+#' @export
+#' @importFrom tools file_ext
+#' @importFrom png readPNG
+#' @importFrom jpeg readJPEG
+resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)"),
+                          folder = "temp", max_width = 800, max_height = 600) {
+  out = character(0)
+  for (i in seq_along(photo_files)) {
+    f = photo_files[[i]]
+    ext = file_ext(f)
+    file_out = file.path(folder, basename(f))
+    if (tolower(ext) == "png") {
+      readfun = readPNG
+      devfun = png
+    } else if (tolower(ext) %in% c("jpg", "jpeg")) {
+      readfun = readJPEG
+      devfun = jpeg
+    } else {
+      warning("photo extension not supported:", f)
+      next
+    }
+    img = readfun(f)
+    h = dim(img)[1] # height
+    w = dim(img)[2] # width
+    r = w/h # ratio
+    if (w>max_width) {
+      w = max_width
+      h = w/r
+    }
+    if (h>max_height) {
+      h = max_height
+      w = h*r
+    }
+    devfun(file_out, width = w, height = h, quality = 100)
+    par(mar=rep(0,4))
+    plot(c(0, 1), c(0, 1), type="n", xlab = "", ylab = "",
+         bty="n", xaxt="n", yaxt="n", xaxs="i", yaxs="i")
+    rasterImage(img, 0, 0, 1, 1)
+    dev.off()
+    out = c(out, file_out)
+  }
+  invisible(out)
+}
 
 #' Write data.frame to Excel file
 #'
