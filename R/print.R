@@ -47,7 +47,8 @@ print_table <- function(df = data.frame(),
                         envir = c("longtable", "tabular", "tabularx"), 
                         col_format = "", 
                         rowcolors = NULL,
-                        rowcol_head = "lightgray", hline=TRUE, 
+                        rowcol_head = "lightgray",
+                        hline = TRUE, 
                         format_head = "\\centering\\bf",
                         replace_na = function(x) ifelse(is.na(x), "", x),
                         replace_nl = function(x) gsub("\n", "\\\\newline ", x),
@@ -210,7 +211,7 @@ print_taches <- function(taches,
         taches_d = taches_d %>% 
           mutate(ETAT = ifelse(ETAT == "a" & !is.na(PRIORITE), 
                                PRIORITE,
-                               legende$Nom[ind])) %>%  # libelle etat
+                               legende$NOM[ind])) %>%  # libelle etat
           mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
           select(TACHE, ECHEANCE, ETAT) %>% # ordonne colonnes
           mutate(TACHE = paste("$\\bullet$", TACHE)) # ajoute puce devant tache

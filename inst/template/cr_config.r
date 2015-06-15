@@ -21,7 +21,7 @@ garde$titre = "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
 garde$soustitre = paste("Compte rendu \\no", num_reu, "de la réunion du", format(date_reu, "%d %B %Y"))
 garde$img = "images/TAVAILLON_3D"
 garde$img_width = "0.8\\textwidth"
-garde$reu_next = paste0("Réunion de chantier  \\no ", num_reu_next, " à {\\bf", heure_reu_next, "} le", format(date_reu_next, "%A %d %B %Y"))
+garde$reu_next = paste0("Réunion de chantier \\no ", num_reu_next, " à {\\bf ", heure_reu_next, "} le ", format(date_reu_next, "%A %d %B %Y"))
 garde$email = "t.weulersse@atelier-d-form.com"
 
 # Couleurs perso ---------------------------------------------------------------
@@ -43,7 +43,7 @@ pied$C = "{\\color{DformVert} \\raggedleft www.ateliers-d-form.com\\\\
 Tél : 03.89.80.94.84 - Fax : 03.89.80.95.79 - mail : contact@atelier-d-form.com - APE : 7111 Z / SIRET : 49 945 834 00030}"
 
 # Fichier excel ----------------------------------------------------------------
-xlfile = "BEUBOIS_CR_box_1.xlsx"
+xlfile = "BEUBOIS_CR_box.xlsx"
 xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_export.xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
 legende_sheet = "LEGENDE"
@@ -66,31 +66,33 @@ quality = 95
 backup = format(date_reu, "%Y-%m-%d")
 
 # Formatage --------------------------------------------------------------------
+header_orga = c("Désignation", "Nom", "Représentants", "Téléphones", "Mobiles", "Fax", "Courriels", "P", "Dif", "Inv", "")
+header_exe = c("Lot", "Corps d'état", "Entreprise", "Représentants", "Téléphones", "Mobiles", "", "Courriels", "P", "Dif", "Conv", "Pen Abs.")
 header_taches = c("Tâche", "Pour le", "Etat")
-header_plans = c("Plan", "n°", "Indice", "Date")
+header_plans = c("Plan", "N°", "Indice", "Date")
 grid_col = "lightgray"
 rowcol_head = "lightgray"
 
 format_fun = list()
 format_fun$"section taches" <- function(x) {
-  paste0("\\clearpage\n\\section*{\\centering ", toupper(x$Nom), "}\n\n", sep="")
+  paste0("\\clearpage\n\\section*{\\centering ", toupper(x$NOM), "}\n\n", sep="")
 }
 format_fun$"acteur orga" <- function(x) {
-  lib = ifelse(is.na(x$Nom),
-               toupper(x$Désignation), # pour A TOUTES LES ENTREPRISES
-               paste(x$Nom, x$Désignation))
+  lib = ifelse(is.na(x$NOM),
+               toupper(x$DESIGNATION), # pour A TOUTES LES ENTREPRISES
+               paste(x$NOM, x$DESIGNATION))
   paste0("\\textbf{", lib, "}\n\n")
 }
 format_fun$"acteur exe" <- function(x) {
-  lib = paste(x$Lots, x$Désignation, "-", x$Nom)
+  lib = paste(x$LOT, x$DESIGNATION, "-", x$NOM)
   paste0("\\textbf{", lib, "}\n\n")
 }
 format_fun$"date_reu" <- function(x) {
   format(x, "\\hspace*{1.4em}\n\\underline{Réunion du %d %B %Y}\n\n")
 }
 format_fun$"section plans" <- function(x) {
-  paste0("{\\bf ", x$Nom, "}\n\n")
+  paste0("{\\bf ", x$NOM, "}\n\n")
 }
 format_fun$"soussection plans" <- function(x) {
-  paste0("{\\bf \\small \\qquad", x$Nom, "}\n\n")
+  paste0("{\\bf \\small \\qquad", x$NOM, "}\n\n")
 }

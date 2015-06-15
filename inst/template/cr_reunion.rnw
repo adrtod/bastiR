@@ -104,12 +104,12 @@ legende = xl[[legende_sheet]] %>%
 <<tab_orga>>=
 orga = legende %>% 
   filter(CLASSE == "acteur orga", CLE != "all") %>% 
-  select(Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
+  select(DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, INV, C)
 
 print_table(orga, 
             col_format="|p{3.88cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
-            rowcol_head = rowcol_head, hline=TRUE,
-            header = c("Désignation", "Nom", "Représentant", "Tel", "Portables", "Fax", "Mail", "P", "Dif", "Inv", ""),
+            rowcol_head = rowcol_head,
+            header = header_orga,
             vspace_after = "-.68cm",
             grid_col = grid_col)
 @
@@ -117,12 +117,12 @@ print_table(orga,
 <<tab_exe>>=
 exe = legende %>% 
   filter(CLASSE == "acteur exe") %>% 
-  select(Lots, Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
+  select(LOT, DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, INV, C)
 
 print_table(exe, 
             col_format="|p{.7cm}|p{3.1cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
-            rowcol_head = rowcol_head, hline=TRUE,
-            header = c("Lots", "Corps d'état", "Entreprises", "Représentant", "Tel", "Portables", "", "Mail", "P", "Dif", "Conv", "Pen Abs."),
+            rowcol_head = rowcol_head,
+            header = header_exe,
             grid_col = grid_col)
 @
 }
