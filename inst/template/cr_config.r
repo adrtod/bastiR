@@ -46,12 +46,6 @@ Tél : 03.89.80.94.84 - Fax : 03.89.80.95.79 - mail : contact@atelier-d-form.com
 xlfile = "BEUBOIS_CR_box.xlsx"
 xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_export.xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
-legende_sheet = "LEGENDE"
-taches_sheet = "TACHES"
-cejour_sheet = "CEJOUR"
-photos_sheet = "PHOTOS"
-plans_sheet = "PLANS"
-plansnote_sheet = "PLANSNOTE"
 col_dates = c("DATE", "ECHEANCE")
 origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
 openxl = TRUE

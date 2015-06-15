@@ -10,13 +10,12 @@
 #'
 #' @export
 #' @importFrom readxl excel_sheets
-read_xl <- function(xlfile, sheets = 1, 
+read_xl <- function(xlfile, sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS", "PLANSNOTE"), 
                     sheets_opt = "PHOTOS",
                     col_dates = c("DATE", "ECHEANCE"), 
                     origin = "1899-12-30") {
   
   xlsheets = readxl::excel_sheets(xlfile)
-
   xl = list()
   
   for (s in c(sheets, sheets_opt)) {

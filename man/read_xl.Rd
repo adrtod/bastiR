@@ -4,8 +4,9 @@
 \alias{read_xl}
 \title{Read excel file}
 \usage{
-read_xl(xlfile, sheets = 1, sheets_opt = "PHOTOS", col_dates = c("DATE",
-  "ECHEANCE"), origin = "1899-12-30")
+read_xl(xlfile, sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS",
+  "PLANSNOTE"), sheets_opt = "PHOTOS", col_dates = c("DATE", "ECHEANCE"),
+  origin = "1899-12-30")
 }
 \arguments{
 \item{xlfile}{string. path to the file}
