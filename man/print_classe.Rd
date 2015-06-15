@@ -4,8 +4,7 @@
 \alias{print_classe}
 \title{Print object depending on its class}
 \usage{
-print_classe(cle, legende, format_fun, cle_var = "CLE",
-  classe_var = "CLASSE")
+print_classe(cle, legende, format_fun)
 }
 \arguments{
 \item{cle}{string. cle}
@@ -13,10 +12,6 @@ print_classe(cle, legende, format_fun, cle_var = "CLE",
 \item{legende}{data.frame}
 
 \item{format_fun}{list. formatting functions}
-
-\item{cle_var}{string. key column name}
-
-\item{classe_var}{string. class column name}
 }
 \description{
 Print object depending on its class

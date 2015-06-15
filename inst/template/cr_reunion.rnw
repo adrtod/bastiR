@@ -93,7 +93,12 @@ if (!(photos_sheet %in% names(xl))) {
 require(dplyr)
 
 legende = xl[[legende_sheet]] %>% 
-  mutate_each_(funs(tolower), c(cle_var, classe_var))
+  mutate_each(funs(tolower), CLE, CLASSE) %>% 
+  filter(!is.na(CLE))
+
+cles = legende$CLE
+if (anyDuplicated(cles))
+  stop("clés dupliquées dans la légende:", cles[duplicated(cles)], "\n")
 @
 
 % Affichage tableau page de garde ----------------------------------------------
@@ -163,7 +168,6 @@ taches = taches %>%
 <<taches>>=
 print_taches(taches, legende, header = header_taches, 
              col_format = c("|p{.75\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|"),
-             cle_var = cle_var, classe_var = classe_var, 
              format_fun = format_fun,
              grid_col = grid_col)
 @

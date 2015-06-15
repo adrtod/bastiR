@@ -122,16 +122,12 @@ print_table <- function(df = data.frame(),
 #'
 #' @param cle string. cle
 #' @param legende data.frame
-#' @param cle_var string. key column name
-#' @param classe_var string. class column name
 #' @param format_fun list. formatting functions
 #' @export
 print_classe <- function(cle, legende, 
-                         format_fun, 
-                         cle_var = "CLE", 
-                         classe_var = "CLASSE") {
-  ind = match(cle, legende[[cle_var]])
-  fmtfun = do.call(switch, c(list(legende[[classe_var]][ind]), format_fun))
+                         format_fun) {
+  ind = match(cle, legende$CLE)
+  fmtfun = do.call(switch, c(list(legende$CLASSE[ind]), format_fun))
   cat(fmtfun(legende[ind,]))
 }
 
@@ -142,8 +138,6 @@ print_classe <- function(cle, legende,
 #' @param col_format string. column format
 #' @param rowcol_head row color of the header
 #' @param header character vector. header
-#' @param cle_var string. key column name
-#' @param classe_var string. class column name
 #' @param format_fun list. formatting functions
 #' @param ... further arguments to be passed to print_table
 #'
@@ -159,20 +153,17 @@ print_taches <- function(taches,
                          col_format,
                          rowcol_head = "lightgray",
                          header = c("TACHE", "ECHEANCE", "ETAT"),
-                         cle_var = "CLE", classe_var = "CLASSE",
                          format_fun, ...) {
   
   # sections dans l'ordre de la legende
   sections = unique(taches$SECTION)
-  ind = match(legende[[cle_var]], sections)
+  ind = match(legende$CLE, sections)
   ind = ind[!is.na(ind)]
   sections = sections[ind]
   
   # boucle sur sections
   for (s in seq_along(sections)) {
     print_classe(sections[s], legende, 
-                 cle_var = cle_var, 
-                 classe_var = classe_var, 
                  format_fun = format_fun)
     
     taches_s = taches %>% 
@@ -184,7 +175,7 @@ print_taches <- function(taches,
     
     # acteurs dans l'ordre de la legende
     acteurs = unique(taches_s$ACTEUR)
-    ind = match(legende[[cle_var]], acteurs)
+    ind = match(legende$CLE, acteurs)
     ind = ind[!is.na(ind)]
     acteurs = acteurs[ind]  
     
@@ -194,8 +185,6 @@ print_taches <- function(taches,
         filter(ACTEUR == acteurs[a])
       
       print_classe(acteurs[a], legende, 
-                   cle_var = cle_var, 
-                   classe_var = classe_var, 
                    format_fun = format_fun)
       
       dates = unique(taches_a$DATE)
@@ -207,7 +196,7 @@ print_taches <- function(taches,
         taches_d = taches_a %>% 
           filter(DATE == dates[d])
         
-        ind = match(taches_d$ETAT, legende[[cle_var]])
+        ind = match(taches_d$ETAT, legende$CLE)
         taches_d = taches_d %>% 
           mutate(ETAT = ifelse(ETAT == "a" & !is.na(PRIORITE), 
                                PRIORITE,
@@ -241,8 +230,6 @@ print_taches <- function(taches,
 #' @param col_format string. column format
 #' @param rowcol_head row color of the header
 #' @param header character vector. header
-#' @param cle_var string. key column name
-#' @param classe_var string. class column name
 #' @param format_fun list. formatting functions
 #' @param ... further arguments to be passed to print_table
 #'
@@ -257,7 +244,6 @@ print_plans <- function(plans,
                         col_format,
                         rowcol_head = "lightgray",
                         header = c("PLAN", "NUM", "INDICE", "DATE"),
-                        cle_var = "CLE", classe_var = "CLASSE", 
                         format_fun, ...) {
   
   print_table(header = header,
@@ -266,7 +252,7 @@ print_plans <- function(plans,
   
   # sections dans l'ordre de la legende
   sections = unique(plans$SECTION)
-  ind = match(legende[[cle_var]], sections)
+  ind = match(legende$CLE, sections)
   ind = ind[!is.na(ind)]
   sections = sections[ind]
   
@@ -275,15 +261,11 @@ print_plans <- function(plans,
       filter(SECTION == sections[s])
     
     print_classe(sections[s], legende, 
-                 cle_var = cle_var, 
-                 classe_var = classe_var, 
                  format_fun = format_fun)
     
     soussec = unique(plans_s$SOUSSECTION)
     for (ss in seq_along(soussec)) {
       print_classe(soussec[ss], legende, 
-                   cle_var = cle_var, 
-                   classe_var = classe_var, 
                    format_fun = format_fun)
       
       plans_ss = plans_s %>% 

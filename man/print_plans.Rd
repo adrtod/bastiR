@@ -5,8 +5,7 @@
 \title{Print plans to latex}
 \usage{
 print_plans(plans, legende, col_format, rowcol_head = "lightgray",
-  header = c("PLAN", "NUM", "INDICE", "DATE"), cle_var = "CLE",
-  classe_var = "CLASSE", format_fun, ...)
+  header = c("PLAN", "NUM", "INDICE", "DATE"), format_fun, ...)
 }
 \arguments{
 \item{plans}{data.frame}
@@ -18,10 +17,6 @@ print_plans(plans, legende, col_format, rowcol_head = "lightgray",
 \item{rowcol_head}{row color of the header}
 
 \item{header}{character vector. header}
-
-\item{cle_var}{string. key column name}
-
-\item{classe_var}{string. class column name}
 
 \item{format_fun}{list. formatting functions}
 

@@ -5,8 +5,7 @@
 \title{Print tasks to latex}
 \usage{
 print_taches(taches, legende, col_format, rowcol_head = "lightgray",
-  header = c("TACHE", "ECHEANCE", "ETAT"), cle_var = "CLE",
-  classe_var = "CLASSE", format_fun, ...)
+  header = c("TACHE", "ECHEANCE", "ETAT"), format_fun, ...)
 }
 \arguments{
 \item{taches}{data.frame}
@@ -18,10 +17,6 @@ print_taches(taches, legende, col_format, rowcol_head = "lightgray",
 \item{rowcol_head}{row color of the header}
 
 \item{header}{character vector. header}
-
-\item{cle_var}{string. key column name}
-
-\item{classe_var}{string. class column name}
 
 \item{format_fun}{list. formatting functions}
 

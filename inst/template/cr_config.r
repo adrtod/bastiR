@@ -55,8 +55,6 @@ plansnote_sheet = "PLANSNOTE"
 col_dates = c("DATE", "ECHEANCE")
 origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
 openxl = TRUE
-cle_var = "CLE"
-classe_var = "CLASSE"
 
 # Photos -----------------------------------------------------------------------
 photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
