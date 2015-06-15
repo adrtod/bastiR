@@ -2,11 +2,14 @@
 <<setup, include=FALSE>>=
 knitr::opts_chunk$set(results='asis', echo=FALSE)
 
+# chargement du package bastiR
 require(bastiR)
 
-source("cr_variables.r")
+# chargement des variables du projet
+source("cr_config.r")
 @
 
+% Préambule LaTeX ==============================================================
 \documentclass[\Sexpr{fontsize}, \Sexpr{classoption}]{\Sexpr{documentclass}}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -14,13 +17,11 @@ source("cr_variables.r")
 \usepackage[\Sexpr{geometry}]{geometry}
 \usepackage{lmodern}
 \usepackage{hyperref}
-\usepackage{graphicx}
+\usepackage[]{graphicx}
 \usepackage[letterspace=\Sexpr{letterspace}]{microtype} % pour espacement de caractères avec \lsstyle
 \usepackage{ulem} % pour barrer \sout
 \usepackage{setspace} % pour définir les interlignes
 \renewcommand*{\familydefault}{\\Sexpr{familydefault}} % police par défaut
-% \graphicspath{{\Sexpr{graphicspath}}}
-
 \usepackage{tabularx}
 \usepackage[table,usenames,dvipsnames]{xcolor}
 \usepackage{array}
@@ -28,13 +29,11 @@ source("cr_variables.r")
 \setlongtables % pour pouvoir utiliser les colonnes l r c en longtable
 \setlength{\LTleft}{-20cm plus -1fill} % pour l'alignement horizontal des lontables
 \setlength{\LTright}{\LTleft}
-
 \usepackage{fancyhdr} % entete et pied de page
 \pagestyle{fancy}
-
 \DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8
-
 \parindent \Sexpr{parindent}
+% \graphicspath{{\Sexpr{graphicspath}}}
 
 <<colors>>=
 for (i in seq_along(RGBcolors)) {
@@ -42,6 +41,7 @@ for (i in seq_along(RGBcolors)) {
 }
 @
 
+% entête et pied de page -------------------------------------------------------
 \fancyhf{}
 \fancyhead[C]{\Sexpr{entete$C}}
 \fancyhead[L]{\Sexpr{entete$L}}
@@ -51,12 +51,15 @@ for (i in seq_along(RGBcolors)) {
 \fancyfoot[R]{\Sexpr{pied$R}}
 \renewcommand{\headrulewidth}{0pt} % pour ne pas afficher de ligne horizontale en entête
 
+% Début document LaTeX =========================================================
 \begin{document}
 
+% Page de garde ----------------------------------------------------------------
 <<garde>>=
 print_garde(garde)
 @
 
+% Lecture fichier Excel --------------------------------------------------------
 <<read, include=FALSE>>=
 # lecture fichier
 xl = read_xl(xlfile, c(legende_sheet, taches_sheet, cejour_sheet, plans_sheet, plansnote_sheet), 
@@ -65,6 +68,7 @@ xl = read_xl(xlfile, c(legende_sheet, taches_sheet, cejour_sheet, plans_sheet, p
              origin = origin)
 @
 
+% Retaillage des photos --------------------------------------------------------
 <<resize_photos, include=FALSE>>=
 if (!dir.exists(backup))
   dir.create(backup)
@@ -75,6 +79,7 @@ resize_photos(photo_files = photo_files,
 photo_files = list.files(backup, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
 @
 
+% Prépare feuille de calcul PHOTOS ---------------------------------------------
 <<prepare_photo, include=FALSE>>=
 if (!(photos_sheet %in% names(xl))) {
   # prepare tableau photo
@@ -83,6 +88,7 @@ if (!(photos_sheet %in% names(xl))) {
 }
 @
 
+% Légende ----------------------------------------------------------------------
 <<legende, include=FALSE>>=
 require(dplyr)
 
@@ -90,6 +96,7 @@ legende = xl[[legende_sheet]] %>%
   mutate_each_(funs(tolower), c(cle_var, classe_var))
 @
 
+% Affichage tableau page de garde ----------------------------------------------
 \begin{spacing}{.7}
 {\fontsize{6pt}{1em}\selectfont
 \setlength{\tabcolsep}{1pt}
@@ -97,7 +104,6 @@ legende = xl[[legende_sheet]] %>%
 <<tab_orga>>=
 orga = legende %>% 
   filter(CLASSE == "acteur orga", CLE != "all") %>% 
-  select(-CLE, -CLASSE, -Lots) %>% 
   select(Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
 
 print_table(orga, 
@@ -111,7 +117,6 @@ print_table(orga,
 <<tab_exe>>=
 exe = legende %>% 
   filter(CLASSE == "acteur exe") %>% 
-  select(-CLE, -CLASSE) %>% 
   select(Lots, Désignation, Nom, Représentant, Téléphone, Mobile, Fax, Courriel, P, Dif, Inv, C)
 
 print_table(exe, 
@@ -123,6 +128,7 @@ print_table(exe,
 }
 \end{spacing}
 
+% Mise en forme des taches -----------------------------------------------------
 <<edit_taches, include=FALSE>>=
 cejour = xl[[cejour_sheet]] %>% 
   filter(!is.na(SECTION)) %>%  # effacer lignes vides
@@ -134,10 +140,10 @@ taches = xl[[taches_sheet]] %>%
 
 # recodage et tri
 taches = taches %>% 
-  mutate(ETAT = tolower(ETAT)) %>% 
+  mutate(ETAT = tolower(ETAT)) %>%
   mutate(SECTION = tolower(SECTION)) %>% 
   mutate(ACTEUR = tolower(ACTEUR)) %>% 
-  arrange(ETAT, SECTION, ECHEANCE, ACTEUR)
+  arrange(ETAT, SECTION, ECHEANCE, ACTEUR) # trier les lignes par ETAT, SECTION, ECHEANCE puis ACTEUR
 
 # ajouter rappel
 row = (taches$ETAT == "a") & (taches$ECHEANCE <= date_reu)
@@ -151,22 +157,9 @@ taches$PRIORITE[row] = "URGENT"
 taches = taches %>% 
   filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*7) ) )
 
-# prepare cejour prochaine reunion
-nafun = function(x) { y = NA; class(y) = class(x); return(y) }
-cejour_next = cejour %>% 
-  summarise_each(funs(nafun)) %>% # 1 ligne vide
-  mutate(DATE = date_reu_next) %>% # date prochaine reu
-  slice(rep(1, 10)) # dupliquer 10 lignes
-
-# exporte xls prochaine reunion
-xl_next = xl
-xl_next[[taches_sheet]] = taches
-xl_next[[cejour_sheet]] = cejour_next
-xl_next[[photos_sheet]] = NULL
-
-write_xl(xl_next, xlfile_next, open=FALSE)
 @
 
+% Sections Taches --------------------------------------------------------------
 <<taches>>=
 print_taches(taches, legende, header = header_taches, 
              col_format = c("|p{.75\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|"),
@@ -175,6 +168,7 @@ print_taches(taches, legende, header = header_taches,
              grid_col = grid_col)
 @
 
+% Section ARMOIRE A PLANS ------------------------------------------------------
 \clearpage
 \section*{\centering ARMOIRE \`A PLANS }
 <<plansnote>>=
@@ -198,6 +192,7 @@ print_plans(plans, legende,
             grid_col = grid_col)
 @
 
+% Section PHOTOGRAPHIES --------------------------------------------------------
 \clearpage
 \section*{\centering PHOTOGRAPHIES}
 <<photo>>=
@@ -206,4 +201,23 @@ print_photos(xl[[photos_sheet]],
              grid_col = grid_col)
 @
 
+% Fin document LaTeX ===========================================================
 \end{document}
+
+% Export fichier Excel prochaine réunion ---------------------------------------
+<<next_reu>>=
+# prepare cejour prochaine reunion
+nafun = function(x) { y = NA; class(y) = class(x); return(y) }
+cejour_next = cejour %>% 
+  summarise_each(funs(nafun)) %>% # 1 ligne vide
+  mutate(DATE = date_reu_next) %>% # date prochaine reu
+  slice(rep(1, 10)) # dupliquer 10 lignes
+
+# exporte xls prochaine reunion
+xl_next = xl
+xl_next[[taches_sheet]] = taches
+xl_next[[cejour_sheet]] = cejour_next
+xl_next[[photos_sheet]] = NULL
+
+write_xl(xl_next, xlfile_next, open=FALSE)
+@
