@@ -1,5 +1,5 @@
 # bastiR
-[![Travis-CI Build Status](https://img.shields.io/travis/adrtod/bastiR.svg)](https://travis-ci.org/adrtod/bastiR)
+[![Build Status](https://travis-ci.org/adrtod/bastiR.svg?branch=master)](https://travis-ci.org/adrtod/bastiR)
 [![GPLv2 License](http://img.shields.io/badge/license-GPLv2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
 
 Le package R **bastiR** a pour but d'être une collection d'outils pour faciliter le suivi de chantier.
@@ -34,13 +34,15 @@ devtools::install_github("adrtod/bastiR")
 - 1 ligne = 1 individu
 - Colonnes de dates au format date dans Excel
 - N'utiliser que les caractères reconnus par la norme [ISO 8859-1](https://fr.wikipedia.org/wiki/ISO_8859-1)
-    - utiliser les commandes LaTeX `\euro{}`, `\oe{}`, `\OE{}`
+  Pour le reste utiliser les commandes LaTeX
+    - `\euro{}`, `\oe{}`, `\OE{}`
+    - [symboles mathématiques et lettres grecques](http://www.commentcamarche.net/contents/620-latex-table-de-caracteres) entre dollars, ex: `$\lambda$`
 
 ### Feuilles de calcul (onglets)
 Nom           | Description               | Colonnes
 ------------- | ------------------------- | -------------
 **`LEGENDE`** | Légende des objets        | *Obligatoires* : <br> **`CLASSE`** : classe d'objet désigné par une clé (`acteur orga`, `acteur exe`, `section`, `etat`) <br> **`CLE`** : clé, courte chaîne de caractères, insensible à la casse <br> **`NOM`** : nom de l'objet <br> *Facultatives* : <br> **`DESIGNATION`** : nom du lot <br> **`LOT`** : numéro du lot <br> **`REPRESENTANT`**,	**`TEL`**,	**`MOBILE`**,	**`FAX`**,	**`EMAIL`**,	**`P`**,	**`DIF`**,	**`INV`**,	**`C`** ...
-**`TACHES`**  | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche, accepte formattage et symboles mathématiques latex (ex: `$\lambda$`) <br> **`ETAT`** : clé (`a`=A faire, `f`=Fait, `i`=Info) <br> **`PRIORITE`** : automatique (`RAPPEL` ou `URGENT`)
+**`TACHES`**  | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche <br> **`ETAT`** : clé (`a`=A faire, `f`=Fait, `i`=Info) <br> **`PRIORITE`** : automatique (`RAPPEL` ou `URGENT`)
 **`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHES`**, sauf **`PRIORITE`**
 **`PLANS`**   | Armoire à plans           | **`SECTION`** <br> **`SOUSSECTION`** <br> **`PLAN`**,	**`NUM`**,	**`INDICE`**,	**`DATE`**
 **`PLANSNOTE`** | Note pour l'armoire à plans | **`TEXTE`**
