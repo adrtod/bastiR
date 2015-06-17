@@ -33,6 +33,8 @@ devtools::install_github("adrtod/bastiR")
 - 1 colonne = 1 variable, libellé en 1ère ligne
 - 1 ligne = 1 individu
 - Colonnes de dates au format date dans Excel
+- N'utiliser que les caractères reconnus par la norme [ISO 8859-1](https://fr.wikipedia.org/wiki/ISO_8859-1)
+    - utiliser les commandes LaTeX `\euro{}`, `\oe{}`, `\OE{}`
 
 ### Feuilles de calcul (onglets)
 Nom           | Description               | Colonnes
