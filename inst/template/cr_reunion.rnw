@@ -175,7 +175,7 @@ print_taches(taches, legende,
              grid_col = grid_col)
 @
 
-% Section ARMOIRE A PLANS ------------------------------------------------------
+% Section ARMOIRE À PLANS ------------------------------------------------------
 \clearpage
 \section*{\centering ARMOIRE À PLANS }
 <<plansnote>>=
