@@ -14,7 +14,7 @@ _**bastiR** est actuellement en contruction._
 - [R](http://www.r-project.org/) version >= 3.2.0 (2015-04-16)
 - [Rtools](http://cran.r-project.org/bin/windows/Rtools/) (Windows seulement)
 - [RStudio](http://www.rstudio.com/) version >= 0.99.441
-- [LaTeX](http://www.latex-project.org/)
+- [LaTeX](http://www.latex-project.org/) :
     - Windows : [MiKTeX](http://miktex.org/)
     - OS X : [MacTeX](https://tug.org/mactex/)
     - Debian/Ubuntu : `sudo apt-get install texlive`
