@@ -6,22 +6,24 @@ knitr::opts_chunk$set(results='asis', echo=FALSE)
 require(bastiR)
 
 # chargement des variables du projet
-source("cr_config.r")
+source("cr_config.r", encoding = "ISO8859-1")
 @
 
-% PrÃ©ambule LaTeX ==============================================================
+% Préambule LaTeX ==============================================================
 \documentclass[\Sexpr{fontsize}, \Sexpr{classoption}]{\Sexpr{documentclass}}
 \usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
+\usepackage[latin1]{inputenc}
 \usepackage[french]{babel}
-\usepackage[\Sexpr{geometry}]{geometry}
 \usepackage{lmodern}
+\usepackage{eurosym} % pour \euro
+% \DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8
+\usepackage[\Sexpr{geometry}]{geometry}
 \usepackage{hyperref}
 \usepackage[]{graphicx}
-\usepackage[letterspace=\Sexpr{letterspace}]{microtype} % pour espacement de caractÃ¨res avec \lsstyle
+\usepackage[letterspace=\Sexpr{letterspace}]{microtype} % pour espacement de caractères avec \lsstyle
 \usepackage{ulem} % pour barrer \sout
-\usepackage{setspace} % pour dÃ©finir les interlignes
-\renewcommand*{\familydefault}{\\Sexpr{familydefault}} % police par dÃ©faut
+\usepackage{setspace} % pour définir les interlignes
+\renewcommand*{\familydefault}{\\Sexpr{familydefault}} % police par défaut
 \usepackage{tabularx}
 \usepackage[table,usenames,dvipsnames]{xcolor}
 \usepackage{array}
@@ -31,7 +33,6 @@ source("cr_config.r")
 \setlength{\LTright}{\LTleft}
 \usepackage{fancyhdr} % entete et pied de page
 \pagestyle{fancy}
-\DeclareUnicodeCharacter{00A0}{~} % pour espaces insÃ©cables en utf8
 \parindent \Sexpr{parindent}
 % \graphicspath{{\Sexpr{graphicspath}}}
 
@@ -41,7 +42,7 @@ for (i in seq_along(RGBcolors)) {
 }
 @
 
-% entÃªte et pied de page -------------------------------------------------------
+% entête et pied de page -------------------------------------------------------
 \fancyhf{}
 \fancyhead[C]{\Sexpr{entete$C}}
 \fancyhead[L]{\Sexpr{entete$L}}
@@ -49,9 +50,9 @@ for (i in seq_along(RGBcolors)) {
 \fancyfoot[C]{\Sexpr{pied$C}}
 \fancyfoot[L]{\Sexpr{pied$L}}
 \fancyfoot[R]{\Sexpr{pied$R}}
-\renewcommand{\headrulewidth}{0pt} % pour ne pas afficher de ligne horizontale en entÃªte
+\renewcommand{\headrulewidth}{0pt} % pour ne pas afficher de ligne horizontale en entête
 
-% DÃ©but document LaTeX =========================================================
+% Début document LaTeX =========================================================
 \begin{document}
 
 % Page de garde ----------------------------------------------------------------
@@ -78,7 +79,7 @@ resize_photos(photo_files = photo_files,
 photo_files = list.files(backup, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
 @
 
-% PrÃ©pare feuille de calcul PHOTOS ---------------------------------------------
+% Prépare feuille de calcul PHOTOS ---------------------------------------------
 <<prepare_photo, include=FALSE>>=
 if (!("PHOTOS" %in% names(xl))) {
   # prepare tableau photo
@@ -87,7 +88,7 @@ if (!("PHOTOS" %in% names(xl))) {
 }
 @
 
-% LÃ©gende ----------------------------------------------------------------------
+% Légende ----------------------------------------------------------------------
 <<legende, include=FALSE>>=
 require(dplyr)
 
@@ -97,7 +98,7 @@ legende = xl$LEGENDE %>%
 
 cles = legende$CLE
 if (anyDuplicated(cles))
-  stop("clÃ©s dupliquÃ©es dans la lÃ©gende:", cles[duplicated(cles)], "\n")
+  stop("clés dupliquées dans la légende:", cles[duplicated(cles)], "\n")
 @
 
 % Affichage tableau page de garde ----------------------------------------------
@@ -140,7 +141,7 @@ cejour = xl$CEJOUR %>%
   filter(!is.na(SECTION)) %>%  # effacer lignes vides
   mutate(ETAT = ifelse(is.na(ETAT), "a", ETAT)) # ETAT vide -> A faire
 
-# ajouter cejour Ã  taches
+# ajouter cejour à taches
 taches = xl$TACHES %>% 
   bind_rows(cejour)
 
@@ -159,7 +160,7 @@ taches$PRIORITE[row] = "RAPPEL"
 row = (taches$ETAT == "a") & (taches$ECHEANCE <= date_reu-7)
 taches$PRIORITE[row] = "URGENT"
 
-# supprime Fait et supÃ©rieur Ã  3 semaines
+# supprime Fait et supérieur à 3 semaines
 taches = taches %>% 
   filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*7) ) )
 
@@ -176,7 +177,7 @@ print_taches(taches, legende,
 
 % Section ARMOIRE A PLANS ------------------------------------------------------
 \clearpage
-\section*{\centering ARMOIRE Ã€ PLANS }
+\section*{\centering ARMOIRE À PLANS }
 <<plansnote>>=
 print_table(xl$PLANSNOTE[,"TEXTE"], 
             col_format="p{\\textwidth}",
@@ -184,7 +185,7 @@ print_table(xl$PLANSNOTE[,"TEXTE"],
             header = NULL)
 @
 
-\subsection*{LISTE DES PLANS Ã€ JOUR}
+\subsection*{LISTE DES PLANS À JOUR}
 <<plans>>=
 plans = xl$PLANS %>% 
   mutate(SECTION = tolower(SECTION)) %>% 
@@ -211,7 +212,7 @@ print_photos(xl$PHOTOS,
 % Fin document LaTeX ===========================================================
 \end{document}
 
-% Fichier Excel prochaine rÃ©union ---------------------------------------
+% Fichier Excel prochaine réunion ---------------------------------------
 <<next_reu, include = FALSE>>=
 # prepare cejour prochaine reunion
 nafun = function(x) { y = NA; class(y) = class(x); return(y) }
