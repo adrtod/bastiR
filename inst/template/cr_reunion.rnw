@@ -212,7 +212,7 @@ print_photos(xl$PHOTOS,
 \end{document}
 
 % Fichier Excel prochaine réunion ---------------------------------------
-<<next_reu>>=
+<<next_reu, include = FALSE>>=
 # prepare cejour prochaine reunion
 nafun = function(x) { y = NA; class(y) = class(x); return(y) }
 cejour_next = cejour %>% 

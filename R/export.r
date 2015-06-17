@@ -67,11 +67,23 @@ resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpe
 #' @param df data.frame or list of data.frames
 #' @param xlfile_out string. path to the output excel file
 #' @param open logical. activate opening the file in Excel/LibreOffice/OpenOffice
+#' @param zip_path string. path containing zip executable on windows
 #'
 #' @export
 #' @importFrom openxlsx write.xlsx
 #' @importFrom openxlsx openXL
-write_xl <- function(df, xlfile_out, open = TRUE) {
+write_xl <- function(df, 
+                     xlfile_out, 
+                     open = FALSE,
+                     zip_path = "C:\\Rtools\\bin") {
+  
+  if (.Platform$OS.type == "windows") {
+    tryCatch(shell("zip"), 
+             warning = function(w)
+               Sys.setenv(PATH = paste(Sys.getenv("PATH"), zip_path, sep=";"))
+    )
+  }
+  
   # export
   openxlsx::write.xlsx(df, file = xlfile_out)
   
