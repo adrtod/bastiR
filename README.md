@@ -11,8 +11,8 @@ _**bastiR** est actuellement en contruction._
 <img src="http://www.r-project.org/Rlogo.png" alt="R" height=32/> &nbsp;
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/92/LaTeX_logo.svg/220px-LaTeX_logo.svg.png" alt="LaTeX" height=32/>
 
-- [R](http://www.r-project.org/) version 3.2.0 (2015-04-16)
-- [RStudio](http://www.rstudio.com/) version 0.99.441
+- [R](http://www.r-project.org/) version >= 3.2.0 (2015-04-16)
+- [RStudio](http://www.rstudio.com/) version >= 0.99.441
 - [LaTeX](http://www.latex-project.org/)
     - Windows : [MiKTeX](http://miktex.org/)
     - OS X : [MacTeX](https://tug.org/mactex/)
