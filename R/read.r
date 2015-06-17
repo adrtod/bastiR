@@ -10,7 +10,8 @@
 #'
 #' @export
 #' @importFrom readxl excel_sheets
-read_xl <- function(xlfile, sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS", "PLANSNOTE"), 
+read_xl <- function(xlfile, 
+                    sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS", "PLANSNOTE"), 
                     sheets_opt = "PHOTOS",
                     col_dates = c("DATE", "ECHEANCE"), 
                     origin = "1899-12-30") {
@@ -21,7 +22,7 @@ read_xl <- function(xlfile, sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS", "
   for (s in c(sheets, sheets_opt)) {
     if (!(s %in% xlsheets)) {
       if (s %in% sheets_opt)
-        next() # passer au suivant si optionnel
+        next # passer au suivant si optionnel
       else
         stop("la feuille de calcul ", s, " est absente ")
     }

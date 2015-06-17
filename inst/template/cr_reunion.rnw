@@ -111,11 +111,12 @@ orga = legende %>%
   select(DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, INV, C)
 
 print_table(orga, 
-            col_format="|p{3.88cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
+            header = header$orga,
+            col_format = col_format$orga, 
             rowcol_head = rowcol_head,
-            header = header_orga,
-            vspace_after = "-.68cm",
-            grid_col = grid_col)
+            hline = hline,
+            grid_col = grid_col,
+            vspace_after = "-.68cm")
 @
 
 <<tab_exe>>=
@@ -124,9 +125,10 @@ exe = legende %>%
   select(LOT, DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, INV, C)
 
 print_table(exe, 
-            col_format="|p{.7cm}|p{3.1cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|", 
+            header = header$exe,
+            col_format = col_format$exe, 
             rowcol_head = rowcol_head,
-            header = header_exe,
+            hline = hline,
             grid_col = grid_col)
 @
 }
@@ -165,15 +167,16 @@ taches = taches %>%
 
 % Sections Taches --------------------------------------------------------------
 <<taches>>=
-print_taches(taches, legende, header = header_taches, 
-             col_format = c("|p{.75\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|"),
+print_taches(taches, legende, 
+             header = header$taches, 
+             col_format = col_format$taches,
              format_fun = format_fun,
              grid_col = grid_col)
 @
 
 % Section ARMOIRE A PLANS ------------------------------------------------------
 \clearpage
-\section*{\centering ARMOIRE \`A PLANS }
+\section*{\centering ARMOIRE À PLANS }
 <<plansnote>>=
 print_table(xl$PLANSNOTE[,"TEXTE"], 
             col_format="p{\\textwidth}",
@@ -181,17 +184,17 @@ print_table(xl$PLANSNOTE[,"TEXTE"],
             header = NULL)
 @
 
-\subsection*{LISTE DES PLANS \`A JOUR}
+\subsection*{LISTE DES PLANS À JOUR}
 <<plans>>=
 plans = xl$PLANS %>% 
   mutate(SECTION = tolower(SECTION)) %>% 
   mutate(SOUSSECTION = tolower(SOUSSECTION))
 
 print_plans(plans, legende,
-            hline=TRUE,
-            col_format = c("|p{.6\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|"),
-            header = header_plans, 
+            col_format = col_format$plans,
+            header = header$plans, 
             format_fun = format_fun,
+            hline = hline,
             grid_col = grid_col)
 @
 
@@ -201,13 +204,14 @@ print_plans(plans, legende,
 <<photo>>=
 print_photos(xl$PHOTOS, 
              header = NULL,
+             hline = hline,
              grid_col = grid_col)
 @
 
 % Fin document LaTeX ===========================================================
 \end{document}
 
-% Export fichier Excel prochaine réunion ---------------------------------------
+% Fichier Excel prochaine réunion ---------------------------------------
 <<next_reu>>=
 # prepare cejour prochaine reunion
 nafun = function(x) { y = NA; class(y) = class(x); return(y) }
@@ -216,7 +220,7 @@ cejour_next = cejour %>%
   mutate(DATE = date_reu_next) %>% # date prochaine reu
   slice(rep(1, 10)) # dupliquer 10 lignes
 
-# exporte xls prochaine reunion
+# exporte xlsx prochaine reunion
 xl_next = xl
 xl_next$TACHES = taches
 xl_next$CEJOUR = cejour_next

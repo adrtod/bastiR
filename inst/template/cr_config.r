@@ -44,7 +44,7 @@ Tél : 03.89.80.94.84 - Fax : 03.89.80.95.79 - mail : contact@atelier-d-form.com
 
 # Fichier excel ----------------------------------------------------------------
 xlfile = "BEUBOIS_CR_box.xlsx"
-xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_export.xlsx")
+xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu, ".xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
 col_dates = c("DATE", "ECHEANCE")
 origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
@@ -58,12 +58,19 @@ quality = 95
 backup = format(date_reu, "%Y-%m-%d")
 
 # Formatage --------------------------------------------------------------------
-header_orga = c("Désignation", "Nom", "Représentants", "Téléphones", "Mobiles", "Fax", "Courriels", "P", "Dif", "Inv", "")
-header_exe = c("Lot", "Corps d'état", "Entreprise", "Représentants", "Téléphones", "Mobiles", "", "Courriels", "P", "Dif", "Conv", "Pen Abs.")
-header_taches = c("Tâche", "Pour le", "Etat")
-header_plans = c("Plan", "N°", "Indice", "Date")
+header = list()
+header$orga = c("Désignation", "Nom", "Représentants", "Téléphones", "Mobiles", "Fax", "Courriels", "P", "Dif", "Inv", "")
+header$exe = c("Lot", "Corps d'état", "Entreprise", "Représentants", "Téléphones", "Mobiles", "", "Courriels", "P", "Dif", "Conv", "Pen Abs.")
+header$taches = c("Tâche", "Pour le", "Etat")
+header$plans = c("Plan", "N°", "Indice", "Date")
+col_format = list()
+col_format$orga = "|p{3.88cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|"
+col_format$exe = "|p{.7cm}|p{3.1cm}|p{2.4cm}|p{1.7cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.5cm}|>{\\centering}p{.3cm}|>{\\centering}p{.4cm}|>{\\color{red}\\centering}p{.5cm}|>{\\centering}p{.9cm}|"
+col_format$taches = "|p{.75\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|"
+col_format$plans = "|p{.6\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|>{\\centering}p{.1\\textwidth}|"
 grid_col = "lightgray"
 rowcol_head = "lightgray"
+hline = TRUE
 
 format_fun = list()
 format_fun$"section taches" <- function(x) {
