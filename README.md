@@ -96,7 +96,7 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
 - [LaTeX](http://fr.wikibooks.org/wiki/LaTeX)
     
 # Liste des tâches
-- [ ] code en anglais, aide en franÃ§ais ?
+- [ ] code en anglais, aide en français ?
 - [ ] tester sous windows
 - [ ] écrire intro origine et but du projet
 - [ ] ajouter ressources
