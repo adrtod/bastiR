@@ -21,9 +21,21 @@ _**bastiR** est actuellement en contruction._
     - Fedora/RedHat : `sudo yum install texlive`
 
 # Installation
-Pour installer la dernière version en développement sur [GitHub](https://github.com/adrtod/rchallenge), taper la commande suivante sous R :
+Pour installer la dernière version en développement sur [GitHub](https://github.com/adrtod/rchallenge), entrer la commande suivante sous R :
 ```r
 # install.packages("devtools")
+devtools::install_github("adrtod/bastiR")
+```
+
+### Installation rapide sous Windows
+1. Installez [R](http://cran.r-project.org/bin/windows/base/)
+2. Ouvrez la console R puis entrez les commandes suivantes pour installer tous les logiciels requis ansi que le package **bastiR** :
+
+```r
+install.packages(c("installr", "devtools"))
+installr::install.rtools()
+installr::install.rstudio()
+installr::install.miktex(64) # remplacez 64 par 32 pour la version 32-bit
 devtools::install_github("adrtod/bastiR")
 ```
 
