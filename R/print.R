@@ -196,6 +196,16 @@ print_taches <- function(taches,
         taches_d = taches_a %>% 
           filter(DATE == dates[d])
         
+        rowformat = rep("{", nrow(taches_d))
+        
+        # formatage ligne A faire, A valider, Rappel ou Urgent
+        row = tolower(taches_d$ETAT) %in% c("af", "av")  & (!is.na(taches_d$PRIORITE))
+        rowformat[row] = "\\textcolor{red}{"
+        
+        # formatage ligne Annule
+        row = (tolower(taches_d$ETAT) == "an")
+        rowformat[row] = "\\sout{"
+        
         ind = match(taches_d$ETAT, legende$CLE)
         taches_d = taches_d %>% 
           mutate(ETAT = ifelse(ETAT %in% c("f", "v") & !is.na(DATEREALISATION), 
@@ -203,24 +213,13 @@ print_taches <- function(taches,
                                legende$NOM[ind])) %>%  # libelle etat
           mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
           mutate(TACHE = paste("$\\bullet$", TACHE)) %>% # ajoute puce devant tache
-          select(TACHE, ECHEANCE, ETAT, PRIORITE) # ordonne colonnes
-          
-        # formatage ligne annule, urgent, rappel
-        for (i in 1:nrow(taches_d)) {
-          rowformat = switch(iconv(tolower(taches_d$ETAT[i]), to="ASCII//TRANSLIT"), # minuscule sans caracteres speciaux
-                             "annule" = "\\sout{",
-                             "a faire" = ifelse(is.na(taches_d$PRIORITE[i]), "{", "\\textcolor{red}{"), # cas Rappel ou Urgent
-                             "a valider" = ifelse(is.na(taches_d$PRIORITE[i]), "{", "\\textcolor{red}{"),
-                             "{")
-          
-          rowfun = function(x) ifelse(is.na(x), "", paste0(rowformat, x, "}"))
-          
-          for (j in 1:ncol(taches_d))
-            taches_d[i,j] = rowfun(taches_d[i,j])
-        }
-        
-        taches_d = taches_d %>% 
           select(TACHE, ECHEANCE, ETAT) # ordonne colonnes
+        
+        # applique formatage
+        rowfun = function(x) ifelse(is.na(x), "", paste0(rowformat, x, "}"))
+        
+        for (j in 1:ncol(taches_d))
+          taches_d[[j]] = rowfun(taches_d[[j]])
         
         print_table(taches_d, col_format=col_format, header=NULL, ...)
       }

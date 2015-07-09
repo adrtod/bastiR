@@ -37,9 +37,10 @@ source("cr_config.r", encoding = "ISO8859-1")
 \usepackage{fancyhdr} % entete et pied de page
 \pagestyle{fancy}
 \renewcommand{\sectionmark}[1]{\markboth{#1}{}} % commande pour titre de section sans numéro dans l'entête
+\setlength\headheight{14.5pt}
 
 \usepackage{titlesec}
-\titleformat{\section}[wrap]{}{}{0em}{\phantom} % supprime affichage des titres de sections en début de section
+\titleformat{\section}[block]{}{}{0em}{\vphantom}[\vspace*{-2em}] % supprime affichage des titres de sections en début de section
 
 
 <<colors>>=

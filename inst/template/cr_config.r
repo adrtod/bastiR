@@ -2,7 +2,7 @@
 
 # Document ---------------------------------------------------------------------
 fontsize = "11pt" # taille de police par défaut
-geometry = "top=2.5cm, bottom=3cm, left=1.5cm, right=1.5cm" # marges
+geometry = "top=2.5cm, bottom=3.5cm, left=1.5cm, right=1.5cm" # marges
 documentclass = "article" # classe du document
 classoption = "a4paper" # options du document
 parindent = "0em" # indentation de paragraphe
