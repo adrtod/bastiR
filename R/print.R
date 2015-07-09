@@ -198,27 +198,29 @@ print_taches <- function(taches,
         
         ind = match(taches_d$ETAT, legende$CLE)
         taches_d = taches_d %>% 
-          mutate(ETAT = ifelse(ETAT %in% c("af", "av") & !is.na(PRIORITE), 
-                               PRIORITE,
-                               ifelse(ETAT %in% c("f", "v") & !is.na(DATEREALISATION), 
-                                      paste0(legende$NOM[ind], " le ", format(DATEREALISATION, "%d/%m/%Y")),
-                                      legende$NOM[ind]
-                                      ))) %>%  # libelle etat
+          mutate(ETAT = ifelse(ETAT %in% c("f", "v") & !is.na(DATEREALISATION), 
+                               paste0(legende$NOM[ind], " le ", format(DATEREALISATION, "%d/%m/%Y")),
+                               legende$NOM[ind])) %>%  # libelle etat
           mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
-          select(TACHE, ECHEANCE, ETAT) %>% # ordonne colonnes
-          mutate(TACHE = paste("$\\bullet$", TACHE)) # ajoute puce devant tache
-        
+          mutate(TACHE = paste("$\\bullet$", TACHE)) %>% # ajoute puce devant tache
+          select(TACHE, ECHEANCE, ETAT, PRIORITE) # ordonne colonnes
+          
         # formatage ligne annule, urgent, rappel
-        rowformat = switch(sapply(tolower(taches_d$ETAT), function(x) iconv(x, to="ASCII//TRANSLIT")), # minuscule sans caracteres speciaux
-                           annule = "\\sout{",
-                           rappel = "\\textcolor{red}{",
-                           urgent = "\\textcolor{red}{",
-                           "{")
-        
-        rowfun = function(x) paste0(rowformat, x, "}")
+        for (i in 1:nrow(taches_d)) {
+          rowformat = switch(iconv(tolower(taches_d$ETAT[i]), to="ASCII//TRANSLIT"), # minuscule sans caracteres speciaux
+                             "annule" = "\\sout{",
+                             "a faire" = ifelse(is.na(taches_d$PRIORITE[i]), "{", "\\textcolor{red}{"), # cas Rappel ou Urgent
+                             "a valider" = ifelse(is.na(taches_d$PRIORITE[i]), "{", "\\textcolor{red}{"),
+                             "{")
+          
+          rowfun = function(x) ifelse(is.na(x), "", paste0(rowformat, x, "}"))
+          
+          for (j in 1:ncol(taches_d))
+            taches_d[i,j] = rowfun(taches_d[i,j])
+        }
         
         taches_d = taches_d %>% 
-          mutate_each(funs(rowfun))
+          select(TACHE, ECHEANCE, ETAT) # ordonne colonnes
         
         print_table(taches_d, col_format=col_format, header=NULL, ...)
       }
@@ -289,8 +291,8 @@ print_plans <- function(plans,
         
         # double boucle parce que segfault inexplique avec traitement colonnes ou mutate_each !?
         for (i in ind)
-          for (c in colnames(plans_ss))
-            plans_ss[i,c] = rowfun(plans_ss[i,c])
+          for (j in 1:ncol(plans_ss))
+            plans_ss[i,j] = rowfun(plans_ss[i,j])
       }
       
       print_table(plans_ss, col_format=col_format, header=NULL, ...)
