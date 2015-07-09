@@ -31,7 +31,7 @@ RGBcolors$DformVert = c(131,182,27)
 # Entete -----------------------------------------------------------------------
 entete = list()
 entete$C = "\\large FAS et FATH au Beubois\\\\
-Compte-Rendu de chantier\\\\
+Compte rendu de chantier\\\\
 {\\bf \\Large \\leftmark}"
 entete$L = "\\leavevmode\\smash{\\raisebox{6mm}{\\parbox[c]{\\linewidth}{\\includegraphics[width=\\linewidth]{img/Dform_logo}}}}"
 entete$R = "\\thepage"
