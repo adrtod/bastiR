@@ -14,7 +14,7 @@ prepare_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jp
 #' Resize photos
 #'
 #' @param photo_files character vector. paths of the photo files
-#' @param folder string. output folder of the photos
+#' @param folder string. output folder of the resized photos
 #' @param max_width maximum photo width
 #' @param max_height maximum photo height
 #'
@@ -23,7 +23,7 @@ prepare_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jp
 #' @importFrom png readPNG
 #' @importFrom jpeg readJPEG
 resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)"),
-                          folder = "temp", max_width = 800, max_height = 600) {
+                          folder = "tmp", max_width = 800, max_height = 600) {
   out = character(0)
   for (i in seq_along(photo_files)) {
     f = photo_files[[i]]
@@ -34,7 +34,7 @@ resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpe
       devfun = png
     } else if (tolower(ext) %in% c("jpg", "jpeg")) {
       readfun = readJPEG
-      devfun = jpeg
+      devfun = function(...) jpeg(..., quality = 100)
     } else {
       warning("photo extension not supported:", f)
       next
@@ -51,7 +51,7 @@ resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpe
       h = max_height
       w = h*r
     }
-    devfun(file_out, width = w, height = h, quality = 100)
+    devfun(file_out, width = w, height = h)
     par(mar=rep(0,4))
     plot(c(0, 1), c(0, 1), type="n", xlab = "", ylab = "",
          bty="n", xaxt="n", yaxt="n", xaxs="i", yaxs="i")

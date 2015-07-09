@@ -5,13 +5,13 @@
 \title{Resize photos}
 \usage{
 resize_photos(photo_files = list.files(".", pattern =
-  ".*\\\\.(jpg|jpeg|JPG|JPEG|png|PNG)"), folder = "temp", max_width = 800,
+  ".*\\\\.(jpg|jpeg|JPG|JPEG|png|PNG)"), folder = "tmp", max_width = 800,
   max_height = 600)
 }
 \arguments{
 \item{photo_files}{character vector. paths of the photo files}
 
-\item{folder}{string. output folder of the photos}
+\item{folder}{string. output folder of the resized photos}
 
 \item{max_width}{maximum photo width}
 
