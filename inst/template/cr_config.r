@@ -46,7 +46,7 @@ Tél : 03.89.80.94.84 - Fax : 03.89.80.95.79 - mail : contact@atelier-d-form.com 
 xlfile = "BEUBOIS_CR_box.xlsx"
 xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu, ".xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
-col_dates = c("DATE", "ECHEANCE")
+col_dates = c("DATE", "ECHEANCE", "DATEREALISATION")
 origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
 openxl = TRUE
 
@@ -56,6 +56,7 @@ max_width = 800
 max_height = 600
 quality = 95
 backup = format(date_reu, "%Y-%m-%d")
+temp = "tmp"
 
 # Formatage --------------------------------------------------------------------
 header = list()
@@ -80,14 +81,14 @@ format_fun$"acteur orga" <- function(x) {
   lib = ifelse(is.na(x$NOM),
                toupper(x$DESIGNATION), # pour A TOUTES LES ENTREPRISES
                paste(x$NOM, x$DESIGNATION))
-  paste0("\\textbf{", lib, "}\n\n")
+  paste0("\\vspace*{1em}\\textbf{", lib, "}\n\n")
 }
 format_fun$"acteur exe" <- function(x) {
   lib = paste(x$LOT, x$DESIGNATION, "-", x$NOM)
-  paste0("\\textbf{", lib, "}\n\n")
+  paste0("\\vspace*{1em}\\textbf{", lib, "}\n\n")
 }
 format_fun$"date_reu" <- function(x) {
-  format(x, "\\hspace*{1.4em}\n\\underline{Réunion du %d %B %Y}\n\n")
+  format(x, "\\vspace*{.5em}\\hspace*{1.4em}\n\\underline{Réunion du %d %B %Y}\n\n")
 }
 format_fun$"section plans" <- function(x) {
   paste0("{\\bf ", x$NOM, "}\n\n")

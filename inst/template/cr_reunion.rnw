@@ -68,15 +68,25 @@ xl = read_xl(xlfile,
              origin = origin)
 @
 
+% Déplacer les photos --------------------------------------------------------
+<<move_photos, include=FALSE>>=
+if (!dir.exists(backup)) {
+  dir.create(backup)
+  ok = file.copy(photo_files, backup)
+  file.remove(photo_files[ok])
+}
+
+photo_files = list.files(backup, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)", full.names = TRUE)
+@
+
 % Retaillage des photos --------------------------------------------------------
 <<resize_photos, include=FALSE>>=
-if (!dir.exists(backup))
-  dir.create(backup)
+if (!dir.exists(temp)) {
+  dir.create(temp)
+}
 
-resize_photos(photo_files = photo_files,
-              folder = backup, max_width = max_width, max_height = max_height)
-
-photo_files = list.files(backup, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
+photo_files = resize_photos(photo_files = photo_files, folder = temp,
+                            max_width = max_width, max_height = max_height)
 @
 
 % Prépare feuille de calcul PHOTOS ---------------------------------------------
@@ -139,7 +149,7 @@ print_table(exe,
 <<edit_taches, include=FALSE>>=
 cejour = xl$CEJOUR %>% 
   filter(!is.na(SECTION)) %>%  # effacer lignes vides
-  mutate(ETAT = ifelse(is.na(ETAT), "a", ETAT)) # ETAT vide -> A faire
+  mutate(ETAT = ifelse(is.na(ETAT), "af", ETAT)) # ETAT vide -> A faire
 
 # ajouter cejour à taches
 taches = xl$TACHES %>% 
@@ -153,16 +163,16 @@ taches = taches %>%
   arrange(ETAT, SECTION, ECHEANCE, ACTEUR) # trier les lignes par ETAT, SECTION, ECHEANCE puis ACTEUR
 
 # ajouter rappel
-row = (taches$ETAT == "a") & (taches$ECHEANCE <= date_reu)
+row = (taches$ETAT %in% c("af", "av")) & (taches$ECHEANCE <= date_reu)
 taches$PRIORITE[row] = "RAPPEL"
 
 # ajouter urgent
-row = (taches$ETAT == "a") & (taches$ECHEANCE <= date_reu-7)
+row = (taches$ETAT %in% c("af", "av")) & (taches$ECHEANCE <= date_reu-7)
 taches$PRIORITE[row] = "URGENT"
 
-# supprime Fait et supérieur à 3 semaines
+# supprime Fait/Validé/Annulé et supérieur à 3 semaines
 taches = taches %>% 
-  filter( !( (ETAT == "f") & (ECHEANCE <= date_reu-3*7) ) )
+  filter( !( (ETAT %in% c("f", "v", "an")) & (ECHEANCE <= date_reu-3*7) ) )
 
 @
 

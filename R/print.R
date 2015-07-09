@@ -198,16 +198,19 @@ print_taches <- function(taches,
         
         ind = match(taches_d$ETAT, legende$CLE)
         taches_d = taches_d %>% 
-          mutate(ETAT = ifelse(ETAT == "a" & !is.na(PRIORITE), 
+          mutate(ETAT = ifelse(ETAT %in% c("af", "av") & !is.na(PRIORITE), 
                                PRIORITE,
-                               legende$NOM[ind])) %>%  # libelle etat
+                               ifelse(ETAT %in% c("f", "v") & !is.na(DATEREALISATION), 
+                                      paste0(legende$NOM[ind], " le ", format(DATEREALISATION, "%d/%m/%Y")),
+                                      legende$NOM[ind]
+                                      ))) %>%  # libelle etat
           mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
           select(TACHE, ECHEANCE, ETAT) %>% # ordonne colonnes
           mutate(TACHE = paste("$\\bullet$", TACHE)) # ajoute puce devant tache
         
-        # formatage ligne fait, urgent, rappel
-        rowformat = switch(tolower(taches_d$ETAT),
-                           fait = "\\sout{",
+        # formatage ligne annule, urgent, rappel
+        rowformat = switch(sapply(tolower(taches_d$ETAT), function(x) iconv(x, to="ASCII//TRANSLIT")), # minuscule sans caracteres speciaux
+                           annule = "\\sout{",
                            rappel = "\\textcolor{red}{",
                            urgent = "\\textcolor{red}{",
                            "{")
@@ -272,8 +275,23 @@ print_plans <- function(plans,
         filter(SOUSSECTION == soussec[ss])
       
       plans_ss = plans_ss %>% 
-        mutate(DATE = ifelse(is.na(DATE), "", format(DATE, "%d/%m/%Y"))) %>% # formatage date
+        mutate(DATE = ifelse(is.na(DATE), "", format(DATE, "%d/%m/%Y"))) # formatage date
+      
+      ok = ifelse(is.na(plans_ss$ETAT), FALSE, (tolower(plans_ss$ETAT) == "n"))
+      
+      plans_ss = plans_ss %>%
         select(PLAN, NUM, INDICE, DATE) # ordonne colonnes
+      
+      # formatage ligne nouveau
+      if (any(ok)) {
+        ind  = which(ok)
+        rowfun = function(x) ifelse(is.na(x), "", paste0("\\textcolor{red}{", x, "}"))
+        
+        # double boucle parce que segfault inexplique avec traitement colonnes ou mutate_each !?
+        for (i in ind)
+          for (c in colnames(plans_ss))
+            plans_ss[i,c] = rowfun(plans_ss[i,c])
+      }
       
       print_table(plans_ss, col_format=col_format, header=NULL, ...)
     }
