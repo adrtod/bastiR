@@ -17,13 +17,14 @@ prepare_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jp
 #' @param folder string. output folder of the resized photos
 #' @param max_width maximum photo width
 #' @param max_height maximum photo height
+#' @param quality the 'quality' of the output JPEG image, as a percentage.
 #'
 #' @export
 #' @importFrom tools file_ext
 #' @importFrom png readPNG
 #' @importFrom jpeg readJPEG
 resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)"),
-                          folder = "tmp", max_width = 800, max_height = 600) {
+                          folder = "tmp", max_width = 800, max_height = 600, quality = 95) {
   out = character(0)
   for (i in seq_along(photo_files)) {
     f = photo_files[[i]]
@@ -34,7 +35,7 @@ resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpe
       devfun = png
     } else if (tolower(ext) %in% c("jpg", "jpeg")) {
       readfun = readJPEG
-      devfun = function(...) jpeg(..., quality = 100)
+      devfun = function(...) jpeg(..., quality = quality)
     } else {
       warning("photo extension not supported:", f)
       next

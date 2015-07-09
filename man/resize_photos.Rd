@@ -6,7 +6,7 @@
 \usage{
 resize_photos(photo_files = list.files(".", pattern =
   ".*\\\\.(jpg|jpeg|JPG|JPEG|png|PNG)"), folder = "tmp", max_width = 800,
-  max_height = 600)
+  max_height = 600, quality = 95)
 }
 \arguments{
 \item{photo_files}{character vector. paths of the photo files}
@@ -16,6 +16,8 @@ resize_photos(photo_files = list.files(".", pattern =
 \item{max_width}{maximum photo width}
 
 \item{max_height}{maximum photo height}
+
+\item{quality}{the 'quality' of the output JPEG image, as a percentage.}
 }
 \description{
 Resize photos

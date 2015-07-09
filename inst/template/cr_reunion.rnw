@@ -29,12 +29,18 @@ source("cr_config.r", encoding = "ISO8859-1")
 \usepackage{array}
 \usepackage{longtable}
 \setlongtables % pour pouvoir utiliser les colonnes l r c en longtable
-\setlength{\LTleft}{-20cm plus -1fill} % pour l'alignement horizontal des lontables
+\setlength{\LTleft}{-20cm plus -1fill} % pour l'alignement horizontal des longtables
 \setlength{\LTright}{\LTleft}
+\parindent \Sexpr{parindent}
+\graphicspath{{\Sexpr{temp}}}
+
 \usepackage{fancyhdr} % entete et pied de page
 \pagestyle{fancy}
-\parindent \Sexpr{parindent}
-% \graphicspath{{\Sexpr{graphicspath}}}
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}} % commande pour titre de section sans numéro dans l'entête
+
+\usepackage{titlesec}
+\titleformat{\section}[wrap]{}{}{0em}{\phantom} % supprime affichage des titres de sections en début de section
+
 
 <<colors>>=
 for (i in seq_along(RGBcolors)) {
@@ -86,7 +92,8 @@ if (!dir.exists(temp)) {
 }
 
 photo_files = resize_photos(photo_files = photo_files, folder = temp,
-                            max_width = max_width, max_height = max_height)
+                            max_width = max_width, max_height = max_height,
+                            quality = quality)
 @
 
 % Prépare feuille de calcul PHOTOS ---------------------------------------------
@@ -148,32 +155,34 @@ print_table(exe,
 % Mise en forme des taches -----------------------------------------------------
 <<edit_taches, include=FALSE>>=
 cejour = xl$CEJOUR %>% 
-  filter(!is.na(SECTION)) %>%  # effacer lignes vides
-  mutate(ETAT = ifelse(is.na(ETAT), "af", ETAT)) # ETAT vide -> A faire
+  filter(!is.na(SECTION)) %>%  # Efface les lignes vides
+  mutate(ETAT = ifelse(is.na(ETAT), "af", ETAT)) # Complète `ETAT` manquant par `A faire`
 
-# ajouter cejour à taches
+# Ajoute `CEJOUR` à TACHES
 taches = xl$TACHES %>% 
   bind_rows(cejour)
 
 # recodage et tri
 taches = taches %>% 
-  mutate(ETAT = tolower(ETAT)) %>%
+  mutate(ETAT = tolower(ETAT)) %>% # Edite clés `ETAT`, `SECTION`, `ACTEUR` en minuscule
   mutate(SECTION = tolower(SECTION)) %>% 
   mutate(ACTEUR = tolower(ACTEUR)) %>% 
-  arrange(ETAT, SECTION, ECHEANCE, ACTEUR) # trier les lignes par ETAT, SECTION, ECHEANCE puis ACTEUR
+  arrange(ETAT, SECTION, ECHEANCE, ACTEUR) # Tri des lignes par `ETAT`, `SECTION`, `ECHEANCE` puis `ACTEUR`
 
-# ajouter rappel
+# Edite `PRIORITE` : `Rappel` (`ECHEANCE` passée) ou `Urgent` (`ECHEANCE` + 1 semaine)
 row = (taches$ETAT %in% c("af", "av")) & (taches$ECHEANCE <= date_reu)
 taches$PRIORITE[row] = "RAPPEL"
 
-# ajouter urgent
 row = (taches$ETAT %in% c("af", "av")) & (taches$ECHEANCE <= date_reu-7)
 taches$PRIORITE[row] = "URGENT"
 
-# supprime Fait/Validé/Annulé et supérieur à 3 semaines
-taches = taches %>% 
-  filter( !( (ETAT %in% c("f", "v", "an")) & (ECHEANCE <= date_reu-3*7) ) )
+# Complète `DATEREALISATION` manquante par la date de la réunion
+row = is.na(taches$DATEREALISATION)
+taches$DATEREALISATION[row] = date_reu
 
+# Supprime les lignes `Fait`/`Validé`/`Annulé` avec `DATEREALISATION` supérieure à 3 semaines
+taches = taches %>% 
+  filter( !( (ETAT %in% c("f", "v", "an")) & (DATEREALISATION <= date_reu-3*7) ) )
 @
 
 % Sections Taches --------------------------------------------------------------
@@ -187,7 +196,7 @@ print_taches(taches, legende,
 
 % Section ARMOIRE À PLANS ------------------------------------------------------
 \clearpage
-\section*{\centering ARMOIRE À PLANS }
+\section{ARMOIRE À PLANS}
 <<plansnote>>=
 print_table(xl$PLANSNOTE[,"TEXTE"], 
             col_format="p{\\textwidth}",
@@ -211,7 +220,7 @@ print_plans(plans, legende,
 
 % Section PHOTOGRAPHIES --------------------------------------------------------
 \clearpage
-\section*{\centering PHOTOGRAPHIES}
+\section{PHOTOGRAPHIES}
 <<photo>>=
 print_photos(xl$PHOTOS, 
              header = NULL,

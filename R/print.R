@@ -314,7 +314,7 @@ print_photos = function(photos, col_format="|>{\\centering}m{.55\\linewidth}|m{.
                         width = "\\linewidth",
                         height=".3\\textheight", ...) {
   photos = mutate(photos, FICHIER = paste0("\\includegraphics[height=", height, ", width=", width, 
-                                           ", keepaspectratio]{", tools::file_path_sans_ext(FICHIER), "}"))
+                                           ", keepaspectratio]{", FICHIER, "}"))
   
   print_table(photos, col_format=col_format, ...)
 }

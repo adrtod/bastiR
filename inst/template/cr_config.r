@@ -10,8 +10,8 @@ letterspace = 200 # espacement de lettres pour email
 familydefault = "sfdefault" # police sans empattement
 
 # Page de garde ----------------------------------------------------------------
-num_reu = 12 # numéro de réunion
-date_reu = as.Date("2015-04-29") # date de réunion
+num_reu = 23 # numéro de réunion
+date_reu = as.Date("2015-07-08") # date de réunion
 date_reu_next = date_reu+7 # date prochaine réunion
 num_reu_next = num_reu + 1 # numéro prochaine réunion
 heure_reu_next = "9H00" # heure prochaine réunion
@@ -19,7 +19,7 @@ heure_reu_next = "9H00" # heure prochaine réunion
 garde = list()
 garde$titre = "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
 garde$soustitre = paste("Compte rendu \\no", num_reu, "de la réunion du", format(date_reu, "%d %B %Y"))
-garde$img = "images/TAVAILLON_3D"
+garde$img = "img/TAVAILLON_3D_600"
 garde$img_width = "0.8\\textwidth"
 garde$reu_next = paste0("Réunion de chantier \\no ", num_reu_next, " à {\\bf ", heure_reu_next, "} le ", format(date_reu_next, "%A %d %B %Y"))
 garde$email = "t.weulersse@atelier-d-form.com"
@@ -31,8 +31,9 @@ RGBcolors$DformVert = c(131,182,27)
 # Entete -----------------------------------------------------------------------
 entete = list()
 entete$C = "\\large FAS et FATH au Beubois\\\\
-Compte-Rendu de chantier"
-entete$L = "\\leavevmode\\smash{\\raisebox{6mm}{\\parbox[c]{\\linewidth}{\\includegraphics[width=\\linewidth]{images/Dform_logo}}}}"
+Compte-Rendu de chantier\\\\
+{\\bf \\Large \\leftmark}"
+entete$L = "\\leavevmode\\smash{\\raisebox{6mm}{\\parbox[c]{\\linewidth}{\\includegraphics[width=\\linewidth]{img/Dform_logo}}}}"
 entete$R = "\\thepage"
 
 # Pied de page -----------------------------------------------------------------
@@ -43,7 +44,7 @@ pied$C = "{\\color{DformVert} \\raggedleft www.ateliers-d-form.com\\\\
 Tél : 03.89.80.94.84 - Fax : 03.89.80.95.79 - mail : contact@atelier-d-form.com - APE : 7111 Z / SIRET : 49 945 834 00030}"
 
 # Fichier excel ----------------------------------------------------------------
-xlfile = "BEUBOIS_CR_box.xlsx"
+xlfile = "BEUBOIS_CR.xlsx"
 xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu, ".xlsx")
 xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
 col_dates = c("DATE", "ECHEANCE", "DATEREALISATION")
@@ -52,11 +53,11 @@ openxl = TRUE
 
 # Photos -----------------------------------------------------------------------
 photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
-max_width = 800
-max_height = 600
+max_width = 350
+max_height = 350
 quality = 95
 backup = format(date_reu, "%Y-%m-%d")
-temp = "tmp"
+temp = "tmp/" # doit terminer par /
 
 # Formatage --------------------------------------------------------------------
 header = list()
@@ -75,7 +76,7 @@ hline = TRUE
 
 format_fun = list()
 format_fun$"section taches" <- function(x) {
-  paste0("\\clearpage\n\\section*{\\centering ", toupper(x$NOM), "}\n\n", sep="")
+  paste0("\\clearpage\n\\section{", toupper(x$NOM), "}\n\n", sep="")
 }
 format_fun$"acteur orga" <- function(x) {
   lib = ifelse(is.na(x$NOM),

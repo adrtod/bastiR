@@ -49,6 +49,9 @@ devtools::install_github("adrtod/bastiR")
   Pour le reste utiliser les commandes LaTeX :
     - `\euro{}`, `\oe{}`, `\OE{}`
     - [symboles mathématiques et lettres grecques](http://www.commentcamarche.net/contents/620-latex-table-de-caracteres) entre dollars, ex: `$\lambda$`
+    - formatage en indice ou exposant, ex: `m$^2$`
+    - apostrophes simples `'` seulement
+    - tirets simples seulement `-`. tiret semi-cadratin : `--`. tiret cadratin : `---`
 
 ### Feuilles de calcul (onglets)
 Nom           | Description               | Colonnes
@@ -58,7 +61,22 @@ Nom           | Description               | Colonnes
 **`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHES`**, sauf **`PRIORITE`**
 **`PLANS`**   | Armoire à plans           | **`SECTION`** <br> **`SOUSSECTION`** <br> **`PLAN`**,	**`NUM`**,	**`INDICE`**,	**`DATE`**
 **`PLANSNOTE`** | Note pour l'armoire à plans | **`TEXTE`**
-**`PHOTOS`**  | Photographies commentées  | **`FICHIER`** : nom du fichier, ne doit pas contenir d'espace <br> **`COMMENTAIRE`** : texte
+**`PHOTOS`**  | Photographies commentées  | **`FICHIER`** : nom du fichier (avec extension, sans le chemin), ne doit pas contenir d'espace <br> **`COMMENTAIRE`** : texte
+
+# Spécification des photos
+- Fichiers reconnus : `.jpg`, `.jpeg`, `.JPG`, `.JPEG`, `.png`, `.PNG`
+- Orientation portrait/paysage : effectuer les rotations nécessaires manuellement
+
+# Traitements automatiques
+- Prépare feuille de calcul `PHOTOS` avec fichiers lus dans le dossier courant
+- Efface les lignes vides
+- Complète `ETAT` manquant par `A faire`
+- Ajoute `CEJOUR` à TACHES
+- Edite clés `ETAT`, `SECTION`, `ACTEUR` en minuscule
+- Tri des lignes par `ETAT`, `SECTION`, `ECHEANCE` puis `ACTEUR`
+- Edite `PRIORITE` : `Rappel` (`ECHEANCE` passée) ou `Urgent` (`ECHEANCE` + 1 semaine)
+- Complète `DATEREALISATION` manquante par la date de la réunion
+- Supprime les lignes `Fait`/`Validé`/`Annulé` avec `DATEREALISATION` supérieure à 3 semaines
 
 # Ressources
 - Introduction à R et RStudio : TODO
@@ -112,3 +130,5 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
 - [ ] tester sous windows
 - [ ] écrire intro origine et but du projet
 - [ ] ajouter ressources
+- [ ] problème de lecture lorsque certaines colonnes sont apparemment vides mais ne le sont pas en réalité
+- [ ] insérer et retailler seulement les photos commentées
