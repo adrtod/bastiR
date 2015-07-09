@@ -208,7 +208,7 @@ print_taches <- function(taches,
         
         ind = match(taches_d$ETAT, legende$CLE)
         taches_d = taches_d %>% 
-          mutate(ETAT = ifelse(ETAT %in% c("f", "v") & !is.na(DATEREALISATION), 
+          mutate(ETAT = ifelse(ETAT %in% c("f", "v", "an"), 
                                paste0(legende$NOM[ind], " le ", format(DATEREALISATION, "%d/%m/%Y")),
                                legende$NOM[ind])) %>%  # libelle etat
           mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance

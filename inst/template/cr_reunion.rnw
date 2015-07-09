@@ -178,7 +178,7 @@ row = (taches$ETAT %in% c("af", "av")) & (taches$ECHEANCE <= date_reu-7)
 taches$PRIORITE[row] = "URGENT"
 
 # Complète `DATEREALISATION` manquante par la date de la réunion
-row = is.na(taches$DATEREALISATION)
+row = (taches$ETAT %in% c("f", "v", "an")) & is.na(taches$DATEREALISATION)
 taches$DATEREALISATION[row] = date_reu
 
 # Supprime les lignes `Fait`/`Validé`/`Annulé` avec `DATEREALISATION` supérieure à 3 semaines

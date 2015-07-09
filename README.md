@@ -71,7 +71,7 @@ Nom           | Description               | Colonnes
 - Prépare feuille de calcul `PHOTOS` avec fichiers lus dans le dossier courant
 - Efface les lignes vides
 - Complète `ETAT` manquant par `A faire`
-- Ajoute `CEJOUR` à TACHES
+- Ajoute `CEJOUR` à `TACHES`
 - Edite clés `ETAT`, `SECTION`, `ACTEUR` en minuscule
 - Tri des lignes par `ETAT`, `SECTION`, `ECHEANCE` puis `ACTEUR`
 - Edite `PRIORITE` : `Rappel` (`ECHEANCE` passée) ou `Urgent` (`ECHEANCE` + 1 semaine)
