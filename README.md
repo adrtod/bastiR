@@ -127,7 +127,7 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
     
 # Liste des tâches
 - [ ] code en anglais, aide en français ?
-- [ ] tester sous windows
+- [ ] tester sous osx
 - [ ] écrire intro origine et but du projet
 - [ ] ajouter ressources
 - [ ] problème de lecture lorsque certaines colonnes sont apparemment vides mais ne le sont pas en réalité
