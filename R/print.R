@@ -187,7 +187,8 @@ print_taches <- function(taches,
       print_classe(acteurs[a], legende, 
                    format_fun = format_fun)
       
-      dates = unique(taches_a$DATE)
+      # par ordre chronologique
+      dates = sort(unique(taches_a$DATE))
       
       # boucle sur dates
       for (d in seq_along(dates)) {
@@ -202,15 +203,17 @@ print_taches <- function(taches,
         row = tolower(taches_d$ETAT) %in% c("af", "av")  & (!is.na(taches_d$PRIORITE))
         rowformat[row] = "\\textcolor{red}{"
         
-        # formatage ligne Annule
-        row = (tolower(taches_d$ETAT) == "an")
+        # formatage ligne Fait, Annule
+        row = (tolower(taches_d$ETAT) %in% c("f", "an"))
         rowformat[row] = "\\sout{"
         
         ind = match(taches_d$ETAT, legende$CLE)
         taches_d = taches_d %>% 
           mutate(ETAT = ifelse(ETAT %in% c("f", "v", "an"), 
                                paste0(legende$NOM[ind], " le ", format(DATEREALISATION, "%d/%m/%Y")),
-                               legende$NOM[ind])) %>%  # libelle etat
+                               ifelse(!is.na(PRIORITE), 
+                                      toupper(PRIORITE),
+                                      legende$NOM[ind]))) %>%  # libelle etat
           mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
           mutate(TACHE = paste("$\\bullet$", TACHE)) %>% # ajoute puce devant tache
           select(TACHE, ECHEANCE, ETAT) # ordonne colonnes
