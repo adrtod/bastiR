@@ -311,10 +311,15 @@ print_plans <- function(plans,
 #' @param ... further arguments to be passed to print_table
 #'
 #' @export
+#' @importFrom dplyr filter
 #' @importFrom dplyr mutate
 print_photos = function(photos, col_format="|>{\\centering}m{.55\\linewidth}|m{.4\\linewidth}|", 
                         width = "\\linewidth",
                         height=".3\\textheight", ...) {
+  # enleve photos sans commentaires
+  photos = filter(photos, !is.na(COMMENTAIRE), nzchar(COMMENTAIRE))
+  
+  # formate insertion photo en latex
   photos = mutate(photos, FICHIER = paste0("\\includegraphics[height=", height, ", width=", width, 
                                            ", keepaspectratio]{", FICHIER, "}"))
   

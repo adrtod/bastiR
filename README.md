@@ -131,4 +131,4 @@ Copyright (C) 2015, [Adrien Todeschini](https://sites.google.com/site/adrientode
 - [ ] écrire intro origine et but du projet
 - [ ] ajouter ressources
 - [ ] problème de lecture lorsque certaines colonnes sont apparemment vides mais ne le sont pas en réalité
-- [ ] insérer et retailler seulement les photos commentées
+- [ ] retailler seulement les photos commentées
