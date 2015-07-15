@@ -12,11 +12,16 @@ source("cr_config.r", encoding = "ISO8859-1")
 % Préambule LaTeX ==============================================================
 \documentclass[\Sexpr{fontsize}, \Sexpr{classoption}]{\Sexpr{documentclass}}
 \usepackage[T1]{fontenc}
-\usepackage[latin1]{inputenc}
+\usepackage[\Sexpr{inputenc}]{inputenc}
 \usepackage[french]{babel}
 \usepackage{lmodern}
 \usepackage{eurosym} % pour \euro
-% \DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8
+
+<<>>=
+if (inputenc=="utf8")
+  cat("\\DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8")
+@
+
 \usepackage[\Sexpr{geometry}]{geometry}
 \usepackage{hyperref}
 \usepackage[]{graphicx}
@@ -37,7 +42,7 @@ source("cr_config.r", encoding = "ISO8859-1")
 \usepackage{fancyhdr} % entete et pied de page
 \pagestyle{fancy}
 \renewcommand{\sectionmark}[1]{\markboth{#1}{}} % commande pour titre de section sans numéro dans l'entête
-\setlength\headheight{14.5pt}
+\setlength\headheight{42.82pt}
 
 \usepackage{titlesec}
 \titleformat{\section}[block]{}{}{0em}{\vphantom}[\vspace*{-2em}] % supprime affichage des titres de sections en début de section
@@ -127,7 +132,7 @@ if (anyDuplicated(cles))
 <<tab_orga>>=
 orga = legende %>% 
   filter(CLASSE == "acteur orga", CLE != "all") %>% 
-  select(DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, INV, C)
+  select(DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, C, ABS)
 
 print_table(orga, 
             header = header$orga,
@@ -141,7 +146,7 @@ print_table(orga,
 <<tab_exe>>=
 exe = legende %>% 
   filter(CLASSE == "acteur exe") %>% 
-  select(LOT, DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, INV, C)
+  select(LOT, DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, C, ABS)
 
 print_table(exe, 
             header = header$exe,
@@ -245,7 +250,7 @@ cejour_next = cejour %>%
 xl_next = xl
 xl_next$TACHES = taches
 xl_next$CEJOUR = cejour_next
-xl_next$PHOTOS = NULL
+xl_next$PHOTOS = xl$PHOTOS[NULL,] # NULL %%%%%%%%%%%%%%%% TEMP %%%%%%%%%%%%%
 
 write_xl(xl_next, xlfile_next, open=FALSE)
 @

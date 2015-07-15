@@ -5,13 +5,14 @@ fontsize = "11pt" # taille de police par défaut
 geometry = "top=2.5cm, bottom=3.5cm, left=1.5cm, right=1.5cm" # marges
 documentclass = "article" # classe du document
 classoption = "a4paper" # options du document
+inputenc = ifelse(.Platform$OS.type == "windows", "latin1", "utf8")
 parindent = "0em" # indentation de paragraphe
 letterspace = 200 # espacement de lettres pour email
 familydefault = "sfdefault" # police sans empattement
 
 # Page de garde ----------------------------------------------------------------
-num_reu = 23 # numéro de réunion
-date_reu = as.Date("2015-07-08") # date de réunion
+num_reu = 24 # numéro de réunion
+date_reu = as.Date("2015-07-15") # date de réunion
 date_reu_next = date_reu+7 # date prochaine réunion
 num_reu_next = num_reu + 1 # numéro prochaine réunion
 heure_reu_next = "9H00" # heure prochaine réunion

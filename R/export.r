@@ -46,11 +46,11 @@ resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpe
     r = w/h # ratio
     if (w>max_width) {
       w = max_width
-      h = w/r
+      h = round(w/r)
     }
     if (h>max_height) {
       h = max_height
-      w = h*r
+      w = round(h*r)
     }
     devfun(file_out, width = w, height = h)
     par(mar=rep(0,4))
