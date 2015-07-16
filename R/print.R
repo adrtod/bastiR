@@ -197,21 +197,23 @@ print_taches <- function(taches,
         taches_d = taches_a %>% 
           filter(DATE == dates[d])
         
-        rowformat = rep("{", nrow(taches_d))
+        cellformat = NULL
+        for (j in 1:3)
+          cellformat = cbind(cellformat, rep("{", nrow(taches_d)))
         
-        # formatage ligne A faire, A valider, Rappel ou Urgent
+        # formatage ligne A faire, A valider, RAPPEL ou URGENT
         row = tolower(taches_d$ETAT) %in% c("af", "av")  & (!is.na(taches_d$PRIORITE))
-        rowformat[row] = "\\textcolor{red}{"
+        cellformat[row,] = "\\textcolor{red}{"
         
         # formatage ligne Fait, Annule
         row = (tolower(taches_d$ETAT) %in% c("f", "an"))
-        rowformat[row] = "\\sout{"
+        cellformat[row,1:2] = "\\sout{" # sauf colonne ETAT
         
         ind = match(taches_d$ETAT, legende$CLE)
         taches_d = taches_d %>% 
           mutate(ETAT = ifelse(ETAT %in% c("f", "v", "an"), 
                                paste0(legende$NOM[ind], " le ", format(DATEREALISATION, "%d/%m/%Y")),
-                               ifelse(!is.na(PRIORITE), 
+                               ifelse(ETAT == "af" & !is.na(PRIORITE), 
                                       toupper(PRIORITE),
                                       legende$NOM[ind]))) %>%  # libelle etat
           mutate(ECHEANCE = ifelse(is.na(ECHEANCE), "", format(ECHEANCE, "%d/%m/%Y"))) %>% # formatage date echeance
@@ -219,10 +221,9 @@ print_taches <- function(taches,
           select(TACHE, ECHEANCE, ETAT) # ordonne colonnes
         
         # applique formatage
-        rowfun = function(x) ifelse(is.na(x), "", paste0(rowformat, x, "}"))
-        
-        for (j in 1:ncol(taches_d))
-          taches_d[[j]] = rowfun(taches_d[[j]])
+        for (j in 1:ncol(taches_d)) {
+          taches_d[[j]] = ifelse(is.na(taches_d[[j]]), "", paste0(c(cellformat[,j]), taches_d[[j]], "}")) 
+        }
         
         print_table(taches_d, col_format=col_format, header=NULL, ...)
       }
