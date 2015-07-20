@@ -100,19 +100,19 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   row = (taches$ETAT %in% c("af", "av")) & (taches$ECHEANCE <= date-7)
   taches$PRIORITE[row] = "URGENT"
   
-  # Complete `DATEREALISATION` manquante par la date de la reunion
+  # Complete `REALISATION` manquante par la date de la reunion
   if (!quiet){
-    cat("  Remplissage de DATEREALISATION manquante\n")
+    cat("  Remplissage de REALISATION manquante\n")
   }
-  row = (taches$ETAT %in% c("f", "v", "an")) & is.na(taches$DATEREALISATION)
-  taches$DATEREALISATION[row] = date
+  row = (taches$ETAT %in% c("f", "v", "an")) & is.na(taches$REALISATION)
+  taches$REALISATION[row] = date
   
-  # Supprime les lignes `Fait`/`Valide`/`Annule` avec `DATEREALISATION` superieure a 3 semaines
+  # Supprime les lignes `Fait`/`Valide`/`Annule` avec `REALISATION` superieure a 3 semaines
   if (!quiet){
-    cat("  Suppression des lignes DATEREALISATION superieure a 3 semaines\n")
+    cat("  Suppression des lignes REALISATION superieure a 3 semaines\n")
   }
   taches = taches %>% 
-    filter( !( (ETAT %in% c("f", "v", "an")) & (DATEREALISATION <= date-3*7) ) )
+    filter( !( (ETAT %in% c("f", "v", "an")) & (REALISATION <= date-3*7) ) )
   
   # plans
     if (!quiet){
@@ -128,7 +128,7 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   nafun = function(x) { y = NA; class(y) = class(x); return(y) }
   cejour_next = xl$CEJOUR %>% 
     summarise_each(funs(nafun)) %>% # 1 ligne vide
-    mutate(DATE = date_next) %>% # date prochaine reu
+    mutate(REUNION = date_next) %>% # date prochaine reu
     slice(rep(1, 10)) # dupliquer 10 lignes
   
   # exporte xlsx

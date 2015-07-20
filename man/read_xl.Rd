@@ -5,7 +5,7 @@
 \title{Read excel file}
 \usage{
 read_xl(xl_file, sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS",
-  "PLANSNOTE"), col_dates = c("DATE", "ECHEANCE", "DATEREALISATION"),
+  "PLANSNOTE"), col_dates = c("REUNION", "ECHEANCE", "REALISATION", "DATE"),
   origin = "1899-12-30")
 }
 \arguments{

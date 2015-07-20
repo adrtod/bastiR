@@ -1,6 +1,6 @@
 utils::globalVariables(c("FICHIER", "SECTION", "SOUSSECTION", "DATE", "PLAN", 
-                         "NUM", "INDICE", "SECTION", "ACTEUR", "DATE", "ETAT", 
-                         "PRIORITE", "ECHEANCE", "TACHE", "COMMENTAIRE", "DATEREALISATION",
+                         "NUM", "INDICE", "SECTION", "ACTEUR", "REUNION", "ETAT", 
+                         "PRIORITE", "ECHEANCE", "TACHE", "COMMENTAIRE", "REALISATION",
                          "CLE", "CLASSE", "xl_file", "col_dates", "origin", "date", 
                          "date_next", "xl_file_next", "backup", "xl_file_photos", 
                          "openxl", "temp", "max_width", "max_height", "quality", 
@@ -192,31 +192,31 @@ print_taches <- function(taches,
                    format_fun = format_fun)
       
       # par ordre chronologique
-      dates = sort(unique(taches_a$DATE))
+      reunions = sort(unique(taches_a$REUNION))
       
-      # boucle sur dates
-      for (d in seq_along(dates)) {
-        cat(format_fun$date(dates[d]))
+      # boucle sur reunions
+      for (r in seq_along(reunions)) {
+        cat(format_fun$reunion(reunions[r]))
         
-        taches_d = taches_a %>% 
-          filter(DATE == dates[d])
+        taches_r = taches_a %>% 
+          filter(REUNION == reunions[r])
         
         cellformat = NULL
         for (j in 1:3)
-          cellformat = cbind(cellformat, rep("{", nrow(taches_d)))
+          cellformat = cbind(cellformat, rep("{", nrow(taches_r)))
         
         # formatage ligne A faire, A valider, RAPPEL ou URGENT
-        row = tolower(taches_d$ETAT) %in% c("af", "av")  & (!is.na(taches_d$PRIORITE))
+        row = tolower(taches_r$ETAT) %in% c("af", "av")  & (!is.na(taches_r$PRIORITE))
         cellformat[row,] = "\\textcolor{red}{"
         
         # formatage ligne Fait, Annule
-        row = (tolower(taches_d$ETAT) %in% c("f", "an"))
+        row = (tolower(taches_r$ETAT) %in% c("f", "an"))
         cellformat[row,1:2] = "\\sout{" # sauf colonne ETAT
         
-        ind = match(taches_d$ETAT, legende$CLE)
-        taches_d = taches_d %>% 
+        ind = match(taches_r$ETAT, legende$CLE)
+        taches_r = taches_r %>% 
           mutate(ETAT = ifelse(ETAT %in% c("f", "v", "an"), 
-                               paste0(legende$NOM[ind], " le ", format(DATEREALISATION, "%d/%m/%Y")),
+                               paste0(legende$NOM[ind], " le ", format(REALISATION, "%d/%m/%Y")),
                                ifelse(ETAT == "af" & !is.na(PRIORITE), 
                                       toupper(PRIORITE),
                                       legende$NOM[ind]))) %>%  # libelle etat
@@ -225,11 +225,11 @@ print_taches <- function(taches,
           select(TACHE, ECHEANCE, ETAT) # ordonne colonnes
         
         # applique formatage
-        for (j in 1:ncol(taches_d)) {
-          taches_d[[j]] = ifelse(is.na(taches_d[[j]]), "", paste0(c(cellformat[,j]), taches_d[[j]], "}")) 
+        for (j in 1:ncol(taches_r)) {
+          taches_r[[j]] = ifelse(is.na(taches_r[[j]]), "", paste0(c(cellformat[,j]), taches_r[[j]], "}")) 
         }
         
-        print_table(taches_d, col_format=col_format, header=NULL, ...)
+        print_table(taches_r, col_format=col_format, header=NULL, ...)
       }
     }
   }

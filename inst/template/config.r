@@ -10,7 +10,7 @@ heure_next = "9H00" # heure prochaine réunion
 # Fichier excel ----------------------------------------------------------------
 xl_file = "BEUBOIS_CR.xlsx"
 xl_file_next = paste0(tools::file_path_sans_ext(xl_file), "_", num_next, ".xlsx")
-col_dates = c("DATE", "ECHEANCE", "DATEREALISATION")
+col_dates = c("REUNION", "ECHEANCE", "REALISATION", "DATE")
 origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
 openxl = TRUE
 
@@ -94,7 +94,7 @@ format_fun$"acteur exe" <- function(x) {
   lib = paste(x$LOT, x$DESIGNATION, "-", x$NOM)
   paste0("\\vspace*{1em}\\textbf{", lib, "}\n\n")
 }
-format_fun$"date" <- function(x) {
+format_fun$"reunion" <- function(x) {
   format(x, "\\vspace*{.5em}\\hspace*{1.4em}\n\\underline{Réunion du %d %B %Y}\n\n")
 }
 format_fun$"section plans" <- function(x) {

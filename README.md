@@ -57,7 +57,7 @@ devtools::install_github("adrtod/bastiR")
 Nom           | Description               | Colonnes
 ------------- | ------------------------- | -------------
 **`LEGENDE`** | Légende des objets        | *Obligatoires* : <br> **`CLASSE`** : classe d'objet désigné par une clé (`acteur orga`, `acteur exe`, `section`, `etat`) <br> **`CLE`** : clé, courte chaîne de caractères, insensible à la casse <br> **`NOM`** : nom de l'objet <br> *Facultatives* : <br> **`DESIGNATION`** : nom du lot <br> **`LOT`** : numéro du lot <br> **`REPRESENTANT`**,	**`TEL`**,	**`MOBILE`**,	**`FAX`**,	**`EMAIL`**,	**`P`**,	**`DIF`**,	**`C`**,	**`ABS`** ...
-**`TACHES`**  | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`DATE`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`DATEREALISATION`** : date de réalisation <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche <br> **`ETAT`** : clé (`af`=A faire, `f`=Fait, `i`=Info, `av`=A valider, `v`=Validé, `an`=Annulé) <br> **`PRIORITE`** : automatique (`RAPPEL` ou `URGENT`)
+**`TACHES`**  | Tâches passées            | **`SECTION`** : clé (ex: `orga`=Organisation générale, `exe`=Exécution) <br> **`REUNION`** : date de réunion <br> **`ECHEANCE`** : date d'échéance <br> **`REALISATION`** : date de réalisation <br> **`ACTEUR`** : clé associée à l'acteur <br> **`TACHE`** : texte décrivant la tâche <br> **`ETAT`** : clé (`af`=A faire, `f`=Fait, `i`=Info, `av`=A valider, `v`=Validé, `an`=Annulé) <br> **`PRIORITE`** : automatique (`RAPPEL` ou `URGENT`)
 **`CEJOUR`**  | Tâches réunion en cours   | cf. **`TACHES`**, sauf **`PRIORITE`**
 **`PLANS`**   | Armoire à plans           | **`SECTION`** <br> **`SOUSSECTION`** <br> **`PLAN`**,	**`NUM`**,	**`INDICE`**,	**`DATE`**
 **`PLANSNOTE`** | Note pour l'armoire à plans | **`TEXTE`**
@@ -72,11 +72,11 @@ Nom           | Description               | Colonnes
 - Efface les lignes vides
 - Complète `ETAT` manquant par `A faire`
 - Ajoute `CEJOUR` à `TACHES`
-- Edite clés `ETAT`, `SECTION`, `ACTEUR` en minuscule
+- Convertit clés `ETAT`, `SECTION`, `ACTEUR` en minuscule
 - Tri des lignes par `ETAT`, `SECTION`, `ECHEANCE` puis `ACTEUR`
 - Edite `PRIORITE` : `Rappel` (`ECHEANCE` passée) ou `Urgent` (`ECHEANCE` + 1 semaine)
-- Complète `DATEREALISATION` manquante par la date de la réunion
-- Supprime les lignes `Fait`/`Validé`/`Annulé` avec `DATEREALISATION` supérieure à 3 semaines
+- Complète `REALISATION` manquante par la date de la réunion
+- Supprime les lignes `Fait`/`Validé`/`Annulé` avec `REALISATION` supérieure à 3 semaines
 
 # Ressources
 - Introduction à R et RStudio : TODO

@@ -11,7 +11,7 @@
 #' @importFrom readxl excel_sheets
 read_xl <- function(xl_file, 
                     sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS", "PLANSNOTE"), 
-                    col_dates = c("DATE", "ECHEANCE", "DATEREALISATION"), 
+                    col_dates = c("REUNION", "ECHEANCE", "REALISATION", "DATE"), 
                     origin = "1899-12-30") {
   
   xl_sheets = readxl::excel_sheets(xl_file)
