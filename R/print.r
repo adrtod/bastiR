@@ -1,6 +1,10 @@
 utils::globalVariables(c("FICHIER", "SECTION", "SOUSSECTION", "DATE", "PLAN", 
                          "NUM", "INDICE", "SECTION", "ACTEUR", "DATE", "ETAT", 
-                         "PRIORITE", "ECHEANCE", "TACHE"))
+                         "PRIORITE", "ECHEANCE", "TACHE", "COMMENTAIRE", "DATEREALISATION",
+                         "CLE", "CLASSE", "xl_file", "col_dates", "origin", "date", 
+                         "date_next", "xl_file_next", "backup", "xl_file_photos", 
+                         "openxl", "temp", "max_width", "max_height", "quality", 
+                         "out_name", "rnw_file"))
 
 #' Print front page
 #'
@@ -126,8 +130,8 @@ print_table <- function(df = data.frame(),
 #' @export
 print_classe <- function(cle, legende, 
                          format_fun) {
-  ind = match(cle, legende$CLE)
-  fmtfun = do.call(switch, c(list(legende$CLASSE[ind]), format_fun))
+  ind = match(tolower(cle), tolower(legende$CLE))
+  fmtfun = do.call(switch, c(tolower(list(legende$CLASSE[ind])), format_fun))
   cat(fmtfun(legende[ind,]))
 }
 
@@ -156,8 +160,8 @@ print_taches <- function(taches,
                          format_fun, ...) {
   
   # sections dans l'ordre de la legende
-  sections = unique(taches$SECTION)
-  ind = match(legende$CLE, sections)
+  sections = unique(tolower(taches$SECTION))
+  ind = match(tolower(legende$CLE), sections)
   ind = ind[!is.na(ind)]
   sections = sections[ind]
   
@@ -167,22 +171,22 @@ print_taches <- function(taches,
                  format_fun = format_fun)
     
     taches_s = taches %>% 
-      filter(SECTION == sections[s])
+      filter(tolower(SECTION) == sections[s])
     
     print_table(header = header,
                 col_format = col_format, 
                 rowcol_head = rowcol_head, ...)
     
     # acteurs dans l'ordre de la legende
-    acteurs = unique(taches_s$ACTEUR)
-    ind = match(legende$CLE, acteurs)
+    acteurs = unique(tolower(taches_s$ACTEUR))
+    ind = match(tolower(legende$CLE), acteurs)
     ind = ind[!is.na(ind)]
     acteurs = acteurs[ind]  
     
     # boucle sur acteurs
     for (a in seq_along(acteurs)) {
       taches_a = taches_s %>% 
-        filter(ACTEUR == acteurs[a])
+        filter(tolower(ACTEUR) == acteurs[a])
       
       print_classe(acteurs[a], legende, 
                    format_fun = format_fun)
@@ -192,7 +196,7 @@ print_taches <- function(taches,
       
       # boucle sur dates
       for (d in seq_along(dates)) {
-        cat(format_fun$date_reu(dates[d]))
+        cat(format_fun$date(dates[d]))
         
         taches_d = taches_a %>% 
           filter(DATE == dates[d])
@@ -259,25 +263,25 @@ print_plans <- function(plans,
               rowcol_head = rowcol_head, ...)
   
   # sections dans l'ordre de la legende
-  sections = unique(plans$SECTION)
-  ind = match(legende$CLE, sections)
+  sections = unique(tolower(plans$SECTION))
+  ind = match(tolower(legende$CLE), sections)
   ind = ind[!is.na(ind)]
   sections = sections[ind]
   
   for (s in seq_along(sections)) {
     plans_s = plans %>% 
-      filter(SECTION == sections[s])
+      filter(tolower(SECTION) == sections[s])
     
     print_classe(sections[s], legende, 
                  format_fun = format_fun)
     
-    soussec = unique(plans_s$SOUSSECTION)
+    soussec = unique(tolower(plans_s$SOUSSECTION))
     for (ss in seq_along(soussec)) {
       print_classe(soussec[ss], legende, 
                    format_fun = format_fun)
       
       plans_ss = plans_s %>% 
-        filter(SOUSSECTION == soussec[ss])
+        filter(tolower(SOUSSECTION) == soussec[ss])
       
       plans_ss = plans_ss %>% 
         mutate(DATE = ifelse(is.na(DATE), "", format(DATE, "%d/%m/%Y"))) # formatage date

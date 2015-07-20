@@ -1,5 +1,32 @@
 # Variables du projet ==========================================================
 
+# Projet ----------------------------------------------------------------
+num = 24 # numéro de réunion
+date = as.Date("2015-07-15") # date de réunion
+date_next = date+7 # date prochaine réunion
+num_next = num + 1 # numéro prochaine réunion
+heure_next = "9H00" # heure prochaine réunion
+
+# Fichier excel ----------------------------------------------------------------
+xl_file = "BEUBOIS_CR.xlsx"
+xl_file_next = paste0(tools::file_path_sans_ext(xl_file), "_", num_next, ".xlsx")
+col_dates = c("DATE", "ECHEANCE", "DATEREALISATION")
+origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
+openxl = TRUE
+
+# Rapport ----------------------------------------------------------------------
+rnw_file = system.file("template/chantier_cr.rnw", package = "bastiR")
+out_name = paste0(tools::file_path_sans_ext(xl_file), "_", num)
+
+# Photos -----------------------------------------------------------------------
+photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
+backup = format(date, "%Y-%m-%d")
+xl_file_photos = file.path(backup, paste0(tools::file_path_sans_ext(xl_file), "_", num, ".xlsx"))
+temp = "tmp/" # doit terminer par /
+max_width = 340
+max_height = 340
+quality = 95
+
 # Document ---------------------------------------------------------------------
 fontsize = "11pt" # taille de police par défaut
 geometry = "top=2.5cm, bottom=3.5cm, left=1.5cm, right=1.5cm" # marges
@@ -11,18 +38,12 @@ letterspace = 200 # espacement de lettres pour email
 familydefault = "sfdefault" # police sans empattement
 
 # Page de garde ----------------------------------------------------------------
-num_reu = 24 # numéro de réunion
-date_reu = as.Date("2015-07-15") # date de réunion
-date_reu_next = date_reu+7 # date prochaine réunion
-num_reu_next = num_reu + 1 # numéro prochaine réunion
-heure_reu_next = "9H00" # heure prochaine réunion
-
 garde = list()
 garde$titre = "CONSTRUCTION D'UN FAS ET FATH PASSIF AU BEUBOIS A ORBEY"
-garde$soustitre = paste("Compte rendu \\no", num_reu, "de la réunion du", format(date_reu, "%d %B %Y"))
+garde$soustitre = paste("Compte rendu \\no", num, "de la réunion du", format(date, "%d %B %Y"))
 garde$img = "img/TAVAILLON_3D_600"
 garde$img_width = "0.8\\textwidth"
-garde$reu_next = paste0("Réunion de chantier \\no ", num_reu_next, " à {\\bf ", heure_reu_next, "} le ", format(date_reu_next, "%A %d %B %Y"))
+garde$reu_next = paste0("Réunion de chantier \\no ", num_next, " à {\\bf ", heure_next, "} le ", format(date_next, "%A %d %B %Y"))
 garde$email = "t.weulersse@atelier-d-form.com"
 
 # Couleurs perso ---------------------------------------------------------------
@@ -43,22 +64,6 @@ pied$C = "{\\color{DformVert} \\raggedleft www.ateliers-d-form.com\\\\
 \\vspace*{-2mm}\\rule{\\linewidth}{.5mm}\\vspace*{-.5mm}}
 {\\color{gray} \\footnotesize Ateliers d-Form Sàrl d'architecture au capital de 20000\\euro{} - siège social : 20 rue de Munster 68230 Soultzbach-les-bains\\\\ \\vspace*{-1mm}
 Tél : 03.89.80.94.84 - Fax : 03.89.80.95.79 - mail : contact@atelier-d-form.com - APE : 7111 Z / SIRET : 49 945 834 00030}"
-
-# Fichier excel ----------------------------------------------------------------
-xlfile = "BEUBOIS_CR.xlsx"
-xlfile_out = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu, ".xlsx")
-xlfile_next = paste0(tools::file_path_sans_ext(xlfile), "_", num_reu_next, ".xlsx")
-col_dates = c("DATE", "ECHEANCE", "DATEREALISATION")
-origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
-openxl = TRUE
-
-# Photos -----------------------------------------------------------------------
-photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
-max_width = 350
-max_height = 350
-quality = 95
-backup = format(date_reu, "%Y-%m-%d")
-temp = "tmp/" # doit terminer par /
 
 # Formatage --------------------------------------------------------------------
 header = list()
@@ -89,7 +94,7 @@ format_fun$"acteur exe" <- function(x) {
   lib = paste(x$LOT, x$DESIGNATION, "-", x$NOM)
   paste0("\\vspace*{1em}\\textbf{", lib, "}\n\n")
 }
-format_fun$"date_reu" <- function(x) {
+format_fun$"date" <- function(x) {
   format(x, "\\vspace*{.5em}\\hspace*{1.4em}\n\\underline{Réunion du %d %B %Y}\n\n")
 }
 format_fun$"section plans" <- function(x) {

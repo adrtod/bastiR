@@ -2,11 +2,10 @@
 <<setup, include=FALSE>>=
 knitr::opts_chunk$set(results='asis', echo=FALSE)
 
-# chargement du package bastiR
-require(bastiR)
+require("bastiR")
+require("dplyr")
 
-# chargement des variables du projet
-source("cr_config.r", encoding = "ISO8859-1")
+#source("config.r", encoding = "ISO8859-1")
 @
 
 % Préambule LaTeX ==============================================================
@@ -47,7 +46,6 @@ if (inputenc=="utf8")
 \usepackage{titlesec}
 \titleformat{\section}[block]{}{}{0em}{\vphantom}[\vspace*{-2em}] % supprime affichage des titres de sections en début de section
 
-
 <<colors>>=
 for (i in seq_along(RGBcolors)) {
   cat("\\definecolor{", names(RGBcolors)[i], "}{RGB}{", paste(RGBcolors[[i]], collapse=","), "}\n", sep="")
@@ -72,56 +70,11 @@ for (i in seq_along(RGBcolors)) {
 print_garde(garde)
 @
 
-% Lecture fichier Excel --------------------------------------------------------
-<<read, include=FALSE>>=
+<<read_xl, include=FALSE>>=
 # lecture fichier
-xl = read_xl(xlfile,
+xl = read_xl(xl_file,
              col_dates = col_dates, 
              origin = origin)
-@
-
-% Déplacer les photos --------------------------------------------------------
-<<move_photos, include=FALSE>>=
-if (!dir.exists(backup)) {
-  dir.create(backup)
-  ok = file.copy(photo_files, backup)
-  file.remove(photo_files[ok])
-}
-
-photo_files = list.files(backup, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)", full.names = TRUE)
-@
-
-% Retaillage des photos --------------------------------------------------------
-<<resize_photos, include=FALSE>>=
-if (!dir.exists(temp)) {
-  dir.create(temp)
-}
-
-photo_files = resize_photos(photo_files = photo_files, folder = temp,
-                            max_width = max_width, max_height = max_height,
-                            quality = quality)
-@
-
-% Prépare feuille de calcul PHOTOS ---------------------------------------------
-<<prepare_photo, include=FALSE>>=
-if (!("PHOTOS" %in% names(xl))) {
-  # prepare tableau photo
-  xl$PHOTOS = prepare_photos(photo_files)
-  write_xl(xl, xlfile_out, open = openxl)
-}
-@
-
-% Légende ----------------------------------------------------------------------
-<<legende, include=FALSE>>=
-require(dplyr)
-
-legende = xl$LEGENDE %>% 
-  mutate_each(funs(tolower), CLE, CLASSE) %>% 
-  filter(!is.na(CLE))
-
-cles = legende$CLE
-if (anyDuplicated(cles))
-  stop("clés dupliquées dans la légende:", cles[duplicated(cles)], "\n")
 @
 
 % Affichage tableau page de garde ----------------------------------------------
@@ -130,8 +83,8 @@ if (anyDuplicated(cles))
 \setlength{\tabcolsep}{1pt}
 \renewcommand{\arraystretch}{1}
 <<tab_orga>>=
-orga = legende %>% 
-  filter(CLASSE == "acteur orga", CLE != "all") %>% 
+orga = xl$LEGENDE %>% 
+  filter(tolower(CLASSE) == "acteur orga", tolower(CLE) != "all") %>% 
   select(DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, C, ABS)
 
 print_table(orga, 
@@ -144,8 +97,8 @@ print_table(orga,
 @
 
 <<tab_exe>>=
-exe = legende %>% 
-  filter(CLASSE == "acteur exe") %>% 
+exe = xl$LEGENDE %>% 
+  filter(tolower(CLASSE) == "acteur exe") %>% 
   select(LOT, DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, C, ABS)
 
 print_table(exe, 
@@ -158,42 +111,9 @@ print_table(exe,
 }
 \end{spacing}
 
-% Mise en forme des taches -----------------------------------------------------
-<<edit_taches, include=FALSE>>=
-cejour = xl$CEJOUR %>% 
-  filter(!is.na(SECTION)) %>%  # Efface les lignes vides
-  mutate(ETAT = ifelse(is.na(ETAT), "af", ETAT)) # Complète `ETAT` manquant par `A faire`
-
-# Ajoute `CEJOUR` à TACHES
-taches = xl$TACHES %>% 
-  bind_rows(cejour)
-
-# recodage et tri
-taches = taches %>% 
-  mutate(ETAT = tolower(ETAT)) %>% # Edite clés `ETAT`, `SECTION`, `ACTEUR` en minuscule
-  mutate(SECTION = tolower(SECTION)) %>% 
-  mutate(ACTEUR = tolower(ACTEUR)) %>% 
-  arrange(ETAT, SECTION, ECHEANCE, ACTEUR) # Tri des lignes par `ETAT`, `SECTION`, `ECHEANCE` puis `ACTEUR`
-
-# Edite `PRIORITE` : `Rappel` (`ECHEANCE` passée) ou `Urgent` (`ECHEANCE` + 1 semaine)
-row = (taches$ETAT %in% c("af", "av")) & (taches$ECHEANCE <= date_reu)
-taches$PRIORITE[row] = "RAPPEL"
-
-row = (taches$ETAT %in% c("af", "av")) & (taches$ECHEANCE <= date_reu-7)
-taches$PRIORITE[row] = "URGENT"
-
-# Complète `DATEREALISATION` manquante par la date de la réunion
-row = (taches$ETAT %in% c("f", "v", "an")) & is.na(taches$DATEREALISATION)
-taches$DATEREALISATION[row] = date_reu
-
-# Supprime les lignes `Fait`/`Validé`/`Annulé` avec `DATEREALISATION` supérieure à 3 semaines
-taches = taches %>% 
-  filter( !( (ETAT %in% c("f", "v", "an")) & (DATEREALISATION <= date_reu-3*7) ) )
-@
-
 % Sections Taches --------------------------------------------------------------
 <<taches>>=
-print_taches(taches, legende, 
+print_taches(xl$TACHES, xl$LEGENDE, 
              header = header$taches, 
              col_format = col_format$taches,
              format_fun = format_fun,
@@ -212,11 +132,7 @@ print_table(xl$PLANSNOTE[,"TEXTE"],
 
 \subsection*{LISTE DES PLANS À JOUR}
 <<plans>>=
-plans = xl$PLANS %>% 
-  mutate(SECTION = tolower(SECTION)) %>% 
-  mutate(SOUSSECTION = tolower(SOUSSECTION))
-
-print_plans(plans, legende,
+print_plans(xl$PLANS, xl$LEGENDE,
             col_format = col_format$plans,
             header = header$plans, 
             format_fun = format_fun,
@@ -227,8 +143,13 @@ print_plans(plans, legende,
 % Section PHOTOGRAPHIES --------------------------------------------------------
 \clearpage
 \section{PHOTOGRAPHIES}
+<<read_photos_xl, include=FALSE>>=
+# lecture fichier
+xl_photos = read_xl(xl_file_photos, sheets = "PHOTOS")
+@
+
 <<photo>>=
-print_photos(xl$PHOTOS, 
+print_photos(xl_photos$PHOTOS, 
              header = NULL,
              hline = hline,
              grid_col = grid_col)
@@ -236,21 +157,3 @@ print_photos(xl$PHOTOS,
 
 % Fin document LaTeX ===========================================================
 \end{document}
-
-% Fichier Excel prochaine réunion ---------------------------------------
-<<next_reu, include = FALSE>>=
-# prepare cejour prochaine reunion
-nafun = function(x) { y = NA; class(y) = class(x); return(y) }
-cejour_next = cejour %>% 
-  summarise_each(funs(nafun)) %>% # 1 ligne vide
-  mutate(DATE = date_reu_next) %>% # date prochaine reu
-  slice(rep(1, 10)) # dupliquer 10 lignes
-
-# exporte xlsx prochaine reunion
-xl_next = xl
-xl_next$TACHES = taches
-xl_next$CEJOUR = cejour_next
-xl_next$PHOTOS = xl$PHOTOS[NULL,] # NULL %%%%%%%%%%%%%%%% TEMP %%%%%%%%%%%%%
-
-write_xl(xl_next, xlfile_next, open=FALSE)
-@
