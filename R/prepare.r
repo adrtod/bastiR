@@ -34,20 +34,20 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   if (!quiet)
     cat("Preparation du compte rendu :\n")
   
-  # chargement des variables du projet
+  # chargement des variables du projet -----------------------------------------
   if (!quiet)
     cat("* Chargement du fichier de configuration :", cfg_file, "\n")
   
   source(cfg_file, local = TRUE, encoding = encoding)
   
-  # lecture fichier
+  # lecture fichier excel ------------------------------------------------------
   if (!quiet)
     cat("* Lecture du tableur :", xl_file, "\n")
   xl = read_xl(xl_file,
                col_dates = col_dates, 
                origin = origin)
   
-  # legende
+  # legende --------------------------------------------------------------------
   if (!quiet){
     cat("* Edition de la feuille LEGENDE :\n")
     cat("  Conversion de CLE, CLASSE en minuscule\n")
@@ -61,7 +61,7 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   if (anyDuplicated(cles))
     stop("Cles dupliquees dans LEGENDE :", cles[duplicated(cles)], "\n")
   
-  # edit taches
+  # edit taches ----------------------------------------------------------------
   if (!quiet)
     cat("* Edition de la feuille TACHES :\n")
   
@@ -114,7 +114,7 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   taches = taches %>% 
     filter( !( (ETAT %in% c("f", "v", "an")) & (REALISATION <= date-3*7) ) )
   
-  # plans
+  # plans ----------------------------------------------------------------------
     if (!quiet){
       cat("* Edition de la feuille PLANS :\n")
       cat("  Conversion de SECTION, SOUSSECTION, ETAT en minuscule\n")
@@ -122,7 +122,7 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   plans = xl$PLANS %>% 
     mutate_each(funs(tolower), SECTION, SOUSSECTION, ETAT)
   
-  # prepare cejour prochaine reunion
+  # prepare cejour prochaine reunion -------------------------------------------
   if (!quiet)
     cat("* Preparation de la feuille CEJOUR pour le prochain compte rendu\n")
   nafun = function(x) { y = NA; class(y) = class(x); return(y) }
@@ -131,7 +131,7 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
     mutate(REUNION = date_next) %>% # date prochaine reu
     slice(rep(1, 10)) # dupliquer 10 lignes
   
-  # exporte xlsx
+  # exporte xlsx ---------------------------------------------------------------
   if (!quiet)
     cat("* Sauvegarde du tableur :", xl_file_next, "\n")
   
@@ -141,7 +141,7 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   
   write_xl(xl, xl_file_next, open=FALSE)
   
-  # deplacer les photos
+  # deplacer les photos --------------------------------------------------------
   if (!dir.exists(backup)) {
     if (!quiet)
       cat("* Creation du dossier :", backup, "\n")
@@ -163,16 +163,18 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   photo_files = list.files(backup, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)",
                            full.names = TRUE)
   
-  # prepare tableau photo
+  # prepare tableau photo ------------------------------------------------------
   if (!file.exists(xl_file_photos)) {
     if (!quiet)
       cat("* Creation du tableur pour commentaires photos :", xl_file_photos, "\n")
+    
+    if (!dir.exists(dirname(xl_file_photos)))
+      dir.create(dirname(xl_file_photos), recursive = recursive)
     
     xl_photos = list()
     # prepare tableau photo
     xl_photos$photos = prepare_photos(photo_files)
     write_xl(xl_photos, xl_file_photos, open = openxl)
-    
   }
   
   if (!quiet) {
