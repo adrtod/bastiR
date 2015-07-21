@@ -22,7 +22,6 @@ out_name = paste0(tools::file_path_sans_ext(xl_file), "_", num)
 photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
 backup = format(date, "%Y-%m-%d")
 xl_file_photos = file.path(backup, paste0(tools::file_path_sans_ext(xl_file), "_", num, ".xlsx"))
-temp = "tmp/" # doit terminer par /
 max_width = 340
 max_height = 340
 quality = 95

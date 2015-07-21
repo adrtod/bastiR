@@ -52,10 +52,7 @@ write_xl <- function(df,
                      zip_path = "C:\\Rtools\\bin") {
   
   if (.Platform$OS.type == "windows") {
-    tryCatch(shell("zip -v"), 
-             warning = function(w)
-               Sys.setenv(PATH = paste(Sys.getenv("PATH"), zip_path, sep=";"))
-    )
+    Sys.setenv(PATH = paste(Sys.getenv("PATH"), zip_path, sep=.Platform$path.sep))
   }
   
   # export

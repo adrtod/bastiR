@@ -114,11 +114,9 @@ compile_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   row = !is.na(xl_photos$PHOTOS$COMMENTAIRE) & nzchar(xl_photos$PHOTOS$COMMENTAIRE)
   photo_files = file.path(backup, photo_files[row])
   
-  if (!dir.exists(temp)) {
-    if (!quiet)
-      cat("* Creation du dossier temporaire :", temp, "\n")
-    dir.create(temp, recursive = recursive)
-  }
+  temp <- paste0(gsub("\\\\", "/", tempdir()), "/")
+  # backslash \ remplaces par slash / pour latex
+  # doit terminer par / pour graphicspath
   
   if (!quiet)
     cat("* Retaillage des photos dans :", temp, "\n")
@@ -138,17 +136,12 @@ compile_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   # clean
   if(clean) {
     if (!quiet)
-      cat("* Suppression des fichiers et dossiers temporaires\n")
+      cat("* Suppression du fichier latex:", paste0(out_name, ".tex"), "\n")
     
     file.remove(paste0(out_name, ".tex"))
-    
-    # supprime temp
-    unlink(temp, recursive = TRUE)
   }
   
   if (!quiet) {
-    cat("* Fichier pdf produit :", pdf_file,"\n")
-    
     cat("\nEtapes suivantes pour le prochain compte rendu :\n")
     cat('1. Editer "', cfg_file, '"\n', sep="")
     cat("2. Placer les photos dans le dossier approprie\n")
