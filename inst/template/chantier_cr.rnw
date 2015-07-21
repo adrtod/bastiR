@@ -13,12 +13,6 @@ require("dplyr")
 \usepackage[french]{babel}
 \usepackage{lmodern}
 \usepackage{eurosym} % pour \euro
-
-<<>>=
-if (inputenc=="utf8")
-  cat("\\DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8")
-@
-
 \usepackage[\Sexpr{geometry}]{geometry}
 \usepackage{hyperref}
 \usepackage[]{graphicx}
@@ -36,13 +30,10 @@ if (inputenc=="utf8")
 \parindent \Sexpr{parindent}
 \graphicspath{{\Sexpr{temp}}}
 
-\usepackage{fancyhdr} % entete et pied de page
-\pagestyle{fancy}
-\renewcommand{\sectionmark}[1]{\markboth{#1}{}} % commande pour titre de section sans numéro dans l'entête
-\setlength\headheight{42.82pt}
-
-\usepackage{titlesec}
-\titleformat{\section}[block]{}{}{0em}{\vphantom}[\vspace*{-2em}] % supprime affichage des titres de sections en début de section
+<<utf8>>=
+if (inputenc=="utf8")
+  cat("\\DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8")
+@
 
 <<colors>>=
 for (i in seq_along(RGBcolors)) {
@@ -50,7 +41,15 @@ for (i in seq_along(RGBcolors)) {
 }
 @
 
+\usepackage{titlesec}
+\titleformat{\section}[block]{}{}{0em}{\vphantom}[\vspace*{-2em}] % supprime affichage des titres de sections en début de section
+
 % entête et pied de page -------------------------------------------------------
+\usepackage{fancyhdr} % entete et pied de page
+\pagestyle{fancy}
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}} % commande pour titre de section sans numéro dans l'entête
+\setlength\headheight{42.82pt}
+
 \fancyhf{}
 \fancyhead[C]{\Sexpr{entete$C}}
 \fancyhead[L]{\Sexpr{entete$L}}
@@ -65,17 +64,17 @@ for (i in seq_along(RGBcolors)) {
 
 % Page de garde ----------------------------------------------------------------
 <<garde>>=
-print_garde(garde)
+bastiR::print_garde(garde)
 @
 
-<<read_xl, include=FALSE>>=
+<<read_excel, include=FALSE>>=
 # lecture fichier
-xl = read_xl(xl_file_next,
+xl = bastiR::read_xl(xl_file_out,
              col_dates = col_dates, 
              origin = origin)
 @
 
-% Affichage tableau page de garde ----------------------------------------------
+% Tableau page de garde --------------------------------------------------------
 \begin{spacing}{.7}
 {\fontsize{6pt}{1em}\selectfont
 \setlength{\tabcolsep}{1pt}
@@ -85,7 +84,7 @@ orga = xl$LEGENDE %>%
   filter(tolower(CLASSE) == "acteur orga", tolower(CLE) != "all") %>% 
   select(DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, C, ABS)
 
-print_table(orga, 
+bastiR::print_table(orga, 
             header = header$orga,
             col_format = col_format$orga, 
             rowcol_head = rowcol_head,
@@ -99,7 +98,7 @@ exe = xl$LEGENDE %>%
   filter(tolower(CLASSE) == "acteur exe") %>% 
   select(LOT, DESIGNATION, NOM, REPRESENTANT, TEL, MOBILE, FAX, EMAIL, P, DIF, C, ABS)
 
-print_table(exe, 
+bastiR::print_table(exe, 
             header = header$exe,
             col_format = col_format$exe, 
             rowcol_head = rowcol_head,
@@ -111,7 +110,7 @@ print_table(exe,
 
 % Sections Taches --------------------------------------------------------------
 <<taches>>=
-print_taches(xl$TACHES, xl$LEGENDE, 
+bastiR::print_taches(xl$TACHES, xl$LEGENDE, 
              header = header$taches, 
              col_format = col_format$taches,
              format_fun = format_fun,
@@ -122,7 +121,7 @@ print_taches(xl$TACHES, xl$LEGENDE,
 \clearpage
 \section{ARMOIRE À PLANS}
 <<plansnote>>=
-print_table(xl$PLANSNOTE[,"TEXTE"], 
+bastiR::print_table(xl$PLANSNOTE[,"TEXTE"], 
             col_format="p{\\textwidth}",
             hline = FALSE,
             header = NULL)
@@ -130,7 +129,7 @@ print_table(xl$PLANSNOTE[,"TEXTE"],
 
 \subsection*{LISTE DES PLANS À JOUR}
 <<plans>>=
-print_plans(xl$PLANS, xl$LEGENDE,
+bastiR::print_plans(xl$PLANS, xl$LEGENDE,
             col_format = col_format$plans,
             header = header$plans, 
             format_fun = format_fun,
@@ -143,11 +142,11 @@ print_plans(xl$PLANS, xl$LEGENDE,
 \section{PHOTOGRAPHIES}
 <<read_photos_xl, include=FALSE>>=
 # lecture fichier
-xl_photos = read_xl(xl_file_photos, sheets = "PHOTOS")
+xl_photos = bastiR::read_xl(xl_file_photos, sheets = "PHOTOS")
 @
 
 <<photo>>=
-print_photos(xl_photos$PHOTOS, 
+bastiR::print_photos(xl_photos$PHOTOS, 
              header = NULL,
              hline = hline,
              grid_col = grid_col)

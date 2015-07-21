@@ -5,8 +5,8 @@
 \title{Resize photos}
 \usage{
 resize_photos(photo_files = list.files(".", pattern =
-  ".*\\\\.(jpg|jpeg|JPG|JPEG|png|PNG)"), out_dir = "tmp", max_width = 340,
-  max_height = 340, quality = 95, quiet = FALSE)
+  ".*\\\\.(jpg|jpeg|JPG|JPEG|png|PNG)"), out_dir = tempdir(),
+  max_width = 340, max_height = 340, quality = 95, quiet = FALSE)
 }
 \arguments{
 \item{photo_files}{character vector. paths of the photo files}

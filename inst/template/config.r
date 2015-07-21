@@ -1,40 +1,44 @@
 # Variables du projet ==========================================================
 
-# Projet ----------------------------------------------------------------
+name = "BEUBOIS_CR" # nom du projet
 num = 24 # numéro de réunion
 date = as.Date("2015-07-15") # date de réunion
 date_next = date+7 # date prochaine réunion
 num_next = num + 1 # numéro prochaine réunion
 heure_next = "9H00" # heure prochaine réunion
 
-# Fichier excel ----------------------------------------------------------------
-xl_file = "BEUBOIS_CR.xlsx"
-xl_file_next = paste0(tools::file_path_sans_ext(xl_file), "_", num_next, ".xlsx")
+# Excel ------------------------------------------------------------------------
+xl_file = paste0(name, ".xlsx") # fichier excel d'entrée (réunion en cours)
+xl_file_out = paste0(name, "_", num_next, ".xlsx") # fichier excel de sortie (prochaine réunion)
 col_dates = c("REUNION", "ECHEANCE", "REALISATION", "DATE")
 origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
-openxl = TRUE
 
-# Rapport ----------------------------------------------------------------------
-rnw_file = system.file("template/chantier_cr.rnw", package = "bastiR")
-out_name = paste0(tools::file_path_sans_ext(xl_file), "_", num)
+# Pdf --------------------------------------------------------------------------
+rnw_file = system.file("template/chantier_cr.rnw", package = "bastiR") # fichier Sweave pour le compte rendu
+out_name = paste0(name, "_", num) # nom du fichier pdf de sortie (sans extension)
 
 # Photos -----------------------------------------------------------------------
-photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
-backup = format(date, "%Y-%m-%d")
-xl_file_photos = file.path(backup, paste0(tools::file_path_sans_ext(xl_file), "_", num, ".xlsx"))
-max_width = 340
-max_height = 340
-quality = 95
+photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)") # liste des fichiers photos à traiter
+photo_dir = file.path("../photos", format(date, "%Y-%m-%d")) # dossier de sauvegarde des photos
+xl_file_photos = file.path(photo_dir, paste0(name, "_", num, ".xlsx")) # fichier excel pour les photos
+openxl = TRUE # ouvrir le fichier excel pour commentaires photos
+max_width = 340 # largeur max
+max_height = 340 # hauteur max
+quality = 95 # qualité de compression jpeg en pourcents
 
-# Document ---------------------------------------------------------------------
+# Préambule latex --------------------------------------------------------------
 fontsize = "11pt" # taille de police par défaut
 geometry = "top=2.5cm, bottom=3.5cm, left=1.5cm, right=1.5cm" # marges
 documentclass = "article" # classe du document
 classoption = "a4paper" # options du document
-inputenc = ifelse(.Platform$OS.type == "windows", "latin1", "utf8")
+inputenc = ifelse(.Platform$OS.type == "windows", "latin1", "utf8") # encodage du fichier tex
 parindent = "0em" # indentation de paragraphe
 letterspace = 200 # espacement de lettres pour email
 familydefault = "sfdefault" # police sans empattement
+
+# Couleurs ---------------------------------------------------------------------
+RGBcolors = list()
+RGBcolors$DformVert = c(131,182,27)
 
 # Page de garde ----------------------------------------------------------------
 garde = list()
@@ -44,10 +48,6 @@ garde$img = "img/TAVAILLON_3D_600"
 garde$img_width = "0.8\\textwidth"
 garde$reu_next = paste0("Réunion de chantier \\no ", num_next, " à {\\bf ", heure_next, "} le ", format(date_next, "%A %d %B %Y"))
 garde$email = "t.weulersse@atelier-d-form.com"
-
-# Couleurs perso ---------------------------------------------------------------
-RGBcolors = list()
-RGBcolors$DformVert = c(131,182,27)
 
 # Entete -----------------------------------------------------------------------
 entete = list()

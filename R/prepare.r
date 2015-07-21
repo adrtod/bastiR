@@ -1,17 +1,4 @@
 
-#' Prepare photo sheet to be completed
-#' 
-#' @param photo_files character vector. paths of the photo files
-#'
-#' @importFrom dplyr data_frame
-#' @keywords internal
-prepare_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")) {
-  df = data_frame(FICHIER = photo_files, 
-                  COMMENTAIRE = as.character(rep(NA, length(photo_files))))
-  return(df)
-}
-
-
 #' Preparation du compte rendu
 #'
 #' @param cfg_file string. ficher R de configuration
@@ -29,6 +16,7 @@ prepare_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jp
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr summarise_each
 #' @importFrom dplyr slice
+#' @importFrom dplyr data_frame
 prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
                        quiet = FALSE, recursive = TRUE) {
   if (!quiet)
@@ -133,26 +121,26 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   
   # exporte xlsx ---------------------------------------------------------------
   if (!quiet)
-    cat("* Sauvegarde du tableur :", xl_file_next, "\n")
+    cat("* Sauvegarde du tableur :", xl_file_out, "\n")
   
   xl$TACHES = taches
   xl$CEJOUR = cejour_next
   xl$PLANS = plans
   
-  write_xl(xl, xl_file_next, open=FALSE)
+  write_xl(xl, xl_file_out, open=FALSE)
   
   # deplacer les photos --------------------------------------------------------
-  if (!dir.exists(backup)) {
+  if (!dir.exists(photo_dir)) {
     if (!quiet)
-      cat("* Creation du dossier :", backup, "\n")
-    dir.create(backup, recursive = recursive)
+      cat("* Creation du dossier :", photo_dir, "\n")
+    dir.create(photo_dir, recursive = recursive)
   }
   
   if (length(photo_files)>0) {
     if (!quiet)
-      cat("* Deplacement des photos vers :", backup, "\n")
+      cat("* Deplacement des photos vers :", photo_dir, "\n")
     
-    ok = file.copy(photo_files, backup)
+    ok = file.copy(photo_files, photo_dir)
     file.remove(photo_files[ok])
     
     if (any(!ok))
@@ -160,21 +148,29 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
               paste(photo_files[!ok], collapse=" "), "\n")
   }
   
-  photo_files = list.files(backup, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)",
-                           full.names = TRUE)
+  photo_files = list.files(photo_dir, pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)")
   
   # prepare tableau photo ------------------------------------------------------
   if (!file.exists(xl_file_photos)) {
     if (!quiet)
       cat("* Creation du tableur pour commentaires photos :", xl_file_photos, "\n")
     
+    # creer repertoire
     if (!dir.exists(dirname(xl_file_photos)))
       dir.create(dirname(xl_file_photos), recursive = recursive)
     
-    xl_photos = list()
     # prepare tableau photo
-    xl_photos$photos = prepare_photos(photo_files)
+    xl_photos = list()
+    xl_photos$PHOTOS = data_frame(FICHIER = photo_files, 
+                                  COMMENTAIRE = as.character(rep(NA, length(photo_files))))
+    
+    # export excel
     write_xl(xl_photos, xl_file_photos, open = openxl)
+    
+    if (openxl) {
+      open_fileman(photo_dir)
+    }
+      
   }
   
   if (!quiet) {
@@ -185,4 +181,41 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   }
   
   invisible(NULL)
+}
+
+
+#' Open file manager to specified location
+#'
+#' @param path string. path to the target location
+#' @param fileman string. name of the file manager application
+#' @export
+open_fileman <- function(path, fileman = NULL) {
+  
+  # guess the filemanager application
+  if (is.null(fileman) || is.na(fileman)) {
+    # Windows
+    if (tolower(.Platform$OS.type) == "windows")
+      fileman = "explorer"
+    else {
+      # OSX
+      if (tolower(Sys.info()["sysname"]) == "darwin")
+        fileman = "open"
+      else {
+        # Linux: check if different commands exist
+        for (fm in c("gnome-open", "dolphin", "nemo", "pacmanfm", "thunar", "caja")) {
+          if (!system(paste("hash", fm), ignore.stderr = TRUE)) {
+            fileman = fm
+            break
+          }
+        }
+      }
+    }
+  }
+  
+  if (is.null(fileman) || is.na(fileman)) {
+    warning("could not find a file manager")
+    return(NULL)
+  }
+  
+  system(paste(fileman, normalizePath(path)), intern=TRUE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.r
 \name{print_photos}
 \alias{print_photos}
-\title{print photos to latex}
+\title{Print photos to latex}
 \usage{
 print_photos(photos,
   col_format = "|>{\\\\centering}m{.55\\\\linewidth}|m{.4\\\\linewidth}|",
@@ -20,6 +20,6 @@ print_photos(photos,
 \item{...}{further arguments to be passed to print_table}
 }
 \description{
-print photos to latex
+Print photos to latex
 }
 

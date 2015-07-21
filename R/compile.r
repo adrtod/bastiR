@@ -23,7 +23,7 @@ print_sz = function(sz) {
 #' @importFrom png readPNG
 #' @importFrom jpeg readJPEG
 resize_photos <- function(photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)"),
-                          out_dir = "tmp", max_width = 340, max_height = 340, quality = 95,
+                          out_dir = tempdir(), max_width = 340, max_height = 340, quality = 95,
                           quiet = FALSE) {
   out = character(0)
   for (i in seq_along(photo_files)) {
@@ -97,13 +97,13 @@ compile_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   if (!quiet)
     cat("Compilation du compte rendu pdf :\n")
   
-  # chargement des variables du projet
+  # chargement des variables du projet -----------------------------------------
   if (!quiet)
     cat("* Chargement du fichier de configuration :", cfg_file, "\n")
   
   source(cfg_file, local = TRUE, encoding = encoding)
   
-  # Retaillage des photos
+  # Retaillage des photos ------------------------------------------------------
   
   # lecture fichier
   if (!quiet)
@@ -112,7 +112,7 @@ compile_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   
   photo_files = xl_photos$PHOTOS$FICHIER
   row = !is.na(xl_photos$PHOTOS$COMMENTAIRE) & nzchar(xl_photos$PHOTOS$COMMENTAIRE)
-  photo_files = file.path(backup, photo_files[row])
+  photo_files = file.path(photo_dir, photo_files[row])
   
   temp <- paste0(gsub("\\\\", "/", tempdir()), "/")
   # backslash \ remplaces par slash / pour latex
@@ -125,15 +125,20 @@ compile_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
                 max_width = max_width, max_height = max_height,
                 quality = quality, quiet = quiet)
   
-  # render file
+  # Compilation du pdf ---------------------------------------------------------
   if (!quiet)
     cat("* Compilation du pdf :", paste0(out_name, ".pdf"), "\n")
+  
+  root_dir = knitr::opts_knit$get("root.dir")
+  knitr::opts_knit$set(root.dir = getwd())
   
   pdf_file = knitr::knit2pdf(rnw_file, paste0(out_name, ".tex"),
                              encoding = encoding, 
                              quiet = quiet_knit, clean = clean)
   
-  # clean
+  knitr::opts_knit$set(root.dir = root_dir)
+  
+  # clean ----------------------------------------------------------------------
   if(clean) {
     if (!quiet)
       cat("* Suppression du fichier latex:", paste0(out_name, ".tex"), "\n")

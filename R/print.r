@@ -2,14 +2,13 @@ utils::globalVariables(c("FICHIER", "SECTION", "SOUSSECTION", "DATE", "PLAN",
                          "NUM", "INDICE", "SECTION", "ACTEUR", "REUNION", "ETAT", 
                          "PRIORITE", "ECHEANCE", "TACHE", "COMMENTAIRE", "REALISATION",
                          "CLE", "CLASSE", "xl_file", "col_dates", "origin", "date", 
-                         "date_next", "xl_file_next", "backup", "xl_file_photos", 
+                         "date_next", "xl_file_out", "photo_dir", "xl_file_photos", 
                          "openxl", "temp", "max_width", "max_height", "quality", 
                          "out_name", "rnw_file"))
 
 #' Print front page
 #'
 #' @param garde list
-#'
 #' @export
 print_garde = function(garde) {
   cat("\\begin{center}\n", sep="")
@@ -307,7 +306,7 @@ print_plans <- function(plans,
   }
 }
 
-#' print photos to latex
+#' Print photos to latex
 #'
 #' @param photos data.frame
 #' @param col_format string. column format
