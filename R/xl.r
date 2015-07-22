@@ -58,9 +58,13 @@ write_xl <- function(df,
   # export
   openxlsx::write.xlsx(df, file = out_file)
   
-  # ouvrir Excel
-  if (open)
-    openxlsx::openXL(out_file)
+  # open Excel
+  if (open) {
+    if (.Platform$OS.type == "windows")
+      shell.exec(normalizePath(out_file))
+    else
+      openxlsx::openXL(out_file)
+  }
   
   invisible(out_file)
 }

@@ -9,7 +9,8 @@ require("dplyr")
 % Préambule LaTeX ==============================================================
 \documentclass[\Sexpr{fontsize}, \Sexpr{classoption}]{\Sexpr{documentclass}}
 \usepackage[T1]{fontenc}
-\usepackage[\Sexpr{inputenc}]{inputenc}
+\usepackage[latin1]{inputenc}
+%\DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8
 \usepackage[french]{babel}
 \usepackage{lmodern}
 \usepackage{eurosym} % pour \euro
@@ -29,11 +30,6 @@ require("dplyr")
 \setlength{\LTright}{\LTleft}
 \parindent \Sexpr{parindent}
 \graphicspath{{\Sexpr{temp}}}
-
-<<utf8>>=
-if (inputenc=="utf8")
-  cat("\\DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8")
-@
 
 <<colors>>=
 for (i in seq_along(RGBcolors)) {

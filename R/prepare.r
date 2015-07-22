@@ -68,7 +68,7 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   
   taches = taches %>% 
     mutate(ETAT = ifelse(is.na(ETAT), "af", ETAT)) 
-    
+  
   # recodage et tri
   if (!quiet){
     cat("  Conversion de ETAT, SECTION, ACTEUR en minuscule\n")
@@ -103,10 +103,10 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
     filter( !( (ETAT %in% c("f", "v", "an")) & (REALISATION <= date-3*7) ) )
   
   # plans ----------------------------------------------------------------------
-    if (!quiet){
-      cat("* Edition de la feuille PLANS :\n")
-      cat("  Conversion de SECTION, SOUSSECTION, ETAT en minuscule\n")
-    }
+  if (!quiet){
+    cat("* Edition de la feuille PLANS :\n")
+    cat("  Conversion de SECTION, SOUSSECTION, ETAT en minuscule\n")
+  }
   plans = xl$PLANS %>% 
     mutate_each(funs(tolower), SECTION, SOUSSECTION, ETAT)
   
@@ -165,12 +165,12 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
                                   COMMENTAIRE = as.character(rep(NA, length(photo_files))))
     
     # export excel
-    write_xl(xl_photos, xl_file_photos, open = openxl)
+    write_xl(xl_photos, xl_file_photos, open = open_files)
     
-    if (openxl) {
+    if (open_files) {
       open_fileman(photo_dir)
     }
-      
+    
   }
   
   if (!quiet) {
@@ -188,8 +188,12 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
 #'
 #' @param path string. path to the target location
 #' @param fileman string. name of the file manager application
+#' @param ... further arguments to be passed to \code{\link{system}}
+#' @param warn logical (not NA). disable warnings if TRUE
+#'
+#' @seealso \code{\link{system}}, \code{\link{shell}} (windows)
 #' @export
-open_fileman <- function(path, fileman = NULL) {
+open_fileman <- function(path, fileman = NULL, warn=FALSE, ...) {
   
   # guess the filemanager application
   if (is.null(fileman) || is.na(fileman)) {
@@ -217,5 +221,13 @@ open_fileman <- function(path, fileman = NULL) {
     return(NULL)
   }
   
-  system(paste(fileman, normalizePath(path)), intern=TRUE)
+  warn_handler = function(w) {}
+  if (warn)
+    warn_handler = function(w) { warning(w) }
+  
+  if (tolower(.Platform$OS.type) == "windows")
+    tryCatch(shell(paste(fileman, normalizePath(path)), ...),
+             warning = warn_handler)
+  else
+    system(paste(fileman, normalizePath(path)), ...)
 }

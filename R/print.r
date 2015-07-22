@@ -3,7 +3,7 @@ utils::globalVariables(c("FICHIER", "SECTION", "SOUSSECTION", "DATE", "PLAN",
                          "PRIORITE", "ECHEANCE", "TACHE", "COMMENTAIRE", "REALISATION",
                          "CLE", "CLASSE", "xl_file", "col_dates", "origin", "date", 
                          "date_next", "xl_file_out", "photo_dir", "xl_file_photos", 
-                         "openxl", "temp", "max_width", "max_height", "quality", 
+                         "open_files", "max_width", "max_height", "quality", 
                          "out_name", "rnw_file"))
 
 #' Print front page

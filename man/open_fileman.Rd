@@ -4,14 +4,21 @@
 \alias{open_fileman}
 \title{Open file manager to specified location}
 \usage{
-open_fileman(path, fileman = NULL)
+open_fileman(path, fileman = NULL, warn = FALSE, ...)
 }
 \arguments{
 \item{path}{string. path to the target location}
 
 \item{fileman}{string. name of the file manager application}
+
+\item{warn}{logical (not NA). disable warnings if TRUE}
+
+\item{...}{further arguments to be passed to \code{\link{system}}}
 }
 \description{
 Open file manager to specified location
+}
+\seealso{
+\code{\link{system}}, \code{\link{shell}} (windows)
 }
 

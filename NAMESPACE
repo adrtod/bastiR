@@ -2,6 +2,7 @@
 
 export(compile_cr)
 export(open_fileman)
+export(open_pdf)
 export(prepare_cr)
 export(print_classe)
 export(print_garde)

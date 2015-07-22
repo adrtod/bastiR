@@ -138,6 +138,11 @@ compile_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   
   knitr::opts_knit$set(root.dir = root_dir)
   
+  # open pdf
+  if (open_files)
+    open_pdf(pdf_file, intern=FALSE, wait=FALSE)
+  
+  
   # clean ----------------------------------------------------------------------
   if(clean) {
     if (!quiet)
@@ -155,4 +160,45 @@ compile_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   }
   
   invisible(pdf_file)
+}
+
+
+
+#' Open pdf file
+#'
+#' @param file string. file to open
+#' @param ... further arguments to be passed to \code{\link{system}}
+#' @param viewer string. name of the pdf viewer application (unix only)
+#'
+#' @seealso \code{\link{system}}, \code{\link{shell}} (windows)
+#' @export
+open_pdf <- function(file, viewer = NULL, ...) {
+  
+  # guess the filemanager application
+  if (tolower(.Platform$OS.type) == "windows") {
+    shell.exec(normalizePath(file))
+    return(NULL)
+  }
+  
+  if (is.null(viewer) || is.na(viewer)) {
+    # OSX
+    if (tolower(Sys.info()["sysname"]) == "darwin")
+      viewer = "open -a Preview"
+    else {
+      # Linux: check if different commands exist
+      for (fm in c("evince", "okular", "acroread", "chromium-browser", "xpdf")) {
+        if (!system(paste("hash", fm), ignore.stderr = TRUE)) {
+          viewer = fm
+          break
+        }
+      }
+    }
+  }
+  
+  if (is.null(viewer) || is.na(viewer)) {
+    warning("could not find a pdf viewer")
+    return(NULL)
+  }
+  
+  system(paste(viewer, normalizePath(file)), ...)
 }

@@ -12,6 +12,7 @@ xl_file = paste0(name, ".xlsx") # fichier excel d'entrée (réunion en cours)
 xl_file_out = paste0(name, "_", num_next, ".xlsx") # fichier excel de sortie (prochaine réunion)
 col_dates = c("REUNION", "ECHEANCE", "REALISATION", "DATE")
 origin = "1899-12-30" # Depend du systeme de date Excel. Par défaut "1899-12-30" pour Excel Windows et "1904-01-01" pour Excel Macintosh. Voir l'aide de as.Date et https://support.microsoft.com/en-us/kb/214330
+open_files = TRUE # ouvrir les fichiers après création
 
 # Pdf --------------------------------------------------------------------------
 rnw_file = system.file("template/chantier_cr.rnw", package = "bastiR") # fichier Sweave pour le compte rendu
@@ -19,9 +20,8 @@ out_name = paste0(name, "_", num) # nom du fichier pdf de sortie (sans extension
 
 # Photos -----------------------------------------------------------------------
 photo_files = list.files(".", pattern = ".*\\.(jpg|jpeg|JPG|JPEG|png|PNG)") # liste des fichiers photos à traiter
-photo_dir = file.path("../photos", format(date, "%Y-%m-%d")) # dossier de sauvegarde des photos
+photo_dir = file.path("../PHOTOS", format(date, "%Y-%m-%d")) # dossier de sauvegarde des photos
 xl_file_photos = file.path(photo_dir, paste0(name, "_", num, ".xlsx")) # fichier excel pour les photos
-openxl = TRUE # ouvrir le fichier excel pour commentaires photos
 max_width = 340 # largeur max
 max_height = 340 # hauteur max
 quality = 95 # qualité de compression jpeg en pourcents
@@ -31,7 +31,6 @@ fontsize = "11pt" # taille de police par défaut
 geometry = "top=2.5cm, bottom=3.5cm, left=1.5cm, right=1.5cm" # marges
 documentclass = "article" # classe du document
 classoption = "a4paper" # options du document
-inputenc = ifelse(.Platform$OS.type == "windows", "latin1", "utf8") # encodage du fichier tex
 parindent = "0em" # indentation de paragraphe
 letterspace = 200 # espacement de lettres pour email
 familydefault = "sfdefault" # police sans empattement
