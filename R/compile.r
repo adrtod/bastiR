@@ -114,7 +114,8 @@ compile_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   row = !is.na(xl_photos$PHOTOS$COMMENTAIRE) & nzchar(xl_photos$PHOTOS$COMMENTAIRE)
   photo_files = file.path(photo_dir, photo_files[row])
   
-  temp <- paste0(gsub("\\\\", "/", tempdir()), "/")
+  temp <- paste0(gsub("\\\\", "/", normalizePath(tempdir())), "/")
+  # chemin long absolu complet
   # backslash \ remplaces par slash / pour latex
   # doit terminer par / pour graphicspath
   
