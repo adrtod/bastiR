@@ -6,15 +6,18 @@
 #' @param col_dates character vector. date column names
 #' @param origin a Date object, or something which can be coerced by 
 #'   \code{as.Date(origin)} to such an object.
+#' @param ... further arguments to pass to \code{\link[openxlsx]{read.xlsx}}
 #'
 #' @export
-#' @importFrom readxl excel_sheets
+#' @importFrom openxlsx getSheetNames
+#' @importFrom openxlsx read.xlsx
+#' @importFrom dplyr as_data_frame
 read_xl <- function(xl_file, 
                     sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS", "PLANSNOTE"), 
                     col_dates = c("REUNION", "ECHEANCE", "REALISATION", "DATE"), 
-                    origin = "1899-12-30") {
+                    origin = "1899-12-30", ...) {
   
-  xl_sheets = readxl::excel_sheets(xl_file)
+  xl_sheets = openxlsx::getSheetNames(xl_file)
   xl = list()
   
   for (s in sheets) {
@@ -22,7 +25,7 @@ read_xl <- function(xl_file,
       stop("la feuille de calcul ", s, " est absente ")
     
     # lecture feuille
-    xl[[s]] = readxl::read_excel(xl_file, sheet=s)
+    xl[[s]] = dplyr::as_data_frame(openxlsx::read.xlsx(xl_file, sheet=s, ...))
     
     # codage dates
     for (c in col_dates) {
@@ -42,6 +45,7 @@ read_xl <- function(xl_file,
 #' @param out_file string. path to the output excel file
 #' @param open logical. activate opening the file in Excel/LibreOffice/OpenOffice
 #' @param zip_path string. path containing zip executable on windows
+#' @param ... further arguments to pass to \code{\link[openxlsx]{write.xlsx}}
 #'
 #' @export
 #' @importFrom openxlsx write.xlsx
@@ -49,14 +53,15 @@ read_xl <- function(xl_file,
 write_xl <- function(df, 
                      out_file, 
                      open = FALSE,
-                     zip_path = "C:\\Rtools\\bin") {
+                     zip_path = "C:\\Rtools\\bin",
+                     ...) {
   
   if (.Platform$OS.type == "windows") {
     Sys.setenv(PATH = paste(Sys.getenv("PATH"), zip_path, sep=.Platform$path.sep))
   }
   
   # export
-  openxlsx::write.xlsx(df, file = out_file)
+  openxlsx::write.xlsx(df, file = out_file, ...)
   
   # open Excel
   if (open) {

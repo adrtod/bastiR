@@ -6,7 +6,7 @@
 \usage{
 read_xl(xl_file, sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS",
   "PLANSNOTE"), col_dates = c("REUNION", "ECHEANCE", "REALISATION", "DATE"),
-  origin = "1899-12-30")
+  origin = "1899-12-30", ...)
 }
 \arguments{
 \item{xl_file}{string. path to the file}
@@ -16,7 +16,9 @@ read_xl(xl_file, sheets = c("LEGENDE", "TACHES", "CEJOUR", "PLANS",
 \item{col_dates}{character vector. date column names}
 
 \item{origin}{a Date object, or something which can be coerced by
-  \code{as.Date(origin)} to such an object.}
+\code{as.Date(origin)} to such an object.}
+
+\item{...}{further arguments to pass to \code{\link[openxlsx]{read.xlsx}}}
 }
 \description{
 Read excel file

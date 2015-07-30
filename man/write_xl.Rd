@@ -4,7 +4,7 @@
 \alias{write_xl}
 \title{Write data.frame to Excel file}
 \usage{
-write_xl(df, out_file, open = FALSE, zip_path = "C:\\\\Rtools\\\\bin")
+write_xl(df, out_file, open = FALSE, zip_path = "C:\\\\Rtools\\\\bin", ...)
 }
 \arguments{
 \item{df}{data.frame or list of data.frames}
@@ -14,6 +14,8 @@ write_xl(df, out_file, open = FALSE, zip_path = "C:\\\\Rtools\\\\bin")
 \item{open}{logical. activate opening the file in Excel/LibreOffice/OpenOffice}
 
 \item{zip_path}{string. path containing zip executable on windows}
+
+\item{...}{further arguments to pass to \code{\link[openxlsx]{write.xlsx}}}
 }
 \description{
 Write data.frame to Excel file

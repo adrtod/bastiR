@@ -46,7 +46,8 @@ devtools::install_github("adrtod/bastiR")
 - 1 ligne = 1 individu
 - Colonnes de dates au format date dans Excel
 - N'utiliser que les caractères reconnus par la norme [ISO 8859-1](https://fr.wikipedia.org/wiki/ISO_8859-1)
-  Pour le reste utiliser les commandes LaTeX :
+- ... à l'exception des caractères suivants qui doivent être précédés d'un `\` : &, %, $, #, _, {, }, ~, ^, \\
+- Pour le reste utiliser les commandes LaTeX :
     - `\euro{}`, `\oe{}`, `\OE{}`
     - [symboles mathématiques et lettres grecques](http://www.commentcamarche.net/contents/620-latex-table-de-caracteres) entre dollars, ex: `$\lambda$`
     - formatage en indice ou exposant, ex: `m$^2$`
