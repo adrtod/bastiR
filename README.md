@@ -66,6 +66,7 @@ Nom           | Description               | Colonnes
 
 # Spécification des photos
 - Fichiers reconnus : `.jpg`, `.jpeg`, `.JPG`, `.JPEG`, `.png`, `.PNG`
+- Les noms de fichiers **ne doivent pas contenir d'espace**
 - Orientation portrait/paysage : effectuer les rotations nécessaires manuellement
 
 # Traitements automatiques
