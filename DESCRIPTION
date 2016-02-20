@@ -1,10 +1,11 @@
 Package: bastiR
 Title: Outils De Suivi De Chantier
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(person("Adrien", "Todeschini", email = "adrien.todeschini@gmail.com", role=c("aut", "cre")),
     person("Baptiste", "Dulau", email = "baptiste.dulau@gmail.com",role=c("ctb")))
-Description: The R package bastiR aims to be a collection of tools to facilitate site supervision.
-    Its first task is the generation of account reports of site meetings.
+Description: The R package bastiR aims to be a collection of tools to facilitate
+    site supervision. Its first task is the generation of account reports of site
+    meetings.
 URL: https://github.com/adrtod/bastiR
 BugReports: https://github.com/adrtod/bastiR/issues
 Depends:
@@ -20,3 +21,4 @@ Imports:
 SystemRequirements: Rtools (Windows only), LaTeX
 License: GPL-2
 LazyData: true
+RoxygenNote: 5.0.1
