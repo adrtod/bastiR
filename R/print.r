@@ -54,7 +54,7 @@ print_table <- function(df = data.frame(),
                         hline = TRUE, 
                         format_head = "\\centering\\bf",
                         replace_na = function(x) ifelse(is.na(x), "", x),
-                        replace_nl = function(x) gsub("\n", "\\\\newline ", x),
+                        replace_nl = function(x) gsub("\n|&#10;", "\\\\newline ", x),
                         header = colnames(df),
                         grid_col = "lightgray",
                         vspace_before = "-.8em",
@@ -195,6 +195,8 @@ print_taches <- function(taches,
       
       # boucle sur reunions
       for (r in seq_along(reunions)) {
+        #cat("\\begin{minipage}{\\textwidth}\n")
+        
         cat(format_fun$reunion(reunions[r]))
         
         taches_r = taches_a %>% 
@@ -229,6 +231,8 @@ print_taches <- function(taches,
         }
         
         print_table(taches_r, col_format=col_format, header=NULL, ...)
+        
+        #cat("\\end{minipage}\n")
       }
     }
   }
