@@ -63,11 +63,6 @@ for (i in seq_along(RGBcolors)) {
 % Début document LaTeX =========================================================
 \begin{document}
 
-% Page de garde ----------------------------------------------------------------
-<<garde>>=
-bastiR::print_garde(garde)
-@
-
 <<read_excel, include=FALSE>>=
 # lecture fichier
 xl = bastiR::read_xl(xl_file_out,
@@ -75,7 +70,27 @@ xl = bastiR::read_xl(xl_file_out,
              origin = origin)
 @
 
-% Tableau page de garde --------------------------------------------------------
+% ------------------------------------------------------------------------------
+% Page de garde 
+% ------------------------------------------------------------------------------
+<<vspace>>=
+vspace = "1em"
+if ("vspace" %in% names(garde))
+  vspace = garde$vspace
+@
+
+\begin{center}
+{\LARGE \bf \color{gray} \Sexpr{garde$titre} \\} % titre
+{\Large \color{gray} \Sexpr{garde$soustitre} \\} % sous-titre
+\vspace*{\Sexpr{vspace}}
+\includegraphics[width=\Sexpr{garde$img_width}]{\Sexpr{garde$img}}\\ % image
+\vspace*{\Sexpr{vspace}}
+{\Large \color{red} \Sexpr{garde$reu_next} \\} % prochaine réunion
+\vspace*{\Sexpr{vspace}}
+{\Large \bf \color{blue} \lsstyle \underline{\Sexpr{garde$email}} } % email
+\end{center}
+
+% Tableau de coordonnées --------------------------------------------------------
 \begin{spacing}{.7}
 {\fontsize{6pt}{1em}\selectfont
 \setlength{\tabcolsep}{1pt}
@@ -109,7 +124,9 @@ bastiR::print_table(exe,
 }
 \end{spacing}
 
-% Sections Taches --------------------------------------------------------------
+% ------------------------------------------------------------------------------
+% Sections Taches 
+% ------------------------------------------------------------------------------
 <<taches>>=
 bastiR::print_taches(xl$TACHES, xl$LEGENDE, 
              header = header$taches, 
@@ -118,7 +135,9 @@ bastiR::print_taches(xl$TACHES, xl$LEGENDE,
              grid_col = grid_col)
 @
 
-% Section ARMOIRE À PLANS ------------------------------------------------------
+% ------------------------------------------------------------------------------
+% Section ARMOIRE À PLANS 
+% ------------------------------------------------------------------------------
 \clearpage
 \section{ARMOIRE À PLANS}
 <<plansnote>>=
@@ -159,3 +178,4 @@ if (!is.null(xl_photos$PHOTOS) && nrow(xl_photos$PHOTOS)>0) {
 @
 
 % Fin document LaTeX ===========================================================
+\end{document}

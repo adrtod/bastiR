@@ -6,23 +6,6 @@ utils::globalVariables(c("FICHIER", "SECTION", "SOUSSECTION", "DATE", "PLAN",
                          "open_files", "max_width", "max_height", "quality", 
                          "out_name", "rnw_file"))
 
-#' Print front page
-#'
-#' @param garde list
-#' @export
-print_garde = function(garde) {
-  cat("\\begin{center}\n", sep="")
-  cat("~\\\\\n")
-  cat("{\\LARGE \\bf \\color{gray} ", garde$titre, "\\\\}\n", sep="")
-  cat("{\\Large \\color{gray} ", garde$soustitre , "\\\\}\n", sep="")
-  cat("~\\\\\n")
-  cat("\\includegraphics[width=", garde$img_width, "]{", garde$img,"}\n", sep="")
-  cat("~\\\\~\\\\\n")
-  cat("{\\Large \\color{red} ", garde$reu_next, "\\\\}\n", sep="")
-  cat("~\\\\\n")
-  cat("{\\Large \\bf \\color{blue} \\lsstyle \\underline{", garde$email, "}}\n", sep="")
-  cat("\\end{center}\n")
-}
 
 #' Print table to latex
 #' @param df data.frame
