@@ -136,20 +136,24 @@ bastiR::print_plans(xl$PLANS, xl$LEGENDE,
             grid_col = grid_col)
 @
 
-% Section PHOTOGRAPHIES --------------------------------------------------------
-\clearpage
-\section{PHOTOGRAPHIES}
+% ------------------------------------------------------------------------------
+% Section PHOTOGRAPHIES 
+% ------------------------------------------------------------------------------
 <<read_photos_xl, include=FALSE>>=
 # lecture fichier
 xl_photos = bastiR::read_xl(xl_file_photos, sheets = "PHOTOS")
 @
 
 <<photo>>=
-bastiR::print_photos(xl_photos$PHOTOS, 
-             header = NULL,
-             hline = hline,
-             grid_col = grid_col)
+if (!is.null(xl_photos$PHOTOS) && nrow(xl_photos$PHOTOS)>0) {
+  cat('\\clearpage\n')
+  cat('\\section{PHOTOGRAPHIES}\n')
+  
+  bastiR::print_photos(xl_photos$PHOTOS, 
+                       header = NULL,
+                       hline = hline,
+                       grid_col = grid_col)
+}
 @
 
 % Fin document LaTeX ===========================================================
-\end{document}

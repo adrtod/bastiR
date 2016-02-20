@@ -321,7 +321,8 @@ print_photos = function(photos, col_format="|>{\\centering}m{.55\\linewidth}|m{.
                         width = "\\linewidth",
                         height=".3\\textheight", ...) {
   # enleve photos sans commentaires
-  photos = filter(photos, !is.na(COMMENTAIRE), nzchar(COMMENTAIRE))
+  if (!is.null(photos) && nrow(photos)>0)
+    photos = filter(photos, !is.na(COMMENTAIRE), nzchar(COMMENTAIRE))
   
   # formate insertion photo en latex
   photos = mutate(photos, FICHIER = paste0("\\includegraphics[height=", height, ", width=", width, 

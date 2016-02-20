@@ -25,7 +25,9 @@ read_xl <- function(xl_file,
       stop("la feuille de calcul ", s, " est absente ")
     
     # lecture feuille
-    xl[[s]] = dplyr::as_data_frame(openxlsx::read.xlsx(xl_file, sheet=s, ...))
+    df = openxlsx::read.xlsx(xl_file, sheet=s, ...)
+    if (nrow(df)>0)
+      xl[[s]] = dplyr::as_data_frame(df)
     
     # codage dates
     for (c in col_dates) {
