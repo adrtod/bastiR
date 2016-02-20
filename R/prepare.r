@@ -15,7 +15,6 @@
 #' @importFrom dplyr arrange
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr summarise_each
-#' @importFrom dplyr slice
 #' @importFrom dplyr data_frame
 prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
                        quiet = FALSE, recursive = TRUE) {
@@ -116,8 +115,8 @@ prepare_cr <- function(cfg_file = "config.r", encoding = "ISO8859-1",
   nafun = function(x) { y = NA; class(y) = class(x); return(y) }
   cejour_next = xl$CEJOUR %>% 
     summarise_each(funs(nafun)) %>% # 1 ligne vide
-    mutate(REUNION = date_next) %>% # date prochaine reu
-    slice(rep(1, 10)) # dupliquer 10 lignes
+    mutate(REUNION = date_next) # date prochaine reu
+  cejour_next = cejour_next[1:10,] # dupliquer 10 lignes
   
   # exporte xlsx ---------------------------------------------------------------
   if (!quiet)
