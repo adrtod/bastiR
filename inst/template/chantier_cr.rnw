@@ -12,7 +12,9 @@ require("dplyr")
 \usepackage[\Sexpr{inputenc}]{inputenc}
 <<utf8>>=
 if (inputenc == "utf8")
-  cat("\\DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8")
+  cat("\\DeclareUnicodeCharacter{00A0}{~} % pour espaces insécables en utf8\n")
+  cat("\\DeclareUnicodeCharacter{0301}{\\'} % pour accent aigü en utf8\n")
+  cat("\\DeclareUnicodeCharacter{00B0}{\\textdegree{}} % pour degré en utf8\n")
 @
 \usepackage[french]{babel}
 \usepackage{lmodern}
